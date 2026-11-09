@@ -14,6 +14,7 @@
     "ingest": "node --env-file-if-exists=.env src/ingest.ts",
     "ask": "node --env-file-if-exists=.env src/ask.ts",
     "serve": "node --env-file-if-exists=.env src/server.ts",
+    "score": "node --env-file-if-exists=.env tools/score.ts",
     "typecheck": "tsc",
     "test": "node --test \"test/*.test.ts\""
   },

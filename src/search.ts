@@ -2,9 +2,20 @@
 import { TOP_K } from "./config.ts";
 import { pool, toPg } from "./db.ts";
 
-export type Hit = { id: string; docId: string; title: string; url: string; body: string; score: number };
+export type Hit = {
+  id: string;
+  docId: string;
+  n: number;
+  title: string;
+  url: string;
+  body: string;
+  start: number;
+  end: number;
+  score: number;
+};
 
-export const HIT_COLUMNS = `c.id, c.doc_id as "docId", c.title, c.url, c.body`;
+export const HIT_COLUMNS = `c.id, c.doc_id as "docId", c.n, c.title, c.url, c.body,
+  c.start_char as start, c.end_char as "end"`;
 
 // Cosine distance, nearest first. With no vector index this is exact search:
 // every row is compared.

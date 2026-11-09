@@ -2,17 +2,10 @@
 // written question beside the top score of every question with no answer,
 // and what a "skip sources under x" rule would do.
 //   node experiments/02-scores.ts
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { pool } from "../src/db.ts";
 import { embed } from "../src/embed.ts";
 import { vectorSearch } from "../src/search.ts";
-
-// the written questions; type "none" has no answer in the corpus
-type Q = { q: string; type: string };
-const read = (f: string): Q[] => JSON.parse(readFileSync(join(import.meta.dirname, "..", "questions", f), "utf8")).queries;
-const written = read("public.json").filter((q) => q.type !== "none");
-const noAnswer = [...read("public.json").filter((q) => q.type === "none"), ...read("near-miss.json")];
+import { loadQuestions } from "../tools/score.ts";
 
 // Multiply matching numbers and add them up; divide by the lengths. These
 // vectors come back at length 1, so the dot product alone is the cosine, and
@@ -31,8 +24,8 @@ const top1 = async (qs: { q: string }[]) => {
   const vecs = await embed(qs.map((q) => q.q), { stage: "embed:question" });
   return Promise.all(vecs.map(async (v) => (await vectorSearch(v, 1))[0].score));
 };
-const real = await top1(written);
-const none = await top1(noAnswer);
+const real = await top1(loadQuestions("written"));
+const none = await top1([...loadQuestions("unanswerable"), ...loadQuestions("near-miss")]);
 const stats = (xs: number[]) => {
   const s = [...xs].sort((a, b) => a - b);
   return `min ${s[0].toFixed(3)}, median ${s[Math.floor(s.length / 2)].toFixed(3)}, max ${s.at(-1)!.toFixed(3)}`;

@@ -185,3 +185,13 @@ export async function markNearCopies(dead: Doc[]): Promise<NearCopy[]> {
   }
   return copies;
 }
+
+export async function bumpIndexVersion(): Promise<number> {
+  const { rows } = await pool.query(`update index_state set version = version + 1, updated_at = now() where id = 1 returning version`);
+  return Number(rows[0].version);
+}
+
+export async function indexVersion(): Promise<number> {
+  const { rows } = await pool.query(`select version from index_state where id = 1`);
+  return Number(rows[0]?.version ?? 0);
+}

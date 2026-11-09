@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pool } from "../src/db.ts";
 
-await pool.query(`drop table if exists chunks, documents, slack_messages cascade`);
+await pool.query(`drop table if exists chunks, documents, index_state, slack_messages cascade`);
 await pool.query(readFileSync(join(import.meta.dirname, "..", "sql", "001_schema.sql"), "utf8"));
 console.log("index reset: run npm run ingest");
 await pool.end();

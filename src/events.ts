@@ -6,7 +6,7 @@
 import { SLACK_DEBOUNCE_MS } from "./config.ts";
 import { flattenSlack, loadCastlane, type Doc, type Msg } from "./corpus.ts";
 import { pool } from "./db.ts";
-import { syncDocuments } from "./sync.ts";
+import { bumpIndexVersion, syncDocuments } from "./sync.ts";
 
 // ---- debounce -----------------------------------------------------------------
 
@@ -117,7 +117,9 @@ export async function slackSource(exported: Doc[]): Promise<Doc[]> {
 export async function reindexSlackDay(docId: string) {
   const doc = await slackDay(docId);
   if (!doc) return;
-  return syncDocuments([doc]);
+  const stats = await syncDocuments([doc]);
+  if (stats.replaced) await bumpIndexVersion();
+  return stats;
 }
 
 const debouncer = new Debouncer(SLACK_DEBOUNCE_MS, (docId) => reindexSlackDay(docId).catch((e) => console.error(`reindex ${docId}:`, e)));

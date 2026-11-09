@@ -9,7 +9,7 @@ import { chunkByHeadings } from "../src/chunk.ts";
 import { castlaneAsOf, type Doc } from "../src/corpus.ts";
 import { pool, toPg } from "../src/db.ts";
 import { embed } from "../src/embed.ts";
-import { documentHash, emptyStats, syncSources } from "../src/sync.ts";
+import { bumpIndexVersion, documentHash, emptyStats, syncSources } from "../src/sync.ts";
 
 const { values } = parseArgs({ options: { until: { type: "string", default: "2026-10-21T02:00:00Z" }, naive: { type: "boolean", default: false } } });
 const FIRST = "2026-05-04T02:00:00Z";
@@ -56,6 +56,7 @@ for (let t = Date.parse(FIRST) + 86_400_000; t <= Date.parse(values.until!); t +
   changed++;
   await night(docs);
 }
+await bumpIndexVersion();
 
 const row = async (doc: string) => Number((await pool.query(`select count(*) n from chunks where doc_id = $1`, [doc])).rows[0].n);
 const live = new Set(castlaneAsOf(values.until!).map((d) => d.id));

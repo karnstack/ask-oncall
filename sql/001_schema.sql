@@ -53,6 +53,14 @@ create index if not exists chunks_doc_id on chunks (doc_id);
 -- HNSW: approximate nearest neighbours, m 16 and ef_construction 64 (the defaults)
 create index if not exists chunks_embedding_hnsw on chunks using hnsw (embedding vector_cosine_ops);
 
+-- Bumped by every sync that changes the index; part of every cache key.
+create table if not exists index_state (
+  id         int primary key default 1 check (id = 1),
+  version    bigint not null default 0,
+  updated_at timestamptz not null default now()
+);
+insert into index_state (id) values (1) on conflict (id) do nothing;
+
 -- Slack messages as they arrive (src/events.ts), before and after the export.
 create table if not exists slack_messages (
   channel_id  text not null,

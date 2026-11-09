@@ -15,6 +15,7 @@ import { indexVersion } from "./sync.ts";
 export type AskOptions = {
   asker: string; // a handle from identity.json
   thread?: string[]; // earlier messages in the thread, oldest first
+  scope?: string;
   service?: string;
   now?: Date;
   onDelta?: (text: string) => void;
@@ -36,7 +37,7 @@ export async function ask(question: string, opts: AskOptions) {
 
   // 2. both legs, inside the asker's permissions, current documents only
   const principals = principalsOf(userByHandle(opts.asker));
-  const filter: Filter = { principals, currentOnly: true, service: opts.service };
+  const filter: Filter = { principals, currentOnly: true, scope: opts.scope, service: opts.service };
   const first = await hybridSearch(searched, filter);
   Object.assign(ms, first.ms);
 
@@ -68,12 +69,12 @@ export async function ask(question: string, opts: AskOptions) {
 if (import.meta.main) {
   const { values, positionals } = parseArgs({
     allowPositionals: true,
-    options: { as: { type: "string", default: "dara" }, thread: { type: "string", multiple: true }, service: { type: "string" }, now: { type: "string" } },
+    options: { as: { type: "string", default: "dara" }, thread: { type: "string", multiple: true }, scope: { type: "string" }, service: { type: "string" }, now: { type: "string" } },
   });
   const question = positionals.join(" ");
-  if (!question) throw new Error(`usage: npm run ask -- "your question" --as <handle> [--thread "earlier message"]`);
+  if (!question) throw new Error(`usage: npm run ask -- "your question" --as <handle> [--thread "earlier message"] [--scope payouts]`);
   const now = values.now ? new Date(values.now) : new Date();
-  const r = await ask(question, { asker: values.as!, thread: values.thread, service: values.service, now, onDelta: (s) => process.stdout.write(s) });
+  const r = await ask(question, { asker: values.as!, thread: values.thread, scope: values.scope, service: values.service, now, onDelta: (s) => process.stdout.write(s) });
   console.log("\n");
   if (r.searched !== question) console.log(`searched as: ${r.searched}`);
   console.log(`sources (asked as ${values.as}, index version ${r.indexVersion}):`);

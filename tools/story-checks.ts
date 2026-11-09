@@ -4,8 +4,14 @@
 import { principalsOf, userByHandle } from "../src/access.ts";
 import { loadCastlane } from "../src/corpus.ts";
 import { pool } from "../src/db.ts";
-import { hybridSearch } from "../src/search.ts";
+import { embedQuestion } from "../src/embed.ts";
+import { hybridSearch, vectorSearch } from "../src/search.ts";
 import { reconcilePlan } from "../src/sync.ts";
+
+// Every check runs with sequential scans off, so a filtered vector search takes
+// the HNSW path the way it would on a big index (pg reads PGOPTIONS when it
+// opens a connection, and the pool opens its first one below).
+process.env.PGOPTIONS = "-c enable_seqscan=off";
 
 const V2 = "runbooks/postgres-failover.md@v2";
 const WIKI = "wiki-export-2024/Postgres_Failover.md";
@@ -49,6 +55,12 @@ const checks: [string, () => Promise<boolean | string>][] = [
     const { fused } = await hybridSearch("why were creator payouts late on Tuesday 2026-09-15?", { principals: as("jh"), currentOnly: true });
     if (fused.some((h) => h.docId === SECURITY[0])) return "retrieved the security postmortem";
     return fused.slice(0, 10).some((h) => h.docId === "reports/payouts-2026-09.md") || "run summary not in the top 10";
+  }],
+  // the filter that left one source: the smallest user, with the HNSW path forced
+  ["the contractor's filtered vector leg returns the full LIMIT on the HNSW path", async () => {
+    const vec = await embedQuestion("why were creator payouts late on Tuesday?");
+    const rows = await vectorSearch(vec, { principals: as("ext-rb"), currentOnly: true }, 10);
+    return rows.length === 10 || `${rows.length} of 10 rows`;
   }],
   ["every live Castlane document has chunks", async () => {
     const live = loadCastlane().filter((d) => !d.meta.deletedAt && d.id !== WIKI).map((d) => d.id);

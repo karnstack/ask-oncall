@@ -24,12 +24,12 @@ test("rrf keeps the top `limit`", () => {
 });
 
 test("the permission filter is a parameter inside the query", () => {
-  const w = whereSql({ principals: ["everyone", "user:ext-rb", "contractors"], currentOnly: true }, 2);
-  assert.equal(w.sql, "d.deleted_at is null and d.is_current and c.allowed_groups && $2::text[]");
-  assert.deepEqual(w.params, [["everyone", "user:ext-rb", "contractors"]]);
+  const w = whereSql({ principals: ["everyone", "user:ext-rb", "contractors"], currentOnly: true, scope: "payouts" }, 2);
+  assert.equal(w.sql, "c.is_current and c.allowed_groups && $2::text[] and c.scope = $3");
+  assert.deepEqual(w.params, [["everyone", "user:ext-rb", "contractors"], "payouts"]);
 });
 
-test("every filter keeps live documents only; parameters number from `first`", () => {
-  assert.deepEqual(whereSql({}, 2), { sql: "d.deleted_at is null", params: [] });
-  assert.equal(whereSql({ service: "pgbouncer-payouts" }, 3).sql, "d.deleted_at is null and $3 = any(c.service)");
+test("no filter matches everything; parameters number from `first`", () => {
+  assert.deepEqual(whereSql({}, 2), { sql: "true", params: [] });
+  assert.equal(whereSql({ service: "pgbouncer-payouts" }, 3).sql, "$3 = any(c.service)");
 });

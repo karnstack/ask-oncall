@@ -29,36 +29,44 @@ export const HIT_COLUMNS = `c.id, c.doc_id as "docId", c.n, c.source, c.title, c
 export type Filter = {
   principals?: string[]; // the asker's principals (access.ts)
   currentOnly?: boolean; // only documents in effect now
+  scope?: string; // narrow the search, e.g. 'payouts'
   service?: string; // a service the question names
 };
 
 // The WHERE clause for a filter, with its parameters numbered from `first`.
-// Every leg joins its chunks to their documents and keeps live ones only: a
-// tombstoned document never answers.
+// The flags live on the chunk row (copied from documents by sync.ts): a join
+// is applied after an HNSW scan just like a WHERE, and loses the same rows.
+// Chunks of a tombstoned document are deleted, so no "deleted" flag is needed.
 export function whereSql(filter: Filter, first: number): { sql: string; params: unknown[] } {
-  const parts = ["d.deleted_at is null"];
+  const parts: string[] = [];
   const params: unknown[] = [];
   const param = (v: unknown) => `$${first + params.push(v) - 1}`;
-  if (filter.currentOnly) parts.push(`d.is_current`);
+  if (filter.currentOnly) parts.push(`c.is_current`);
   if (filter.principals) parts.push(`c.allowed_groups && ${param(filter.principals)}::text[]`);
+  if (filter.scope) parts.push(`c.scope = ${param(filter.scope)}`);
   if (filter.service) parts.push(`${param(filter.service)} = any(c.service)`);
-  return { sql: parts.join(" and "), params };
+  return { sql: parts.length ? parts.join(" and ") : "true", params };
 }
 
-// The vector leg: cosine distance, nearest first. HNSW keeps ef_search
-// candidates while it walks the graph, so set it to at least the LIMIT.
+// The vector leg. With filters on an HNSW index, the filter runs after the
+// index scan; an iterative scan keeps walking the graph until k rows pass.
+// relaxed_order can return rows slightly out of order, so re-sort them.
 export async function vectorSearch(vec: Float32Array, filter: Filter = {}, k = CANDIDATES, column = EMBED_COLUMN): Promise<Hit[]> {
   const w = whereSql(filter, 2);
   const client = await pool.connect();
   try {
     await client.query("begin");
     await client.query(`set local hnsw.ef_search = ${HNSW_EF_SEARCH}`);
+    await client.query(`set local hnsw.iterative_scan = relaxed_order`);
     const { rows } = await client.query(
-      `select ${HIT_COLUMNS}, 1 - (c.${column} <=> $1::vector) as score
-         from chunks c join documents d on d.id = c.doc_id
-        where ${w.sql}
-        order by c.${column} <=> $1::vector
-        limit ${k}`,
+      `with ranked as materialized (
+         select ${HIT_COLUMNS}, c.${column} <=> $1::vector as distance
+           from chunks c
+          where ${w.sql}
+          order by distance
+          limit ${k}
+       )
+       select *, 1 - distance as score from ranked order by distance + 0`,
       [toPg(vec), ...w.params],
     );
     await client.query("commit");
@@ -83,7 +91,7 @@ export async function wordSearch(question: string, filter: Filter = {}, k = CAND
   const { rows } = await pool.query(
     `with q as (select ${OR_QUERY} as q)
      select ${HIT_COLUMNS}, ts_rank(c.tsv, q.q, 1) as score
-       from chunks c join documents d on d.id = c.doc_id, q
+       from chunks c, q
       where c.tsv @@ q.q and ${w.sql}
       order by score desc, c.id
       limit ${k}`,

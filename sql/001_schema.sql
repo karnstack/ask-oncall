@@ -22,7 +22,8 @@ create table if not exists documents (
   indexed_at     timestamptz not null default now()
 );
 
--- One row per chunk: its text, its vector, and its document's front matter.
+-- One row per chunk: its text, its vector, and the document's flags copied
+-- onto it, so every filter runs on the row the index scan returns.
 create table if not exists chunks (
   id             text primary key,        -- doc id + '::' + position
   doc_id         text not null,
@@ -50,6 +51,7 @@ create table if not exists chunks (
 );
 create index if not exists chunks_tsv on chunks using gin (tsv);
 create index if not exists chunks_doc_id on chunks (doc_id);
+create index if not exists chunks_scope on chunks (scope);
 -- HNSW: approximate nearest neighbours, m 16 and ef_construction 64 (the defaults)
 create index if not exists chunks_embedding_hnsw on chunks using hnsw (embedding vector_cosine_ops);
 

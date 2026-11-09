@@ -9,18 +9,18 @@
 -- tools/hybrid-sql.ts runs it next to the code path for one question.
 prepare hybrid(vector, text, text[]) as
 with vector_leg as (
-  select c.id, row_number() over (order by c.embedding <=> $1) as rank
-    from chunks c join documents d on d.id = c.doc_id
-   where d.deleted_at is null and d.is_current and c.allowed_groups && $3
-   order by c.embedding <=> $1
+  select id, row_number() over (order by embedding <=> $1) as rank
+    from chunks
+   where is_current and allowed_groups && $3
+   order by embedding <=> $1
    limit 50
 ),
 word_leg as (
   select c.id, row_number() over (order by ts_rank(c.tsv, q.q, 1) desc, c.id) as rank
-    from chunks c join documents d on d.id = c.doc_id,
+    from chunks c,
          (select to_tsquery('simple', coalesce(string_agg(quote_literal(lexeme), ' | '), '')) as q
             from unnest(to_tsvector('english', $2))) as q
-   where c.tsv @@ q.q and d.deleted_at is null and d.is_current and c.allowed_groups && $3
+   where c.tsv @@ q.q and c.is_current and c.allowed_groups && $3
    order by ts_rank(c.tsv, q.q, 1) desc, c.id
    limit 50
 )

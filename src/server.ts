@@ -1,5 +1,5 @@
 // The assistant over HTTP, with node:http and nothing else.
-//   POST /ask           {"question": "...", "asker": "tw", "thread": ["..."]}
+//   POST /ask           {"question": "...", "asker": "tw", "thread": ["..."], "scope": "payouts"}
 //   POST /slack/events  Slack's Events API: message events become index updates
 //   npm run serve       (PORT, default 8787; SLACK_SIGNING_SECRET for /slack/events)
 import { createHmac, timingSafeEqual } from "node:crypto";
@@ -37,12 +37,12 @@ async function route(req: IncomingMessage, res: ServerResponse) {
   if (req.method === "GET" && req.url === "/healthz") return send(res, 200, { ok: true });
 
   if (req.method === "POST" && req.url === "/ask") {
-    const { question, asker, thread } = JSON.parse(await readBody(req));
+    const { question, asker, thread, scope } = JSON.parse(await readBody(req));
     if (typeof question !== "string" || typeof asker !== "string") return send(res, 400, { error: "question and asker are required" });
     const key = cacheKey([...(thread ?? []), question].join("\n"), principalsOf(userByHandle(asker)), await indexVersion());
     const hit = answers.get(key);
     if (hit && Date.now() - hit.at < ANSWER_TTL_MS) return send(res, 200, { ...(hit.body as object), cached: true });
-    const r = await ask(question, { asker, thread });
+    const r = await ask(question, { asker, thread, scope });
     const body = {
       answer: r.text,
       searched: r.searched,

@@ -53,7 +53,7 @@ for (const ef of EF_SEARCH) {
   let found = 0;
   const times: number[] = [];
   for (const [i, v] of vectors.entries()) {
-    const r = await top10(v, [`hnsw.ef_search = ${ef}`, "enable_seqscan = off"]);
+    const r = await top10(v, [`hnsw.ef_search = ${ef}`, "hnsw.iterative_scan = off", "enable_seqscan = off"]);
     found += r.ids.filter((id) => exact[i].includes(id)).length;
     times.push(r.ms);
   }

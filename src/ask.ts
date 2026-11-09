@@ -6,8 +6,8 @@
 import { parseArgs } from "node:util";
 import { principalsOf, userByHandle } from "./access.ts";
 import { answer, sourceLine } from "./answer.ts";
-import { checkAnswer, citedSentence, passed, quotedSpans } from "./checks.ts";
-import { RERANK_CANDIDATES, RERANK_KEEP } from "./config.ts";
+import { checkAnswer, citedSentence, notFoundAnswer, passed, quotedSpans } from "./checks.ts";
+import { RERANK_CANDIDATES } from "./config.ts";
 import { pool } from "./db.ts";
 import { rerank } from "./rerank.ts";
 import { rewriteFollowUp } from "./rewrite.ts";
@@ -53,13 +53,16 @@ export async function ask(question: string, opts: AskOptions) {
     usd += rr.usd;
   }
 
-  // 4. answer from what was kept (the first five, if the reranker kept none)
-  if (!kept.length) kept = candidates.slice(0, RERANK_KEEP);
-  const a = await answer(searched, kept, { now: opts.now, onDelta: opts.onDelta });
-  const text = a.text;
-  ms.firstToken = performance.now() - t0 - a.ms + a.firstTokenMs;
-  ms.answer = a.ms;
-  usd += a.usd;
+  // 4. answer from what was kept; when nothing was kept, skip the model
+  let text: string;
+  if (!kept.length) text = notFoundAnswer(candidates);
+  else {
+    const a = await answer(searched, kept, { now: opts.now, onDelta: opts.onDelta });
+    text = a.text;
+    ms.firstToken = performance.now() - t0 - a.ms + a.firstTokenMs;
+    ms.answer = a.ms;
+    usd += a.usd;
+  }
   ms.total = performance.now() - t0;
 
   // 5. check it
@@ -79,6 +82,7 @@ if (import.meta.main) {
   if (!question) throw new Error(`usage: npm run ask -- "your question" --as <handle> [--thread "earlier message"] [--scope payouts]`);
   const now = values.now ? new Date(values.now) : new Date();
   const r = await ask(question, { asker: values.as!, thread: values.thread, scope: values.scope, service: values.service, now, onDelta: (s) => process.stdout.write(s) });
+  if (!r.sources.length) process.stdout.write(r.text);
   console.log("\n");
   if (r.searched !== question) console.log(`searched as: ${r.searched}`);
   console.log(`sources (asked as ${values.as}, index version ${r.indexVersion}):`);
@@ -90,7 +94,7 @@ if (import.meta.main) {
   const c = r.checks;
   console.log(
     `checks: ${passed(c) ? "pass" : "FAIL"} (${c.citations} citations, ${c.badCitations.length} bad; ${c.quotes} quotes, ` +
-      `${c.unverifiedQuotes.length} not in the sources; ${c.foreignLinks.length} foreign links)`,
+      `${c.unverifiedQuotes.length} not in the sources; ${c.foreignLinks.length} foreign links)${c.notFound ? "; not found" : ""}`,
   );
   if (!passed(c)) console.log(`  ${JSON.stringify({ bad: c.badCitations, quotes: c.unverifiedQuotes, links: c.foreignLinks })}`);
   console.log(`time: ${Object.entries(r.ms).map(([k, v]) => `${k} ${Math.round(v)} ms`).join(", ")}`);

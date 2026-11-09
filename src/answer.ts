@@ -3,6 +3,8 @@
 import { ANSWER_MODEL } from "./config.ts";
 import { respondStream } from "./openai.ts";
 
+export const NOT_FOUND = "Not found in Castlane's docs";
+
 export type Source = { title: string; url: string; body: string; version: number | null; updatedAt: string | null };
 
 export const daysAgo = (iso: string, now: Date) => Math.round((now.getTime() - Date.parse(iso.slice(0, 10))) / 86_400_000);
@@ -20,6 +22,7 @@ export function answerPrompt(question: string, sources: Source[], now = new Date
 - Cite every claim with its source number in square brackets, like [2].
 - Quote commands and settings exactly as the source writes them.
 - Never suggest a command that is not in a cited source.
+- If the sources do not answer the question, reply exactly "${NOT_FOUND}" and then list the titles of the three nearest sources.
 Keep it under 120 words.
 
 Sources:

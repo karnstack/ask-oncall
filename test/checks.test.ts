@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkAnswer, citedSentence, quotedSpans } from "../src/checks.ts";
+import { checkAnswer, citedSentence, isNotFound, notFoundAnswer, quotedSpans } from "../src/checks.ts";
 
 const v4 = {
   title: "PgBouncer", url: "https://runbooks.castlane.internal/pgbouncer/v4",
@@ -9,7 +9,7 @@ const v4 = {
 
 test("a good answer passes every check", () => {
   const c = checkAnswer("Set `default_pool_size = 25` [1].", [v4]);
-  assert.deepEqual([c.badCitations, c.unverifiedQuotes, c.foreignLinks], [[], [], []]);
+  assert.deepEqual([c.badCitations, c.unverifiedQuotes, c.foreignLinks, c.notFound], [[], [], [], false]);
 });
 
 test("a citation must point at a source that was sent", () => {
@@ -37,4 +37,11 @@ test("quoted spans: code lines, inline code, long double-quoted phrases", () => 
   assert.deepEqual(quotedSpans('Run:\n```\nkubectl -n media get pods\n```\nthen `RECONNECT feeds;` as "do NOT raise it back" says.'), [
     "kubectl -n media get pods", "RECONNECT feeds;", "do NOT raise it back",
   ]);
+});
+
+test("not found: the fixed sentence, and nearest titles from the asker's own sources", () => {
+  const a = notFoundAnswer([{ title: "DB password rotation" }, { title: "DB password rotation" }, { title: "PgBouncer" }, { title: "Patroni" }]);
+  assert.equal(a, "Not found in Castlane's docs. Nearest: DB password rotation; PgBouncer; Patroni.");
+  assert.ok(isNotFound(a));
+  assert.ok(!isNotFound("Set it to 25 [1]."));
 });

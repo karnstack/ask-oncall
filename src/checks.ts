@@ -3,6 +3,8 @@
 //   citation  every [n] points at a source that was sent
 //   quote     every quoted span appears verbatim in the sources that were sent
 //   link      every URL in the answer is a sent source's URL
+//   not found the fixed sentence, detected, never treated as an error
+import { NOT_FOUND } from "./answer.ts";
 
 type Sent = { title: string; url: string; body: string };
 
@@ -30,7 +32,7 @@ export function checkAnswer(text: string, sources: Sent[]) {
   const links = [...text.matchAll(/https?:\/\/[^\s)\]>`"]+/g)].map((m) => m[0].replace(/[.,;]$/, ""));
   const strip = (u: string) => u.replace(/\/$/, "");
   const foreignLinks = links.filter((u) => !sources.some((s) => strip(s.url) === strip(u)));
-  return { citations: citations.length, badCitations, quotes: spans.length, unverifiedQuotes, foreignLinks };
+  return { citations: citations.length, badCitations, quotes: spans.length, unverifiedQuotes, foreignLinks, notFound: isNotFound(text) };
 }
 
 export type Checks = ReturnType<typeof checkAnswer>;
@@ -47,3 +49,13 @@ export function citedSentence(body: string, span: string): string | null {
   const stop = flat.indexOf(". ", at + span.length);
   return flat.slice(start, stop < 0 ? undefined : stop + 1).trim();
 }
+
+// ---- not found ----------------------------------------------------------------
+
+export const isNotFound = (text: string) => text.includes(NOT_FOUND);
+
+// The cheap guard: when the reranker keeps nothing, skip the answer model.
+// The nearest titles come from the asker's own filtered candidates, never an
+// unfiltered list, or "not found" names documents the asker may not read.
+export const notFoundAnswer = (nearest: { title: string }[]) =>
+  `${NOT_FOUND}. Nearest: ${[...new Set(nearest.map((s) => s.title))].slice(0, 3).join("; ")}.`;

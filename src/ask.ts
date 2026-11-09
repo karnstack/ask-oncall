@@ -52,7 +52,7 @@ if (import.meta.main) {
   const r = await ask(question, { onDelta: (s) => process.stdout.write(s) });
   console.log("\n");
   console.log(`sources:`);
-  r.sources.forEach((s, i) => console.log(`  ${sourceLine(s, i)}`));
+  r.sources.forEach((s, i) => console.log(`  ${sourceLine(s, i)}${s.breadcrumb ? `\n      ${s.breadcrumb}` : ""}`));
   console.log(`time: ${Object.entries(r.ms).map(([k, v]) => `${k} ${Math.round(v)} ms`).join(", ")}`);
   console.log(`cost: $${r.usd.toFixed(5)}`);
   await pool.end();

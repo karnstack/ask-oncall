@@ -24,7 +24,7 @@ async function route(req: IncomingMessage, res: ServerResponse) {
     const r = await ask(question);
     const body = {
       answer: r.text,
-      sources: r.sources.map((s, i) => ({ n: i + 1, id: s.id, title: s.title, url: s.url })),
+      sources: r.sources.map((s, i) => ({ n: i + 1, id: s.id, title: s.title, url: s.url, breadcrumb: s.breadcrumb })),
       ms: r.ms,
     };
     return send(res, 200, body);

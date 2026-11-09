@@ -12,13 +12,14 @@ export type Hit = {
   source: string;
   title: string;
   url: string;
+  breadcrumb: string;
   body: string;
   start: number;
   end: number;
   score: number;
 };
 
-export const HIT_COLUMNS = `c.id, c.doc_id as "docId", c.n, c.source, c.title, c.url, c.body,
+export const HIT_COLUMNS = `c.id, c.doc_id as "docId", c.n, c.source, c.title, c.url, c.breadcrumb, c.body,
   c.start_char as start, c.end_char as "end"`;
 
 // The vector leg: cosine distance, nearest first. With no vector index this

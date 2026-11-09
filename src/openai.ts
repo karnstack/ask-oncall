@@ -20,10 +20,20 @@ function guard(model: string, input: string) {
   assertBudget((countTokens(input) * PRICES[model].input) / 1_000_000);
 }
 
-export async function respond(stage: string, model: string, input: string) {
+// effort "none" for the gpt-5.4 models; the older gpt-5 models take "minimal".
+// cacheKey groups calls that share a long prefix (at most 64 characters).
+type Options = { effort?: "none" | "minimal"; cacheKey?: string };
+
+export async function respond(stage: string, model: string, input: string, opts: Options = {}) {
   guard(model, input);
   const t0 = performance.now();
-  const res = await openai().responses.create({ model, input, reasoning: { effort: "none" }, store: false });
+  const res = await openai().responses.create({
+    model,
+    input,
+    reasoning: { effort: opts.effort ?? "none" },
+    store: false,
+    ...(opts.cacheKey ? { prompt_cache_key: opts.cacheKey } : {}),
+  });
   const usage = usageOf(res.usage);
   return { text: res.output_text, usage, usd: record(stage, model, usage), ms: performance.now() - t0 };
 }

@@ -24,6 +24,9 @@ export const RERANK_CLIP_TOKENS = 200;
 // The answer model.
 export const ANSWER_MODEL = "gpt-5.4-mini";
 
+// Model-written context for the word leg (the split design, opt-in).
+export const CONTEXT_MODEL = "gpt-5-nano";
+
 // US$ per 1,000,000 tokens, checked 2026-11-08 at
 // https://developers.openai.com/api/docs/pricing (re-check before you trust a bill).
 export type Price = { input: number; cachedInput: number; output: number };
@@ -31,6 +34,7 @@ export const PRICES_CHECKED = "2026-11-08";
 export const PRICES: Record<string, Price> = {
   "text-embedding-3-small": { input: 0.02, cachedInput: 0.02, output: 0 },
   "gpt-5.4-mini": { input: 0.75, cachedInput: 0.075, output: 4.5 },
+  "gpt-5-nano": { input: 0.05, cachedInput: 0.005, output: 0.4 },
 };
 
 // Every call is priced into the ledger; a step that would take the total past

@@ -23,6 +23,9 @@ create table if not exists chunks (
   service        text[] not null default '{}',
   effective_at   date,
   updated_at     timestamptz,
-  tsv            tsvector generated always as (to_tsvector('english', body)) stored
+  breadcrumb     text not null default '',  -- the heading path, shown in citations
+  context        text,                      -- model-written context for the word leg (optional)
+  -- the word leg reads the context and the body; the vector leg reads the body only
+  tsv            tsvector generated always as (to_tsvector('english', coalesce(context, '') || ' ' || body)) stored
 );
 create index if not exists chunks_tsv on chunks using gin (tsv);

@@ -5,6 +5,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { chunkByHeadings, type Chunk } from "./chunk.ts";
+import { cachedContext } from "./context.ts";
 import { loadCorpus, type Doc } from "./corpus.ts";
 import { pool, toPg } from "./db.ts";
 import { embed, type EmbedStats } from "./embed.ts";
@@ -22,10 +23,11 @@ console.log(`embedded ${stats.tokens} tokens in ${(stats.ms / 1000).toFixed(1)} 
 
 // The front matter is copied onto every chunk, so search can filter on it.
 const columns = ["id", "doc_id", "n", "title", "url", "body", "embedding", "start_char", "end_char", "source", "type", "version",
-  "is_current", "superseded_by", "allowed_groups", "scope", "service", "effective_at", "updated_at"];
+  "is_current", "superseded_by", "allowed_groups", "scope", "service", "effective_at", "updated_at", "breadcrumb", "context"];
 const rowOf = (d: Doc, c: Chunk, v: Float32Array) => [
   c.id, c.docId, c.n, d.title, d.url, c.body, toPg(v), c.start, c.end, d.source, d.meta.type, d.meta.version,
-  d.meta.isCurrent, d.meta.supersededBy, d.meta.allowedGroups, d.meta.scope, d.meta.service, d.meta.effectiveAt, d.meta.updatedAt,
+  d.meta.isCurrent, d.meta.supersededBy, d.meta.allowedGroups, d.meta.scope, d.meta.service, d.meta.effectiveAt, d.meta.updatedAt, c.breadcrumb,
+  cachedContext(d.text, c.body),
 ];
 const updates = columns.slice(1).map((c) => `${c} = excluded.${c}`).join(", ");
 for (let i = 0; i < chunks.length; i += 100) {

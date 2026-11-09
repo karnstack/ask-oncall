@@ -1,0 +1,3 @@
+source: https://github.com/kubernetes/website commit 0449ba43e61f8d4e97502f0902704906fba5f5d1 (2026-11-08), content/en/docs
+licence: CC BY 4.0 (LICENSE in this folder), copyright The Kubernetes Authors
+taken: the Markdown files, unmodified, without reference/kubernetes-api and reference/instrumentation

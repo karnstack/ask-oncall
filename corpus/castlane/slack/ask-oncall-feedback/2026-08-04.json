@@ -1,0 +1,190 @@
+{
+  "id": "slack/ask-oncall-feedback/2026-08-04.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#ask-oncall-feedback: purge answer used an old wiki page",
+  "url": "https://slack.castlane.internal/archives/C0XESDI/p1785852191000107",
+  "channel": "#ask-oncall-feedback",
+  "channel_id": "C0XESDI",
+  "incident": null,
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-08-04",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-08-04T14:21:44Z",
+  "messages": [
+    {
+      "ts": "1785852191.000107",
+      "user": "yu",
+      "text": "@ask-oncall just answered a purge question with the old `curl` command from the 2024 wiki export, not `edgectl`. The answer was otherwise fine, but that command is stale enough to be dangerous.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1785852191.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1785852242.000114",
+          "user": "dara",
+          "text": "yeah, noted. the wiki export is still one of the sources it can pull from, so this is not entirely surprising. but we should not be surfacing that old purge flow as the preferred answer.",
+          "thread_ts": "1785852191.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1785852318.000121",
+      "user": "bo",
+      "text": "can we just drop the wiki export from the source set then?",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1785852318.000121",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1785852349.000128",
+          "user": "dara",
+          "text": "maybe, but that is a broader call. there is still stuff in there that is not duplicated elsewhere. i would rather not yank it without checking what else depends on it.",
+          "thread_ts": "1785852318.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1785852423.000135",
+      "user": "yu",
+      "text": "for context, it was a purge question in #ask-oncall. the bot told them to use the old `curl https://.../purge` style command. no mention of `edgectl` at all.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1785852423.000135",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1785852461.000142",
+          "user": "bo",
+          "text": "ugh. that is exactly the sort of thing that gets copy pasted into prod.",
+          "thread_ts": "1785852423.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1785852566.000149",
+      "user": "dara",
+      "text": "i'm checking the source metadata now. the 2024 export is still tagged as an allowed knowledge source, so the bot is not ignoring it. we may need a weighting or freshness rule, not just a hard drop.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1785852566.000149",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1785852610.000156",
+          "user": "yu",
+          "text": "makes sense. if there is a freshness knob, this feels like the kind of thing we should turn down hard.",
+          "thread_ts": "1785852566.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1785852764.000163",
+      "user": "bo",
+      "text": "could we at least mark purge docs as obsolete in the export itself? if it is a source, it should not be winning over current runbook material.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1785852764.000163",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1785852808.000170",
+          "user": "dara",
+          "text": "yeah, that would help. probably easier than removing the source outright.",
+          "thread_ts": "1785852764.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1785852907.000177",
+      "user": "yu",
+      "text": "i can grab the exact reply if useful. no fix needed right now, just flagging that the bot is still leaning on the archived wiki text.",
+      "reactions": [
+        {
+          "name": "ack",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1785852907.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1785852936.000184",
+          "user": "dara",
+          "text": "please do, paste it here or in the feedback ticket. that will help make the test case concrete.",
+          "thread_ts": "1785852907.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1785853101.000191",
+      "user": "bo",
+      "text": "so action items are, check source weighting, look at marking the export stale, and not remove it blindly. sounds good.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1785853101.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1785853139.000198",
+          "user": "yu",
+          "text": "yep. no outage, just a bad answer path.",
+          "thread_ts": "1785853101.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1785853265.000205",
+      "user": "dara",
+      "text": "i'll leave this as feedback for now. if we decide to change the source set, i'll loop in the platform folks so we do not lose useful docs accidentally.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1785853265.000205",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1785853304.000212",
+          "user": "bo",
+          "text": "works for me.",
+          "thread_ts": "1785853265.000205"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

@@ -1,0 +1,207 @@
+{
+  "id": "slack/oncall/2026-11-02.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#oncall hand-off, week of 2026-11-02",
+  "url": "https://slack.castlane.internal/archives/C0EYUKXW/p1793635331000107",
+  "channel": "#oncall",
+  "channel_id": "C0EYUKXW",
+  "incident": null,
+  "allowed_groups": [
+    "eng",
+    "contractors"
+  ],
+  "version": 1,
+  "effective_at": "2026-11-02",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-11-02T16:19:05Z",
+  "messages": [
+    {
+      "ts": "1793635331.000107",
+      "user": "ext-sv",
+      "text": "handoff for the last hour. purge rate limit incident is the only active thing I see, ad-stitcher looks fine and has been quiet for 40m.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1793635331.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1793635382.000114",
+          "user": "zi",
+          "text": "ack, what have you checked so far?",
+          "thread_ts": "1793635331.000107"
+        },
+        {
+          "ts": "1793635424.000121",
+          "user": "ext-sv",
+          "text": "`edgectl purge status` showed the queue backing off hard, but no errors from ad-stitcher pods. I also checked `kubectl --context prod-eu-west -n edge get pods` and nothing weird there.",
+          "thread_ts": "1793635331.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1793635458.000128",
+      "user": "ext-sv",
+      "text": "rate limit on purges seems to be the bottleneck, not a service crash. no need to wake ad-stitcher. I didn't see any deploys in the last 2h either.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1793635458.000128",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793635500.000135",
+          "user": "zi",
+          "text": "cool, I'll take it from here. I'll watch the purge backlog and poke around the limiters.",
+          "thread_ts": "1793635458.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1793635587.000142",
+      "user": "zi",
+      "text": "going to check edge logs and the rate limit config now. if it is just the purge limiter, should be able to trim the queue without touching ad-stitcher.",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1793635587.000142",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793635630.000149",
+          "user": "ext-sv",
+          "text": "yep. ad-stitcher was the first thing I ruled out because its latency and error rate stayed flat.",
+          "thread_ts": "1793635587.000142"
+        }
+      ]
+    },
+    {
+      "ts": "1793635735.000156",
+      "user": "dara",
+      "text": "also, #ask-oncall now shows version and age next to sources, so it should be easier to tell what is fresh. if it answers wrong, please flag it with :x: so I can triage the bad bits.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        },
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1793635735.000156",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1793635771.000163",
+          "user": "zi",
+          "text": "nice, that will help a lot during these handoffs.",
+          "thread_ts": "1793635735.000156"
+        },
+        {
+          "ts": "1793635802.000170",
+          "user": "ext-sv",
+          "text": "good call, the age bit would have saved me 2 minutes already.",
+          "thread_ts": "1793635735.000156"
+        }
+      ]
+    },
+    {
+      "ts": "1793635874.000177",
+      "user": "zi",
+      "text": "found the purge limiter tripping on the same client burst every few minutes. no signs of pod issues, just a noisy producer on the edge side.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1793635874.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793635909.000184",
+          "user": "dara",
+          "text": "ack, sounds like the limiter is doing its job then. if you need to check source freshness in ask-oncall, it should now say which doc version it used.",
+          "thread_ts": "1793635874.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1793635986.000191",
+      "user": "zi",
+      "text": "I am going to rate limit the noisy client a bit harder and see if the backlog drains. not touching ad-stitcher unless the symptoms change.",
+      "reactions": [
+        {
+          "name": "ok_hand",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1793635986.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793636024.000198",
+          "user": "ext-sv",
+          "text": "sounds good. I will stay around for 10 more if you want a second set of eyes.",
+          "thread_ts": "1793635986.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1793636128.000205",
+      "user": "zi",
+      "text": "queue is moving again, purge backlog dropped under the warning line. this looks contained.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 5
+        }
+      ],
+      "thread_ts": "1793636128.000205",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793636163.000212",
+          "user": "dara",
+          "text": "great, keep an eye on it for a bit. and yeah, please :x: anything odd from #ask-oncall, even if it is just stale docs.",
+          "thread_ts": "1793636128.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1793636320.000219",
+      "user": "zi",
+      "text": "ack. thanks for the handoff, ext-sv. I have it now, ad-stitcher still looks healthy.",
+      "reactions": [
+        {
+          "name": "thumbsup",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1793636320.000219",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793636345.000226",
+          "user": "ext-sv",
+          "text": "cool, I'm dropping off. ping me if it starts looking like more than a purge limiter issue.",
+          "thread_ts": "1793636320.000219"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

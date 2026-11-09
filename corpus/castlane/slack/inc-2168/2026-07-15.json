@@ -1,0 +1,259 @@
+{
+  "id": "slack/inc-2168/2026-07-15.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-2168: July payout batch delayed by a provider outage",
+  "url": "https://slack.castlane.internal/archives/C04CFOPJ/p1784095812000107",
+  "channel": "#inc-2168",
+  "channel_id": "C04CFOPJ",
+  "incident": "INC-2168",
+  "allowed_groups": [
+    "payouts-eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-07-15",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-07-15T10:11:05Z",
+  "messages": [
+    {
+      "ts": "1784095812.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] PayoutBatchLate (namespace=payouts cluster=prod-us-east severity=warning)"
+    },
+    {
+      "ts": "1784095825.000114",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2168 declared by @nd. Sev2. Payout batch delayed, investigating."
+    },
+    {
+      "ts": "1784095863.000121",
+      "user": "nd",
+      "text": "on it. checking the batch worker and provider calls now",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "ts": "1784095901.000128",
+      "user": "jh",
+      "text": "i'm looking at the worker logs. seeing a run start at 06:00, then a bunch of provider failures after 06:10"
+    },
+    {
+      "ts": "1784095928.000135",
+      "user": "cv",
+      "text": "i can pull batch state from psql if needed. want me to check how many rows got through before it stopped?",
+      "thread_ts": "1784095928.000135",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1784095951.000142",
+          "user": "nd",
+          "text": "yes please, row counts would help",
+          "thread_ts": "1784095928.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1784096000.000149",
+      "user": "nd",
+      "text": "`kubectl --context prod-us-east -n payouts logs deploy/payouts-worker --since=30m | tail -n 80`",
+      "thread_ts": "1784096000.000149",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1784096029.000156",
+          "user": "jh",
+          "text": "same output here, lots of timeout and upstream error lines from the provider client",
+          "thread_ts": "1784096000.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1784096077.000163",
+      "user": "cv",
+      "text": "`psql -h pg-payouts -U payouts_ro -d payouts -c \"select count(*) from payout_rows where batch_id = '2026-07-15';\"`"
+    },
+    {
+      "ts": "1784096110.000170",
+      "user": "cv",
+      "text": "looks like 17,503 completed, 939 still pending in this batch",
+      "thread_ts": "1784096110.000170",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1784096134.000177",
+          "user": "nd",
+          "text": "ok, so it did stop after partial progress. no data weirdness so far",
+          "thread_ts": "1784096110.000170"
+        }
+      ]
+    },
+    {
+      "ts": "1784096162.000184",
+      "user": "jh",
+      "text": "i'm checking whether the worker exited cleanly or got wedged. don't think it's a db issue, no retries hammering anything right now"
+    },
+    {
+      "ts": "1784096291.000191",
+      "user": "nd",
+      "text": "found it, safety stop tripped at 5 percent failure rate. worker exited cleanly, no immediate restart",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "ts": "1784096366.000198",
+      "user": "cv",
+      "text": "good, that's at least contained. i'm watching the pending rows and provider status, but there's nothing to rerun yet"
+    },
+    {
+      "ts": "1784096405.000205",
+      "user": "jh",
+      "text": "agreed. i'd rather not force retries while the provider is still failing. we can wait a bit and see if it clears on its own"
+    },
+    {
+      "ts": "1784097258.000212",
+      "user": "nd",
+      "text": "still seeing failures on fresh attempts. keeping the batch paused for now",
+      "thread_ts": "1784097258.000212",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1784097286.000219",
+          "user": "cv",
+          "text": "yep, no point poking it more. i'll keep an eye on support pings",
+          "thread_ts": "1784097258.000212"
+        }
+      ]
+    },
+    {
+      "ts": "1784098974.000226",
+      "user": "jh",
+      "text": "quick check, worker is still down and batch state hasn't changed. no signs of duplicate work"
+    },
+    {
+      "ts": "1784100669.000233",
+      "user": "cv",
+      "text": "support already asked once. i told them we're waiting on the payment provider and will rerun once it recovers"
+    },
+    {
+      "ts": "1784102403.000240",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] PayoutBatchLate (namespace=payouts cluster=prod-us-east severity=warning)"
+    },
+    {
+      "ts": "1784102421.000247",
+      "user": "nd",
+      "text": "yep, that confirms the batch still hasn't finished. status is unchanged from our side"
+    },
+    {
+      "ts": "1784102747.000254",
+      "user": "jh",
+      "text": "checked the provider-facing errors again. still looks external, not our db or queue. no useful retry window yet"
+    },
+    {
+      "ts": "1784103452.000261",
+      "user": "cv",
+      "text": "another creator ping came in. i'm keeping it vague, saying payout processing is delayed and we'll update when the batch completes"
+    },
+    {
+      "ts": "1784104930.000268",
+      "user": "nd",
+      "text": "anyone seeing the provider come back? i still get failures on a few manual checks",
+      "thread_ts": "1784104930.000268",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1784104961.000275",
+          "user": "jh",
+          "text": "not yet. i'll keep checking every few minutes",
+          "thread_ts": "1784104930.000268"
+        }
+      ]
+    },
+    {
+      "ts": "1784106318.000282",
+      "user": "jh",
+      "text": "looks like provider errors are clearing now. i'm getting successful responses again",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "ts": "1784106362.000289",
+      "user": "nd",
+      "text": "ok, let's hold a few mins and then rerun the remaining batch rows. i don't want to bounce straight back into another partial run",
+      "thread_ts": "1784106362.000289",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1784106389.000296",
+          "user": "cv",
+          "text": "makes sense. i can watch the remaining count and confirm no new failures",
+          "thread_ts": "1784106362.000289"
+        }
+      ]
+    },
+    {
+      "ts": "1784107214.000303",
+      "user": "nd",
+      "text": "restarting the batch now for the remaining 939 rows"
+    },
+    {
+      "ts": "1784108037.000310",
+      "user": "jh",
+      "text": "most of the rerun is through. no new provider issues so far"
+    },
+    {
+      "ts": "1784108906.000317",
+      "user": "cv",
+      "text": "down to the last chunk. everything still looks clean in psql"
+    },
+    {
+      "ts": "1784109669.000324",
+      "user": "nd",
+      "text": "batch finished successfully. all rows completed, no duplicates, no manual fixes",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "ts": "1784109738.000331",
+      "user": "jh",
+      "text": "nice. i'm going to keep watching for a few mins in case anything else shakes loose, but this looks done"
+    },
+    {
+      "ts": "1784110244.000338",
+      "user": "cv",
+      "text": "posted the status update in oncall-payouts. support can point people there now",
+      "thread_ts": "1784110244.000338",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1784110265.000345",
+          "user": "nd",
+          "text": "thanks",
+          "thread_ts": "1784110244.000338"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

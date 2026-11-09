@@ -1,0 +1,514 @@
+{
+  "id": "slack/inc-2251/2026-10-13.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-2251: Private feeds a few minutes behind after replica lag",
+  "url": "https://slack.castlane.internal/archives/C04CFPF6/p1791882852000107",
+  "channel": "#inc-2251",
+  "channel_id": "C04CFPF6",
+  "incident": "INC-2251",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-10-13",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-10-13T10:02:36Z",
+  "messages": [
+    {
+      "ts": "1791882852.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] FeedBuildLagHigh (namespace=feeds cluster=prod-eu-west severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791882852.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1791882868.000114",
+          "user": "ne",
+          "text": "this is private feeds only? seeing a new ep in public but not in a couple paid URLs",
+          "thread_ts": "1791882852.000107"
+        },
+        {
+          "ts": "1791882881.000121",
+          "user": "ay",
+          "text": "checking feeds_ro path now",
+          "thread_ts": "1791882852.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1791882903.000128",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2251 declared by @ne. Sev3. Private feeds a few minutes behind after replica lag.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1791882903.000128",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791882919.000135",
+          "user": "ne",
+          "text": "ty, gonna stay in this thread",
+          "thread_ts": "1791882903.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1791882944.000142",
+      "user": "mbe",
+      "text": "looking at pg-feeds lag graph, one replica is drifting up pretty steadily. not huge yet but not normal.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791882944.000142",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791882970.000149",
+          "user": "ay",
+          "text": "yep, private-feeds is reading from feeds_ro and that replica is the one behind",
+          "thread_ts": "1791882944.000142"
+        }
+      ]
+    },
+    {
+      "ts": "1791883012.000156",
+      "user": "ne",
+      "text": "grafana link: https://grafana.castlane.internal/d/pg-feeds-replication?var-cluster=prod-eu-west the serving replica is already past 2 min behind",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791883012.000156",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791883031.000163",
+          "user": "mbe",
+          "text": "yeah, seeing apply lag climb, not a network thing",
+          "thread_ts": "1791883012.000156"
+        }
+      ]
+    },
+    {
+      "ts": "1791883078.000170",
+      "user": "ay",
+      "text": "pulling psql on the replica to see what is open. if this is a long query holding replay back that would fit.",
+      "reactions": [
+        {
+          "name": "thumbsup",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791883078.000170",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791883109.000177",
+          "user": "ne",
+          "text": "can you check with a read-only session? don't want to poke it too much",
+          "thread_ts": "1791883078.000170"
+        }
+      ]
+    },
+    {
+      "ts": "1791883147.000184",
+      "user": "mbe",
+      "text": "```\nselect pid, usename, state, now() - query_start as age, left(query, 120)\nfrom pg_stat_activity\nwhere state <> 'idle'\norder by query_start asc;\n```",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791883147.000184",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791883182.000191",
+          "user": "mbe",
+          "text": "got one analytics query at 00:06:xx age, still running. that smells like the blocker.",
+          "thread_ts": "1791883147.000184"
+        }
+      ]
+    },
+    {
+      "ts": "1791883215.000198",
+      "user": "ay",
+      "text": "yep, broad aggregation over recent activity. not on private-feeds code path, but it's on the same replica.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791883215.000198",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791883240.000205",
+          "user": "ne",
+          "text": "that would explain why new eps are late but nothing is actually broken",
+          "thread_ts": "1791883215.000198"
+        }
+      ]
+    },
+    {
+      "ts": "1791883293.000212",
+      "user": "mbe",
+      "text": "replica is keeping up on writes until vacuum/replay gets pinned. hot standby feedback is on here, so the long query is not getting kicked.",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791883293.000212",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791883321.000219",
+          "user": "ne",
+          "text": "ugh, ok",
+          "thread_ts": "1791883293.000212"
+        }
+      ]
+    },
+    {
+      "ts": "1791883364.000226",
+      "user": "ay",
+      "text": "checking who pointed the reporting job at this host. i thought it was supposed to use the spare replica.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791883364.000226",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791883389.000233",
+          "user": "mbe",
+          "text": "looks like the reporting config still has the serving replica in its target list",
+          "thread_ts": "1791883364.000226"
+        }
+      ]
+    },
+    {
+      "ts": "1791883458.000240",
+      "user": "ne",
+      "text": "lag just crossed 3 min on grafana. private feed URLs are definitely stale now.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791883458.000240",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791883487.000247",
+          "user": "ay",
+          "text": "can confirm from a test pft_ URL, latest ep missing on first refresh, then shows up later",
+          "thread_ts": "1791883458.000240"
+        }
+      ]
+    },
+    {
+      "ts": "1791883530.000254",
+      "user": "mbe",
+      "text": "i'm not loving the idea of killing the query if it's a reporting job, but moving it is the cleaner fix. there's a spare replica available.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791883530.000254",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791883558.000261",
+          "user": "ne",
+          "text": "agree, don't want to whack a live report if we can just move it",
+          "thread_ts": "1791883530.000254"
+        }
+      ]
+    },
+    {
+      "ts": "1791883631.000268",
+      "user": "ay",
+      "text": "found the job: it was still using the old host alias. i'm changing it to the dedicated reporting replica now.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1791883631.000268",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791883656.000275",
+          "user": "mbe",
+          "text": "good. once it reconnects, replay should catch up fast",
+          "thread_ts": "1791883631.000268"
+        }
+      ]
+    },
+    {
+      "ts": "1791883744.000282",
+      "user": "ne",
+      "text": "can you paste the exact change? want to make sure we don't leave the serving host in any fallback path.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791883744.000282",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791883781.000289",
+          "user": "ay",
+          "text": "yeah, removing the serving replica from the job config entirely, not just changing primary host",
+          "thread_ts": "1791883744.000282"
+        }
+      ]
+    },
+    {
+      "ts": "1791883882.000296",
+      "user": "mbe",
+      "text": "seeing the old session disappear and the new one land on the spare. lag is still high but should start dropping.",
+      "reactions": [
+        {
+          "name": "thumbsup",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791883882.000296",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791883909.000303",
+          "user": "ne",
+          "text": "nice",
+          "thread_ts": "1791883882.000296"
+        }
+      ]
+    },
+    {
+      "ts": "1791884050.000310",
+      "user": "ne",
+      "text": "lag graph just turned, down from 4m-ish to under 2m.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791884050.000310",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791884073.000317",
+          "user": "ay",
+          "text": "good sign, feed refreshes should start catching up soon",
+          "thread_ts": "1791884050.000310"
+        }
+      ]
+    },
+    {
+      "ts": "1791884218.000324",
+      "user": "mbe",
+      "text": "i'm watching replay rate, it's moving again. no sign of further pinning on the serving replica.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791884218.000324",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791884241.000331",
+          "user": "ne",
+          "text": "cool, leave it alone unless it stalls",
+          "thread_ts": "1791884218.000324"
+        }
+      ]
+    },
+    {
+      "ts": "1791884327.000338",
+      "user": "ay",
+      "text": "reporting query is fully off the serving replica now. spare is taking it.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791884327.000338",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791884345.000345",
+          "user": "mbe",
+          "text": "ack",
+          "thread_ts": "1791884327.000338"
+        }
+      ]
+    },
+    {
+      "ts": "1791884476.000352",
+      "user": "ne",
+      "text": "private feed test URL is fresh on reload now. still a little behind on a couple shows but way better.",
+      "reactions": [
+        {
+          "name": "thumbsup",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791884476.000352",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791884509.000359",
+          "user": "ay",
+          "text": "same here, lag down to about 50s",
+          "thread_ts": "1791884476.000352"
+        }
+      ]
+    },
+    {
+      "ts": "1791884642.000366",
+      "user": "mbe",
+      "text": "under 1 min now. that's basically the recovery point.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791884642.000366",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791884665.000373",
+          "user": "ne",
+          "text": "good, let's keep watching for a few more mins",
+          "thread_ts": "1791884642.000366"
+        }
+      ]
+    },
+    {
+      "ts": "1791884970.000380",
+      "user": "ay",
+      "text": "steady under 20s on the serving replica. no new long queries on feeds_ro.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791884970.000380",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791885004.000387",
+          "user": "mbe",
+          "text": "nice, that should be back in the normal band",
+          "thread_ts": "1791884970.000380"
+        }
+      ]
+    },
+    {
+      "ts": "1791885318.000394",
+      "user": "ne",
+      "text": "all the sampled pft_ URLs I checked now show the latest episode immediately. support chatter seems to have stopped too.",
+      "reactions": [
+        {
+          "name": "relieved",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791885318.000394",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791885349.000401",
+          "user": "ay",
+          "text": "same. i'm done poking it",
+          "thread_ts": "1791885318.000394"
+        }
+      ]
+    },
+    {
+      "ts": "1791885667.000408",
+      "user": "mbe",
+      "text": "lag is settled at single digits again. I don't see any residual backlog on the serving path.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791885667.000408",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791885691.000415",
+          "user": "ne",
+          "text": "ok let's close it",
+          "thread_ts": "1791885667.000408"
+        }
+      ]
+    },
+    {
+      "ts": "1791885734.000422",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2251 resolved by @ne. Duration 48m 59s.",
+      "reactions": [
+        {
+          "name": "white_check_mark",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1791885734.000422",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791885756.000429",
+          "user": "ay",
+          "text": "i'll keep the config change and update the ticket after",
+          "thread_ts": "1791885734.000422"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

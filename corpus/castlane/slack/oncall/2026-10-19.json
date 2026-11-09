@@ -1,0 +1,206 @@
+{
+  "id": "slack/oncall/2026-10-19.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#oncall hand-off, week of 2026-10-19",
+  "url": "https://slack.castlane.internal/archives/C0EYUKXW/p1792396931000107",
+  "channel": "#oncall",
+  "channel_id": "C0EYUKXW",
+  "incident": null,
+  "allowed_groups": [
+    "eng",
+    "contractors"
+  ],
+  "version": 1,
+  "effective_at": "2026-10-19",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-10-19T08:20:41Z",
+  "messages": [
+    {
+      "ts": "1792396931.000107",
+      "user": "ok",
+      "text": "handoff from me to @ext-sv for the rest of shift. stats-hourly noise is fixed, the alert flap was from a bad query in download-stats and it stopped after the deploy.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1792396931.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792396982.000114",
+          "user": "ok",
+          "text": "if you see it again, check the feed rebuild queue first, but I do not expect it today.",
+          "thread_ts": "1792396931.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1792397058.000121",
+      "user": "ok",
+      "text": "also, one node in prod-us-east got cordoned earlier, it was dragging on a slow volume. no workload impact after reschedule, just keeping an eye on it.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1792397058.000121",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792397101.000128",
+          "user": "pk",
+          "text": "yep saw that. kubelet pressure cleared after the pod moved.",
+          "thread_ts": "1792397058.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1792397204.000135",
+      "user": "ok",
+      "text": "one more thing, every page now opens an INC. even the boring kube alerts, so if something wakes you up just use /incident and then triage from there.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1792397204.000135",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792397240.000142",
+          "user": "ext-sv",
+          "text": "got it, so no more just replying in-channel and waiting?",
+          "thread_ts": "1792397204.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1792397283.000149",
+      "user": "pk",
+      "text": "right, INC first now. the bot will do the thread and keep the tracking clean.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1792397283.000149",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792397321.000156",
+          "user": "ok",
+          "text": "exactly. if it is real, declare it. if it is not, still declare and close it fast.",
+          "thread_ts": "1792397283.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1792397412.000163",
+      "user": "ext-sv",
+      "text": "cool. also how do I use `flagctl` again, just for checking and flipping stuff if needed?",
+      "thread_ts": "1792397412.000163",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1792397448.000170",
+          "user": "pk",
+          "text": "check first with `flagctl get <flag>`, then set with `flagctl set <flag> <value> --reason \"...\"`. handbook has the examples under flags and incident response.",
+          "thread_ts": "1792397412.000163"
+        },
+        {
+          "ts": "1792397469.000177",
+          "user": "pk",
+          "text": "pointer is `https://wiki.castlane.internal`, search for flagctl and it should land you on the same page fast.",
+          "thread_ts": "1792397412.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1792397547.000184",
+      "user": "ext-sv",
+      "text": "nice, thanks. I saw `feeds.writes_paused` in a note earlier, that one is still off right?",
+      "thread_ts": "1792397547.000184",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792397582.000191",
+          "user": "ok",
+          "text": "yes, still off. writes are normal, no need to touch it.",
+          "thread_ts": "1792397547.000184"
+        }
+      ]
+    },
+    {
+      "ts": "1792397695.000198",
+      "user": "pk",
+      "text": "for the record, the only live thing I am watching right now is the node with the slow disk. everything else is quiet.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1792397695.000198",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792397723.000205",
+          "user": "ext-sv",
+          "text": "ack, I will keep an eye on that and the alert stream.",
+          "thread_ts": "1792397695.000198"
+        }
+      ]
+    },
+    {
+      "ts": "1792397860.000212",
+      "user": "ok",
+      "text": "if you need me later, I am around for another hour. after that you are solo, but the runbooks are current.",
+      "reactions": [
+        {
+          "name": "wave",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1792397860.000212",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792397891.000219",
+          "user": "pk",
+          "text": "and if you get stuck, page the normal way, do not improvise around the process.",
+          "thread_ts": "1792397860.000212"
+        }
+      ]
+    },
+    {
+      "ts": "1792398006.000226",
+      "user": "ext-sv",
+      "text": "understood. thanks both, reading through the handbook now.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1792398006.000226",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792398041.000233",
+          "user": "ok",
+          "text": "np.",
+          "thread_ts": "1792398006.000226"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

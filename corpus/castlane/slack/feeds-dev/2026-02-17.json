@@ -1,0 +1,208 @@
+{
+  "id": "slack/feeds-dev/2026-02-17.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#feeds-dev: directories slow to pick up new episodes",
+  "url": "https://slack.castlane.internal/archives/C0LD6WTY/p1771336992000107",
+  "channel": "#feeds-dev",
+  "channel_id": "C0LD6WTY",
+  "incident": null,
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-02-17",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-02-17T14:22:31Z",
+  "messages": [
+    {
+      "ts": "1771336992.000107",
+      "user": "zi",
+      "text": "getting creator complaints again, new eps take like an hour to show up in podcast apps. feed rebuild is finishing in seconds, so this is not on feed-builder.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1771336992.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1771337041.000114",
+          "user": "tw",
+          "text": "yeah, I checked the last 3 publishes. rebuilds were 4s, 6s, 5s. edge cache is 60s ttl anyway, so once the feed changes it's visible fast.",
+          "thread_ts": "1771336992.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1771337110.000121",
+      "user": "bo",
+      "text": "same pattern as before. app shows stale episode list until the directories poll again. we are not holding it anywhere on our side.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1771337110.000121",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1771337144.000128",
+          "user": "zi",
+          "text": "and WebSub pings are already going out from feed-builder, right?",
+          "thread_ts": "1771337110.000121"
+        },
+        {
+          "ts": "1771337167.000135",
+          "user": "tw",
+          "text": "yep, got the publish logs. ping sent on each feed rebuild. nothing failing there.",
+          "thread_ts": "1771337110.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1771337248.000142",
+      "user": "zi",
+      "text": "can we prove the ping path is clean? I want to be able to point creators at something concrete.",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1771337248.000142",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1771337282.000149",
+          "user": "tw",
+          "text": "`kubectl --context prod-eu-west -n feeds logs deploy/feed-builder | grep -i websub | tail -n 5` shows the ping attempts for the last publish.",
+          "thread_ts": "1771337248.000142"
+        },
+        {
+          "ts": "1771337320.000156",
+          "user": "bo",
+          "text": "I can also hit the feed URL directly, it has the new item within a minute. so the delay is after our fetch point.",
+          "thread_ts": "1771337248.000142"
+        }
+      ]
+    },
+    {
+      "ts": "1771337411.000163",
+      "user": "tw",
+      "text": "this is mostly the directories' own polling cadence. some of them are near real time, some are not. podcast apps inherit that lag.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1771337411.000163",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1771337449.000170",
+          "user": "zi",
+          "text": "yeah, and the worst part is creators assume every app behaves like a push system.",
+          "thread_ts": "1771337411.000163"
+        },
+        {
+          "ts": "1771337480.000177",
+          "user": "bo",
+          "text": "we could document it better in the creator help page, but that won't make the directories poll faster.",
+          "thread_ts": "1771337411.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1771337585.000184",
+      "user": "zi",
+      "text": "do we have any endpoint or header from the directories that tells us if they accepted the ping?",
+      "reactions": [
+        {
+          "name": "question",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1771337585.000184",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1771337624.000191",
+          "user": "tw",
+          "text": "not really reliable across all of them. some ack, some ignore, some poll later anyway. our side only knows the ping left successfully.",
+          "thread_ts": "1771337585.000184"
+        }
+      ]
+    },
+    {
+      "ts": "1771337718.000198",
+      "user": "bo",
+      "text": "for what it's worth, I just checked a test show. upload at 14:02, feed rebuild at 14:02:19, app picked it up at 14:57. that's totally in the polling bucket.",
+      "reactions": [
+        {
+          "name": "grimacing",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1771337718.000198",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1771337763.000205",
+          "user": "zi",
+          "text": "ok, that lines up with what support is seeing. I'll reply that it's expected propagation, not a broken feed.",
+          "thread_ts": "1771337718.000198"
+        }
+      ]
+    },
+    {
+      "ts": "1771337906.000212",
+      "user": "tw",
+      "text": "if we want to improve this, the only lever I see is better creator comms or maybe more aggressive pings, but we already send WebSub on rebuild.",
+      "reactions": [
+        {
+          "name": "shrug",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1771337906.000212",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1771337942.000219",
+          "user": "bo",
+          "text": "agreed. doubling down on pings probably won't change the lag if the directories are just polling on their own schedule.",
+          "thread_ts": "1771337906.000212"
+        }
+      ]
+    },
+    {
+      "ts": "1771338115.000226",
+      "user": "zi",
+      "text": "cool, I am not touching any code then. I'll update the reply template to say new episodes usually appear in apps after the directory refreshes, often within a few minutes, sometimes longer.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1771338115.000226",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1771338151.000233",
+          "user": "tw",
+          "text": "sounds good. maybe mention the feed itself is updated immediately, so they don't keep blaming transcoder or cache.",
+          "thread_ts": "1771338115.000226"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

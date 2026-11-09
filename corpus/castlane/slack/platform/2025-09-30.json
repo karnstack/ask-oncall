@@ -1,0 +1,255 @@
+{
+  "id": "slack/platform/2025-09-30.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#platform: flagctl reasons",
+  "url": "https://slack.castlane.internal/archives/C0YUOZUI/p1759244531000107",
+  "channel": "#platform",
+  "channel_id": "C0YUOZUI",
+  "incident": null,
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2025-09-30",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2025-09-30T15:21:49Z",
+  "messages": [
+    {
+      "ts": "1759244531.000107",
+      "user": "dara",
+      "text": "seeing a bunch of `flagctl set` changes with reasons like `test` and `x` again. can we tighten that up? feels like we need an INC or ticket id in `--reason` at least.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1759244531.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1759244582.000114",
+          "user": "tw",
+          "text": "yeah, I've been seeing that too. the audit trail is basically useless if the reason is one char.",
+          "thread_ts": "1759244531.000107"
+        },
+        {
+          "ts": "1759244621.000121",
+          "user": "rs",
+          "text": "agree. we can probably validate format in flagctl client, and maybe on the server side too so it's not bypassable.",
+          "thread_ts": "1759244531.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1759244658.000128",
+      "user": "jh",
+      "text": "while we're at it, can payouts flags page @payouts-eng when changed? those flips matter and we keep finding out after the fact.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1759244658.000128",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1759244709.000135",
+          "user": "dara",
+          "text": "yeah, that sounds reasonable. page on any change, or only when `payouts.*` flags move?",
+          "thread_ts": "1759244658.000128"
+        },
+        {
+          "ts": "1759244736.000142",
+          "user": "jh",
+          "text": "only `payouts.*`. if it's `payouts.writes_paused` or `payouts.batch_enabled`, I want a heads up in `#oncall-payouts`.",
+          "thread_ts": "1759244658.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1759244782.000149",
+      "user": "tw",
+      "text": "for the reason thing, I'd rather not force just ticket ids. lots of legit changes come from incidents. maybe allow `INC-1234` or `PLAT-123` or `FEED-9`, but require one of those prefixes.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1759244782.000149",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1759244821.000156",
+          "user": "rs",
+          "text": "yep. something like `^(INC|PLAT|MEDIA|FEED|EDGE|PAY|SEC)-\\d+` as a substring check. not perfect, but better than `test`.",
+          "thread_ts": "1759244782.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1759244891.000163",
+      "user": "dara",
+      "text": "could also make `--reason` accept free text but require the first token to be an id. helps keep it readable, like `PLAT-3812 pause feeds writes during rollback`.",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1759244891.000163",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1759244942.000170",
+          "user": "jh",
+          "text": "first token works for me. easier to teach too.",
+          "thread_ts": "1759244891.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1759245027.000177",
+      "user": "rs",
+      "text": "there's also the question of old scripts. we have a few cron-ish wrappers that set flags with static reasons. if we gate this too hard, we may break them.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1759245027.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1759245060.000184",
+          "user": "tw",
+          "text": "we can do warn-only for a week? then hard fail. and send a Slack nudge to `#flags` when it happens.",
+          "thread_ts": "1759245027.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1759245134.000191",
+      "user": "jh",
+      "text": "re payouts paging, I don't think we need to page on every write to the flag. only on actual value change, and probably not if the value is set to the same thing again.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1759245134.000191",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1759245171.000198",
+          "user": "dara",
+          "text": "good point. page on diff, ignore no-op sets.",
+          "thread_ts": "1759245134.000191"
+        },
+        {
+          "ts": "1759245186.000205",
+          "user": "jh",
+          "text": "exactly. we've got enough noise already.",
+          "thread_ts": "1759245134.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1759245260.000212",
+      "user": "tw",
+      "text": "I can take the CLI validation. flagctl can reject empty / short reasons and print a hint with examples. server side check maybe in the flag API too.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1759245260.000212",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1759245298.000219",
+          "user": "rs",
+          "text": "I can do the API side. should be quick, just need to make sure the response is clear enough for folks using the web UI later.",
+          "thread_ts": "1759245260.000212"
+        }
+      ]
+    },
+    {
+      "ts": "1759245363.000226",
+      "user": "dara",
+      "text": "for the payouts page, maybe send to `#oncall-payouts` and @payouts-eng if it's an actual change. do we want a bot message or an @here?",
+      "reactions": [
+        {
+          "name": "question",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1759245363.000226",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1759245409.000233",
+          "user": "jh",
+          "text": "bot message to `#oncall-payouts` is enough, plus `@payouts-eng` if you can do group mentions cleanly. don't need full `@here`.",
+          "thread_ts": "1759245363.000226"
+        }
+      ]
+    },
+    {
+      "ts": "1759245510.000240",
+      "user": "rs",
+      "text": "I like the idea of requiring a ticket or incident id, but we should allow `SEC-` too. security might flip flags during reviews and I don't want them blocked.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1759245510.000240",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1759245544.000247",
+          "user": "tw",
+          "text": "yeah, list is fine. can keep it to the prefixes we already use everywhere else.",
+          "thread_ts": "1759245510.000240"
+        }
+      ]
+    },
+    {
+      "ts": "1759245677.000254",
+      "user": "dara",
+      "text": "ok, sounds like: 1) require id prefix in `--reason`, 2) warn then enforce, 3) page `#oncall-payouts` and `@payouts-eng` on actual `payouts.*` changes. I'll write this up in an ADR and add a ticket.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1759245677.000254",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1759245709.000261",
+          "user": "jh",
+          "text": "nice. drop the ADR number here when it's up and I'll keep an eye on the payouts paging bit.",
+          "thread_ts": "1759245677.000254"
+        }
+      ]
+    },
+    {
+      "ts": "1759233600.000268",
+      "user": "tw",
+      "text": ""
+    }
+  ],
+  "generated": true
+}

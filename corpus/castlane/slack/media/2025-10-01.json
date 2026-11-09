@@ -1,0 +1,214 @@
+{
+  "id": "slack/media/2025-10-01.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#media: 96 kHz WAV uploads",
+  "url": "https://slack.castlane.internal/archives/C0513JUL/p1759330931000107",
+  "channel": "#media",
+  "channel_id": "C0513JUL",
+  "incident": null,
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2025-10-01",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2025-10-01T15:15:03Z",
+  "messages": [
+    {
+      "ts": "1759330931.000107",
+      "user": "pk",
+      "text": "kicking off MEDIA-812 followup, need to settle the 96 kHz WAV question. do we reject in upload-api or accept and punt to transcoder-slow?",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1759330931.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1759330982.000114",
+          "user": "vi",
+          "text": "my vote is accept it, route to slow lane. rejecting in upload-api is rough for creators, and we already know those files are valid, just expensive.",
+          "thread_ts": "1759330931.000107"
+        },
+        {
+          "ts": "1759331021.000121",
+          "user": "lm",
+          "text": "+1. if we start hard rejecting, support is gonna get spammed with \"my upload works on desktop but not in browser\" type stuff.",
+          "thread_ts": "1759330931.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1759331058.000128",
+      "user": "vi",
+      "text": "also, the 3Gi limit is already the hard stop. 96 kHz doesn't change that. if it's under 3Gi and WAV, let it through, but send to transcoder-slow when sample rate is 96 kHz.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1759331058.000128",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1759331100.000135",
+          "user": "pk",
+          "text": "makes sense. do we want a special warning in creator dashboard too?",
+          "thread_ts": "1759331058.000128"
+        },
+        {
+          "ts": "1759331126.000142",
+          "user": "lm",
+          "text": "yes, should be obvious before upload. something like \"high sample rate uploads take longer to process\".",
+          "thread_ts": "1759331058.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1759331170.000149",
+      "user": "pk",
+      "text": "for the transcode side, I can cap parallelism in slow lane. `TRANSCODE_MAX_PARALLEL=2` was the number we landed on last time, right?",
+      "reactions": [
+        {
+          "name": "thumbsup",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1759331170.000149",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1759331204.000156",
+          "user": "lm",
+          "text": "yep, keep it at 2. any higher and we start stealing too much cpu from normal lane jobs.",
+          "thread_ts": "1759331170.000149"
+        },
+        {
+          "ts": "1759331230.000163",
+          "user": "vi",
+          "text": "and it keeps the queue from turning into a dumpster fire when someone drops a bunch of field recordings.",
+          "thread_ts": "1759331170.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1759331283.000170",
+      "user": "lm",
+      "text": "so the behavior would be, upload-api accepts WAV, flags 96 kHz in metadata, puts the job on transcoder-slow. creator dashboard shows a warning banner. no reject path unless over 3Gi.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1759331283.000170",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1759331311.000177",
+          "user": "pk",
+          "text": "yep, that's what I wanted to confirm.",
+          "thread_ts": "1759331283.000170"
+        }
+      ]
+    },
+    {
+      "ts": "1759331362.000184",
+      "user": "vi",
+      "text": "we should probably log the warning client-side too, but not as an error. maybe info text near the file picker, and a note on the review step.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1759331362.000184",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1759331404.000191",
+          "user": "lm",
+          "text": "agree, just not a modal. modals are how people hate us.",
+          "thread_ts": "1759331362.000184"
+        }
+      ]
+    },
+    {
+      "ts": "1759331465.000198",
+      "user": "pk",
+      "text": "I'll update upload-api validation and the job router. also add a metric on 96 kHz intake so we can see how often this happens.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1759331465.000198",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1759331493.000205",
+          "user": "vi",
+          "text": "cool. make sure the metric name is boring, we don't need another fancy one.",
+          "thread_ts": "1759331465.000198"
+        }
+      ]
+    },
+    {
+      "ts": "1759331538.000212",
+      "user": "lm",
+      "text": "I'll patch the creator dashboard copy. warning text can mention the 3Gi limit too, like: `WAV files over 96 kHz are supported, but may take longer to process. Files over 3Gi are not supported.`",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1759331538.000212",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1759331572.000219",
+          "user": "pk",
+          "text": "works for me.",
+          "thread_ts": "1759331538.000212"
+        }
+      ]
+    },
+    {
+      "ts": "1759331647.000226",
+      "user": "vi",
+      "text": "closing the loop, decision is: do not reject 96 kHz WAV in upload-api, send it to transcoder-slow, keep `TRANSCODE_MAX_PARALLEL=2`, and show a dashboard warning. 3Gi stays the hard reject.",
+      "reactions": [
+        {
+          "name": "ok",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1759331647.000226",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1759331681.000233",
+          "user": "lm",
+          "text": "ack, I'll ship the copy behind the existing dashboard flag.",
+          "thread_ts": "1759331647.000226"
+        },
+        {
+          "ts": "1759331703.000240",
+          "user": "pk",
+          "text": "same here, I'll put the routing change behind a deploy today.",
+          "thread_ts": "1759331647.000226"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

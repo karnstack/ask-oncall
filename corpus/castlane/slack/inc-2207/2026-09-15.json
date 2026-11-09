@@ -1,0 +1,120 @@
+{
+  "id": "slack/inc-2207/2026-09-15.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-2207 (restricted): private-feed tokens in private-feeds application logs",
+  "url": "https://slack.castlane.internal/archives/C09LS2207/p1789448550000107",
+  "channel": "#inc-2207",
+  "channel_id": "C09LS2207",
+  "incident": "INC-2207",
+  "allowed_groups": [
+    "security",
+    "user:ay",
+    "user:jh"
+  ],
+  "version": 1,
+  "effective_at": "2026-09-15",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-09-15T12:45:00Z",
+  "messages": [
+    {
+      "ts": "1789448550.000107",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2207 declared by @sec-ir. Sev2. Restricted. IC: @sec-lead."
+    },
+    {
+      "ts": "1789448590.000114",
+      "user": "sec-ir",
+      "text": "detection rule secrets-in-logs/private-feed-token fired at 04:38. `pft_` tokens in the private-feeds app logs, full request URLs with `?token=`. first hit 2026-09-10 14:22"
+    },
+    {
+      "ts": "1789448642.000121",
+      "user": "sec-lead",
+      "text": "@ay is that the v2.31.0 deploy?"
+    },
+    {
+      "ts": "1789449105.000128",
+      "user": "ay",
+      "text": "yes. v2.31.0 went out 2026-09-10 14:20 with the logging library bump. the new request logger prints the query string at INFO. fix is LOG_QUERY_STRINGS=false, deploying now"
+    },
+    {
+      "ts": "1789449630.000135",
+      "user": "sec-ir",
+      "text": "counting distinct tokens in pf-app-2026.09.10 through pf-app-2026.09.15. will take a few min"
+    },
+    {
+      "ts": "1789450278.000142",
+      "user": "sec-lead",
+      "text": "payouts-worker got the same library bump in that dependency PR. the batch at 06:00 handles bank account references. I want payouts logs checked before it runs. @jh can you hold it?"
+    },
+    {
+      "ts": "1789450442.000149",
+      "user": "jh",
+      "text": "holding. `flagctl set payouts.batch_enabled false --reason INC-2207`. creators will see the money late today, I'll post in #incidents without details"
+    },
+    {
+      "ts": "1789450910.000156",
+      "user": "ay",
+      "text": "v2.31.1 with LOG_QUERY_STRINGS=false is out. no new pft_ hits since 05:40"
+    },
+    {
+      "ts": "1789452132.000163",
+      "user": "sec-ir",
+      "text": "1,912 distinct tokens. all active subscriptions"
+    },
+    {
+      "ts": "1789452300.000170",
+      "user": "sec-lead",
+      "text": "rotate all 1,912. no grace period. subscribers get the new-link email"
+    },
+    {
+      "ts": "1789454433.000177",
+      "user": "ay",
+      "text": "`private-feeds rotate-tokens --since 2026-09-10T14:20Z --notify` started"
+    },
+    {
+      "ts": "1789459205.000184",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] PayoutBatchLate (namespace=payouts cluster=prod-us-east severity=page)\npayout batch for 2026-09 not completed by 08:00 UTC"
+    },
+    {
+      "ts": "1789459240.000191",
+      "user": "jh",
+      "text": "ack, expected, batch is on hold for this incident"
+    },
+    {
+      "ts": "1789467320.000198",
+      "user": "ay",
+      "text": "rotation done, 1,912 revoked and reissued, emails sent"
+    },
+    {
+      "ts": "1789472402.000205",
+      "user": "sec-ir",
+      "text": "payouts-worker logs checked back to 2026-09-10: prod runs it at WARN and the request logger is off. nothing sensitive. purge of pf-app-2026.09.10 to pf-app-2026.09.15 and their snapshots is done"
+    },
+    {
+      "ts": "1789473511.000212",
+      "user": "sec-lead",
+      "text": "ok to release payouts"
+    },
+    {
+      "ts": "1789473730.000219",
+      "user": "jh",
+      "text": "`flagctl set payouts.batch_enabled true --reason INC-2207 cleared`. batch starting"
+    },
+    {
+      "ts": "1789476104.000226",
+      "user": "jh",
+      "text": "batch done, 48,210 payouts sent"
+    },
+    {
+      "ts": "1789476300.000233",
+      "user": "sec-lead",
+      "text": "keeping this open for the postmortem. thanks all"
+    }
+  ]
+}

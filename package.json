@@ -1,0 +1,31 @@
+{
+  "name": "ask-oncall",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Castlane's #ask-oncall: retrieval that holds up in production, built one lesson at a time.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24.14"
+  },
+  "scripts": {
+    "db:up": "docker compose up -d --wait",
+    "db:reset": "node --env-file-if-exists=.env tools/db-reset.ts",
+    "ingest": "node --env-file-if-exists=.env src/ingest.ts",
+    "ask": "node --env-file-if-exists=.env src/ask.ts",
+    "serve": "node --env-file-if-exists=.env src/server.ts",
+    "typecheck": "tsc",
+    "test": "node --test \"test/*.test.ts\""
+  },
+  "dependencies": {
+    "gpt-tokenizer": "4.1.0",
+    "openai": "7.43.0",
+    "pg": "8.23.1",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/pg": "8.23.1",
+    "typescript": "7.0.2"
+  }
+}

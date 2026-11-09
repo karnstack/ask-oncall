@@ -1,0 +1,233 @@
+{
+  "id": "slack/oncall-payouts/2026-10-15.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#oncall-payouts: October payout run",
+  "url": "https://slack.castlane.internal/archives/C03869J0/p1792044002000107",
+  "channel": "#oncall-payouts",
+  "channel_id": "C03869J0",
+  "incident": null,
+  "allowed_groups": [
+    "payouts-eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-10-15",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-10-15T06:45:29Z",
+  "messages": [
+    {
+      "ts": "1792044002.000107",
+      "user": "cv",
+      "text": "kickoff. batch enabled and starting October payouts run now. `payouts-worker` is green, queue depth looks normal.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1792044002.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792044018.000114",
+          "user": "jh",
+          "text": "watching it. if the payment provider wakes up on the wrong side of the bed again, at least it is early.",
+          "thread_ts": "1792044002.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1792044191.000121",
+      "user": "nd",
+      "text": "first shard is through validation. no weird rejects so far.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1792044191.000121",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792044219.000128",
+          "user": "cv",
+          "text": "nice. reconcile job already matching expected count on the first pass.",
+          "thread_ts": "1792044191.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1792044527.000135",
+      "user": "jh",
+      "text": "provider calls are a bit spiky, 17 timeouts retried in the last window. still within normal ugly.",
+      "reactions": [
+        {
+          "name": "ok",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1792044527.000135",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792044550.000142",
+          "user": "nd",
+          "text": "yep, seeing retries land cleanly. no manual intervention needed yet.",
+          "thread_ts": "1792044527.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1792044922.000149",
+      "user": "cv",
+      "text": "mid-run checkpoint, 21,408 creators paid so far. batch worker throughput is steady.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1792044922.000149",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1792044955.000156",
+          "user": "jh",
+          "text": "that is a very satisfying number, for some reason.",
+          "thread_ts": "1792044922.000149"
+        },
+        {
+          "ts": "1792044974.000163",
+          "user": "nd",
+          "text": "numbers with commas are always better before coffee.",
+          "thread_ts": "1792044922.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1792045389.000170",
+      "user": "nd",
+      "text": "41 provider timeouts retried total now. all successful on retry, no stuck jobs.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1792045389.000170",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792045411.000177",
+          "user": "cv",
+          "text": "good. the reconcile pass is still clean against the ledger snapshot.",
+          "thread_ts": "1792045389.000170"
+        }
+      ]
+    },
+    {
+      "ts": "1792045918.000184",
+      "user": "jh",
+      "text": "almost there, last chunk is draining. no late writes, no duplicate attempts.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1792045918.000184",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792045932.000191",
+          "user": "cv",
+          "text": "tiny miracle, let us not scare it.",
+          "thread_ts": "1792045918.000184"
+        }
+      ]
+    },
+    {
+      "ts": "1792046504.000198",
+      "user": "cv",
+      "text": "final reconcile check: expected vs posted matches. I am re-running the summary query once more just to be annoying.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1792046504.000198",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1792046523.000205",
+          "user": "nd",
+          "text": "that is fair, someone has to be the suspicious one.",
+          "thread_ts": "1792046504.000198"
+        },
+        {
+          "ts": "1792046539.000212",
+          "user": "jh",
+          "text": "as long as suspicious stays inside SQL.",
+          "thread_ts": "1792046504.000198"
+        }
+      ]
+    },
+    {
+      "ts": "1792046646.000219",
+      "user": "cv",
+      "text": "done. 48,977 creators paid, batch finished cleanly.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        },
+        {
+          "name": "party",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1792046646.000219",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1792046661.000226",
+          "user": "nd",
+          "text": "reconcile checks out here too. no missing rows, no extras.",
+          "thread_ts": "1792046646.000219"
+        },
+        {
+          "ts": "1792046677.000233",
+          "user": "jh",
+          "text": "love a quiet 06:44.",
+          "thread_ts": "1792046646.000219"
+        }
+      ]
+    },
+    {
+      "ts": "1792046710.000240",
+      "user": "nd",
+      "text": "closing the runbook. same time tomorrow unless the provider decides to be artistic.",
+      "reactions": [
+        {
+          "name": "laughing",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1792046710.000240",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1792046729.000247",
+          "user": "cv",
+          "text": "please no art. just invoices.",
+          "thread_ts": "1792046710.000240"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

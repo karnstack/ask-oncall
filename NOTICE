@@ -1,0 +1,49 @@
+ask-oncall
+Copyright (c) 2026 karnstack. Code licensed MIT (see LICENSE).
+
+This repository vendors three sets of documents under corpus/. Each keeps its
+own licence. The documents are copied unmodified; the code changes them only
+in memory, at load time, as described below.
+
+------------------------------------------------------------------------------
+corpus/k8s-docs/
+corpus/k8s-release-1.33/
+
+Kubernetes Documentation, copyright The Kubernetes Authors, licensed CC BY 4.0
+(https://creativecommons.org/licenses/by/4.0/), from kubernetes/website at
+commit 0449ba43e61f8d4e97502f0902704906fba5f5d1 (2026-11-08, the v1.37 docs),
+https://github.com/kubernetes/website/tree/0449ba43e61f8d4e97502f0902704906fba5f5d1/content/en/docs
+
+What we took: the Markdown files under content/en/docs, without the two
+generated folders reference/kubernetes-api and reference/instrumentation
+(and without images and other non-Markdown files). The files themselves are
+unmodified. Changes made at load time (src/corpus.ts): front matter is
+removed, Hugo shortcodes are rendered to plain text or removed, and a feature
+gate's lifecycle (its front matter "stages") is written out as a short text
+block. corpus/k8s-docs/LICENSE is the upstream licence file.
+
+corpus/k8s-release-1.33/ holds 11 pages fetched unmodified from the
+release-1.33 branch of kubernetes/website on 2026-11-08 (same licence), used
+only to show a stale index on real documents.
+
+------------------------------------------------------------------------------
+corpus/prom-runbooks/
+
+prometheus-operator runbooks, Copyright The prometheus-operator Authors,
+licensed under the Apache License, Version 2.0, from
+https://github.com/prometheus-operator/runbooks at commit
+a685d14cf5128bb30e2bf935c3983decd772d885 (2024-10-03), folder content/runbooks.
+The files are unmodified. The upstream repository has no NOTICE file; its
+LICENSE is kept at corpus/prom-runbooks/LICENSE. Changes made at load time
+(src/corpus.ts): front matter is removed and Hugo shortcodes are removed.
+
+------------------------------------------------------------------------------
+corpus/castlane/
+
+Castlane is a fictional podcast-hosting company invented for this course. Its
+120 documents (runbooks, postmortems, Slack channel days, ADRs, a frozen wiki
+export, a handbook, a payouts report and a status page) describe no real
+people or companies. Copyright (c) 2026 karnstack, licensed CC BY 4.0 (see
+corpus/castlane/LICENSE). Alert names that are not Castlane's own (for
+example KubePodCrashLooping) are real prometheus-operator runbook names, used
+as identifiers only.

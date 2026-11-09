@@ -1,0 +1,564 @@
+{
+  "id": "slack/inc-2108/2026-04-07.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-2108: Transcode backlog after a network moved 900 shows",
+  "url": "https://slack.castlane.internal/archives/C04CFOKD/p1775575451000107",
+  "channel": "#inc-2108",
+  "channel_id": "C04CFOKD",
+  "incident": "INC-2108",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-04-07",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-04-07T23:40:49Z",
+  "messages": [
+    {
+      "ts": "1775575451.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] TranscodeQueueBacklog (namespace=media cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1775575451.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1775575473.000114",
+          "user": "rs",
+          "text": "seeing it. queue depth jumped hard in grafana.",
+          "thread_ts": "1775575451.000107"
+        },
+        {
+          "ts": "1775575488.000121",
+          "user": "lm",
+          "text": "ack, checking transcoder and redis first.",
+          "thread_ts": "1775575451.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1775575502.000128",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2108 declared by @lm. Sev3. Transcode backlog after a network moved 900 shows.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1775575502.000128",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775575519.000135",
+          "user": "pk",
+          "text": "on it, will watch the queue and HPA.",
+          "thread_ts": "1775575502.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1775575570.000142",
+      "user": "lm",
+      "text": "`kubectl --context prod-us-east -n media get hpa transcoder` 30/30 pods. it's pegged.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1775575570.000142",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1775575591.000149",
+          "user": "vi",
+          "text": "30 already? wow.",
+          "thread_ts": "1775575570.000142"
+        },
+        {
+          "ts": "1775575604.000156",
+          "user": "rs",
+          "text": "transcoder nodes are fine, no node not ready yet.",
+          "thread_ts": "1775575570.000142"
+        }
+      ]
+    },
+    {
+      "ts": "1775575638.000163",
+      "user": "pk",
+      "text": "Redis looks normal too. `redis-cli -h redis-feeds-sentinel info replication` not showing anything weird. queues are just massive.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1775575638.000163",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775575661.000170",
+          "user": "lm",
+          "text": "yep, no obvious infra fault.",
+          "thread_ts": "1775575638.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1775575735.000177",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeHpaMaxedOut (namespace=media cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1775575735.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775575748.000184",
+          "user": "vi",
+          "text": "that fits. HPA hit ceiling, backlog still rising.",
+          "thread_ts": "1775575735.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1775575812.000191",
+      "user": "rs",
+      "text": "can confirm this is not only us. upload-api logs show a ton of jobs from one network migration since 15:10.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1775575812.000191",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1775575837.000198",
+          "user": "pk",
+          "text": "the numbers are ugly. one tenant's ingest is crowding everything else.",
+          "thread_ts": "1775575812.000191"
+        },
+        {
+          "ts": "1775575861.000205",
+          "user": "lm",
+          "text": "ugh, that explains the shape.",
+          "thread_ts": "1775575812.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1775575946.000212",
+      "user": "vi",
+      "text": "i'm checking the migration path. is it using the normal transcode queue?",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1775575946.000212",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775575969.000219",
+          "user": "lm",
+          "text": "looks like yes, same lane as creator uploads.",
+          "thread_ts": "1775575946.000212"
+        }
+      ]
+    },
+    {
+      "ts": "1775576050.000226",
+      "user": "pk",
+      "text": "no pod crashes, no storage alerts, no redis failover. just load. queue depth is still climbing.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1775576050.000226",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775576069.000233",
+          "user": "rs",
+          "text": "same in grafana, consumer lag keeps widening.",
+          "thread_ts": "1775576050.000226"
+        }
+      ]
+    },
+    {
+      "ts": "1775576283.000240",
+      "user": "lm",
+      "text": "confirmed. backlog is dominated by the 900-show move, around 41k eps enqueued. normal uploads are sitting behind it.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1775576283.000240",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1775576304.000247",
+          "user": "vi",
+          "text": "so it's not a bad deploy, it's queue starvation.",
+          "thread_ts": "1775576283.000240"
+        },
+        {
+          "ts": "1775576319.000254",
+          "user": "pk",
+          "text": "yeah. HPA is doing what it can, but it's already maxed.",
+          "thread_ts": "1775576283.000240"
+        }
+      ]
+    },
+    {
+      "ts": "1775576517.000261",
+      "user": "rs",
+      "text": "creator complaints are starting to show up in #media. people saying uploads are hanging for ages.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1775576517.000261",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775576538.000268",
+          "user": "lm",
+          "text": "expected, unfortunately.",
+          "thread_ts": "1775576517.000261"
+        }
+      ]
+    },
+    {
+      "ts": "1775577922.000275",
+      "user": "pk",
+      "text": "still no infra issues. pod readiness is clean. `kubectl --context prod-us-east -n media get pods -l app=transcoder` all healthy, just overloaded.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1775577922.000275",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1775577951.000282",
+          "user": "vi",
+          "text": "could try more replicas but HPA is already at limit, right?",
+          "thread_ts": "1775577922.000275"
+        },
+        {
+          "ts": "1775577968.000289",
+          "user": "lm",
+          "text": "yep. need to change queue behavior, not just scale harder.",
+          "thread_ts": "1775577922.000275"
+        }
+      ]
+    },
+    {
+      "ts": "1775578954.000296",
+      "user": "vi",
+      "text": "i was hoping this was a redis thing. nope. queue is the problem.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1775578954.000296",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775578971.000303",
+          "user": "rs",
+          "text": "same, i checked for sentinel weirdness twice.",
+          "thread_ts": "1775578954.000296"
+        }
+      ]
+    },
+    {
+      "ts": "1775580009.000310",
+      "user": "lm",
+      "text": "backlog still rising. normal uploads and migration jobs are effectively in the same line, so the migration is crowding everyone else out.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1775580009.000310",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1775580031.000317",
+          "user": "pk",
+          "text": "we need some kind of priority split.",
+          "thread_ts": "1775580009.000310"
+        },
+        {
+          "ts": "1775580044.000324",
+          "user": "vi",
+          "text": "agreed, otherwise wait time keeps getting worse.",
+          "thread_ts": "1775580009.000310"
+        }
+      ]
+    },
+    {
+      "ts": "1775581518.000331",
+      "user": "lm",
+      "text": "decision: add priority lanes so normal creator uploads can jump ahead of bulk migration work. going to patch consumers.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1775581518.000331",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775581537.000338",
+          "user": "rs",
+          "text": "good. i'll keep an eye on rollback risk.",
+          "thread_ts": "1775581518.000331"
+        }
+      ]
+    },
+    {
+      "ts": "1775582322.000345",
+      "user": "pk",
+      "text": "quick sanity check, this won't touch feed rebuilds directly, right? just transcode ordering.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1775582322.000345",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775582343.000352",
+          "user": "lm",
+          "text": "just transcode ordering. feeds will benefit once transcodes start clearing.",
+          "thread_ts": "1775582322.000345"
+        }
+      ]
+    },
+    {
+      "ts": "1775582936.000359",
+      "user": "lm",
+      "text": "rolled out the consumer change. normal uploads now land in the higher priority lane, migration jobs stay bulk.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1775582936.000359",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1775582960.000366",
+          "user": "vi",
+          "text": "watching metrics.",
+          "thread_ts": "1775582936.000359"
+        },
+        {
+          "ts": "1775582978.000373",
+          "user": "rs",
+          "text": "queue age should start bending soon.",
+          "thread_ts": "1775582936.000359"
+        }
+      ]
+    },
+    {
+      "ts": "1775585414.000380",
+      "user": "rs",
+      "text": "nice, wait time for new uploads is dropping. we're under 90 min now instead of hours.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1775585414.000380",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775585439.000387",
+          "user": "pk",
+          "text": "still bad, but way better.",
+          "thread_ts": "1775585414.000380"
+        }
+      ]
+    },
+    {
+      "ts": "1775588547.000394",
+      "user": "vi",
+      "text": "heads up, feed rebuild lag is visible now since transcodes are finally draining. not broken, just behind.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1775588547.000394",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775588569.000401",
+          "user": "lm",
+          "text": "yeah, expected lag from the backlog. should catch up after queue clears.",
+          "thread_ts": "1775588547.000394"
+        }
+      ]
+    },
+    {
+      "ts": "1775592005.000408",
+      "user": "pk",
+      "text": "queue peak hit about 39k pending jobs. looks like drain is finally outpacing arrivals.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 5
+        }
+      ],
+      "thread_ts": "1775592005.000408",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775592031.000415",
+          "user": "rs",
+          "text": "nice. still a mess, but turning.",
+          "thread_ts": "1775592005.000408"
+        }
+      ]
+    },
+    {
+      "ts": "1775596484.000422",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] FeedBuildLagHigh (namespace=feeds cluster=prod-eu-west severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1775596484.000422",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1775596506.000429",
+          "user": "vi",
+          "text": "that's the downstream symptom. not a second incident.",
+          "thread_ts": "1775596484.000422"
+        },
+        {
+          "ts": "1775596522.000436",
+          "user": "lm",
+          "text": "agree, no action beyond watching it drain.",
+          "thread_ts": "1775596484.000422"
+        }
+      ]
+    },
+    {
+      "ts": "1775600158.000443",
+      "user": "lm",
+      "text": "backlog is below 10k now. feed lag is improving too.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1775600158.000443",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775600180.000450",
+          "user": "pk",
+          "text": "good. no signs of retries failing either.",
+          "thread_ts": "1775600158.000443"
+        }
+      ]
+    },
+    {
+      "ts": "1775605061.000457",
+      "user": "vi",
+      "text": "queue is basically back to baseline. i'm checking one more time for delayed jobs, but this looks clear.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1775605061.000457",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775605082.000464",
+          "user": "rs",
+          "text": "same, no weird leftovers.",
+          "thread_ts": "1775605061.000457"
+        }
+      ]
+    },
+    {
+      "ts": "1775605212.000471",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2108 resolved by @lm. Duration 8h 15m. Backlog drained after transcode queue prioritization.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 6
+        }
+      ],
+      "thread_ts": "1775605212.000471",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1775605231.000478",
+          "user": "lm",
+          "text": "nice. i'll write up the priority lane fix and the migration throttle follow-up.",
+          "thread_ts": "1775605212.000471"
+        },
+        {
+          "ts": "1775605249.000485",
+          "user": "pk",
+          "text": "+1, we should not let 41k jobs enter flat like that again.",
+          "thread_ts": "1775605212.000471"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

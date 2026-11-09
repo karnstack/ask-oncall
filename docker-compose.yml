@@ -1,0 +1,35 @@
+# Postgres 18 with pgvector 0.8.7, the course's only database.
+#   docker compose up -d --wait      (or: npm run db:up)
+# The image is pinned by digest, so every learner runs the same build.
+name: ask-oncall
+services:
+  db:
+    image: pgvector/pgvector:0.8.7-pg18@sha256:c29f30688a9ad961691bdf0ec1650717cc132a5814619d80f80463d6e4c42e47
+    environment:
+      POSTGRES_PASSWORD: ask-oncall
+      POSTGRES_DB: ask_oncall
+    ports:
+      - "127.0.0.1:55434:5432"
+    # A parallel HNSW build keeps its graph in shared memory. Docker's default
+    # /dev/shm is 64 MB (1 GB in the course lab, which still failed at a million
+    # rows with "could not resize shared memory segment").
+    shm_size: 2gb
+    command:
+      - postgres
+      - -c
+      - shared_buffers=1GB
+      - -c
+      - maintenance_work_mem=1GB
+      - -c
+      - max_parallel_maintenance_workers=4
+      - -c
+      - work_mem=64MB
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ask_oncall"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  pgdata:

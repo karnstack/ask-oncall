@@ -1,0 +1,281 @@
+{
+  "id": "slack/incidents/2026-11-02.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#incidents, 2026-11-02",
+  "url": "https://slack.castlane.internal/archives/C0LUFLQ2/p1793610724000107",
+  "channel": "#incidents",
+  "channel_id": "C0LUFLQ2",
+  "incident": null,
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-11-02",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-11-02T09:38:11Z",
+  "messages": [
+    {
+      "ts": "1793610724.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] Watchdog (namespace=feeds cluster=prod-eu-west severity=none)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "ts": "1793610738.000114",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2311 declared by @bo. Sev3. Purge rate limit takedown delay, feed serving impact is limited but admin purges are backing up. Bridge in #inc-2311.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1793610738.000114",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793610760.000121",
+          "user": "bo",
+          "text": "Looking at the purge queue now. I think the limiter got too conservative after the retry storm.",
+          "thread_ts": "1793610738.000114"
+        }
+      ]
+    },
+    {
+      "ts": "1793610785.000128",
+      "user": "bo",
+      "text": "`flagctl get feeds.writes_paused` is false. No writes issue. This looks isolated to cdn-edge purges only.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "ts": "1793610862.000135",
+      "user": "tw",
+      "text": "I see the rate limiter config in edge. Purge latency jumped right after the deploy, but it is not fully blocked. I'm checking if we can widen the takedown window safely.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1793610862.000135",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793610898.000142",
+          "user": "ok",
+          "text": "If it is just the purge path, I can watch for any feed rebuild noise. Nothing else looks hot.",
+          "thread_ts": "1793610862.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1793611091.000149",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2311 resolved by @bo. Duration 00:05:53. Purge rate limit adjusted and takedown requests are flowing again.",
+      "reactions": [
+        {
+          "name": "white_check_mark",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "ts": "1793611293.000156",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeHpaMaxedOut (namespace=edge cluster=prod-eu-west severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "ts": "1793611309.000163",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2310 declared by @tw. Sev4. cdn-edge HPA is maxed out, checking whether this needs action or clears on its own.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1793611309.000163",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1793611330.000170",
+          "user": "tw",
+          "text": "Pods are still serving. HPA looks pinned but there is no user impact. Watching for a few minutes.",
+          "thread_ts": "1793611309.000163"
+        },
+        {
+          "ts": "1793611441.000177",
+          "user": "bo",
+          "text": "It just dropped back under target. Probably traffic burst from the purge retries.",
+          "thread_ts": "1793611309.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1793611514.000184",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2310 resolved by @tw. Duration 00:03:25. KubeHpaMaxedOut cleared without intervention.",
+      "reactions": [
+        {
+          "name": "white_check_mark",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "ts": "1793611687.000191",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubePodNotReady (namespace=media cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1793611687.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793611699.000198",
+          "user": "ok",
+          "text": "This one is on upload-api. I am checking the rollout status.",
+          "thread_ts": "1793611687.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1793611721.000205",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2312 declared by @ok. Sev4. ImagePullBackOff after a failed CI push, one pod cannot start in prod-us-east.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1793611721.000205",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1793611746.000212",
+          "user": "tw",
+          "text": "Was that the image pushed from the broken pipeline earlier? I can see the new tag is missing from the registry.",
+          "thread_ts": "1793611721.000205"
+        },
+        {
+          "ts": "1793611773.000219",
+          "user": "ok",
+          "text": "Yeah, CI push failed mid-way, so the deployment picked up a tag that never landed.",
+          "thread_ts": "1793611721.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1793611880.000226",
+      "user": "ok",
+      "text": "Rolling the deployment back to the previous image tag now. No config changes involved.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "ts": "1793611982.000233",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2312 resolved by @ok. Duration 00:04:21. ImagePullBackOff cleared after rollback to the last good image.",
+      "reactions": [
+        {
+          "name": "white_check_mark",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "ts": "1793612118.000240",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubePodCrashLooping (namespace=media cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1793612118.000240",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793612131.000247",
+          "user": "bo",
+          "text": "Looks like the same deployment tried to restart before the rollback fully settled.",
+          "thread_ts": "1793612118.000240"
+        }
+      ]
+    },
+    {
+      "ts": "1793612160.000254",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2313 declared by @tw. Sev4. Follow-on ImagePullBackOff and restart churn from the failed CI push, keeping this separate for tracking.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1793612160.000254",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793612184.000261",
+          "user": "ok",
+          "text": "Ack, I am verifying the rollout is stable now. Should be clear once the old ReplicaSet takes over.",
+          "thread_ts": "1793612160.000254"
+        }
+      ]
+    },
+    {
+      "ts": "1793612291.000268",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2313 resolved by @tw. Duration 00:02:11. CrashLooping stopped after the rollback completed and the pod came up cleanly.",
+      "reactions": [
+        {
+          "name": "white_check_mark",
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

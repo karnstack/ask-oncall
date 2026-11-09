@@ -1,0 +1,447 @@
+{
+  "id": "slack/inc-1781/2024-10-08.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-1781: Origin overload after a cdn-edge cache key change",
+  "url": "https://slack.castlane.internal/archives/C04CF67P/p1728396612000107",
+  "channel": "#inc-1781",
+  "channel_id": "C04CF67P",
+  "incident": "INC-1781",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2024-10-08",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2024-10-08T15:00:22Z",
+  "messages": [
+    {
+      "ts": "1728396612.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] TargetDown (namespace=edge cluster=prod-eu-west severity=critical)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1728396612.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728396630.000114",
+          "user": "yu",
+          "text": "seeing it, checking if it's just one target or the whole path",
+          "thread_ts": "1728396612.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1728396724.000121",
+      "user": "bo",
+      "text": "noticed audio starts getting weird in prod. Grafana says cache hit ratio is dropping hard on cdn-edge.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728396724.000121",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728396742.000128",
+          "user": "rs",
+          "text": "same here, can confirm user reports are coming in on the support channel",
+          "thread_ts": "1728396724.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1728396858.000135",
+      "user": "yu",
+      "text": "looking at the deploy diff now. only thing that stands out is the cache key change on audio.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728396858.000135",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728396881.000142",
+          "user": "pk",
+          "text": "that would fit the origin spike, if we're suddenly missing on every request",
+          "thread_ts": "1728396858.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1728396926.000149",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-1781 declared by @yu. Sev2. Investigating audio start latency and edge cache behavior.",
+      "reactions": [
+        {
+          "name": "rotating_light",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728396926.000149",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728396944.000156",
+          "user": "bo",
+          "text": "ack, i'll stay on edge metrics and config history",
+          "thread_ts": "1728396926.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1728397029.000163",
+      "user": "rs",
+      "text": "origin fetches are up about 2x from baseline over the last 10 min. feed-builder is noisy too, but I think it's just downstream user pain.",
+      "reactions": [
+        {
+          "name": "chart_with_upwards_trend",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728397029.000163",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728397060.000170",
+          "user": "pk",
+          "text": "yeah feed-builder looks fine on its own, the slow part is after the audio click",
+          "thread_ts": "1728397029.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1728397113.000177",
+      "user": "yu",
+      "text": "object storage is starting to throw throttling responses on audio fetches. that lines up with the latency jump.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728397113.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728397138.000184",
+          "user": "bo",
+          "text": "ugh, so edge miss burst is pushing all the way through",
+          "thread_ts": "1728397113.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1728397161.000191",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] TargetDown (namespace=edge cluster=prod-eu-west severity=critical)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1728397161.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728397189.000198",
+          "user": "yu",
+          "text": "pretty sure that's a symptom, not a separate target issue. checking the actual request shape now",
+          "thread_ts": "1728397161.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1728397267.000205",
+      "user": "bo",
+      "text": "can someone sanity check whether the cache key is including the full query string now? i think the change was meant to only catch a small subset of URLs.",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728397267.000205",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728397295.000212",
+          "user": "pk",
+          "text": "that's what I remember from the review, yeah. let me pull the exact edge config",
+          "thread_ts": "1728397267.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1728397394.000219",
+      "user": "yu",
+      "text": "got it. hit ratio just tanked from the usual mid-90s to high-50s. that's too big for a normal variance blip.",
+      "reactions": [
+        {
+          "name": "chart_with_downwards_trend",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728397394.000219",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728397420.000226",
+          "user": "rs",
+          "text": "if it's including query params, app tracking strings would make every request unique, wouldn't they",
+          "thread_ts": "1728397394.000219"
+        }
+      ]
+    },
+    {
+      "ts": "1728397496.000233",
+      "user": "bo",
+      "text": "yep, and we do have those on most audio requests. that would explain the miss storm.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1728397496.000233",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728397522.000240",
+          "user": "pk",
+          "text": "ok that seems like the mechanism. not seeing anything wrong in feed-builder itself.",
+          "thread_ts": "1728397496.000233"
+        }
+      ]
+    },
+    {
+      "ts": "1728397623.000247",
+      "user": "yu",
+      "text": "confirming with logs and a sample of requests, most have tracking params appended by the apps or referral links. content is same, cache key isn't.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728397623.000247",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728397648.000254",
+          "user": "bo",
+          "text": "so the change basically destroyed sharing across listeners. lovely.",
+          "thread_ts": "1728397623.000247"
+        }
+      ]
+    },
+    {
+      "ts": "1728397721.000261",
+      "user": "rs",
+      "text": "I'm seeing retries on playback start now. not a total outage, but definitely user-visible.",
+      "reactions": [
+        {
+          "name": "warning",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728397721.000261",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728397745.000268",
+          "user": "yu",
+          "text": "agreed. let's revert the key behavior, keep the rest of the rollout alone.",
+          "thread_ts": "1728397721.000261"
+        }
+      ]
+    },
+    {
+      "ts": "1728397812.000275",
+      "user": "bo",
+      "text": "prepping rollback. validating old behavior against a few known audio URLs first so we don't step on the small set that actually need params.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728397812.000275",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728397839.000282",
+          "user": "pk",
+          "text": "I can help sanity check the edge sample after you flip it in staging if needed",
+          "thread_ts": "1728397812.000275"
+        }
+      ]
+    },
+    {
+      "ts": "1728397915.000289",
+      "user": "yu",
+      "text": "validation looks fine. old keying is safe for the paths we care about. go ahead and roll back the audio cache key change.",
+      "reactions": [
+        {
+          "name": "white_check_mark",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728397915.000289",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728397934.000296",
+          "user": "bo",
+          "text": "doing it now",
+          "thread_ts": "1728397915.000289"
+        }
+      ]
+    },
+    {
+      "ts": "1728398180.000303",
+      "user": "bo",
+      "text": "rollback deployed. watching origin fetch rate fall off now.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1728398180.000303",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728398204.000310",
+          "user": "rs",
+          "text": "nice, already seeing the slope change in Grafana",
+          "thread_ts": "1728398180.000303"
+        }
+      ]
+    },
+    {
+      "ts": "1728398291.000317",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] TargetDown (namespace=edge cluster=prod-eu-west severity=critical)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728398291.000317",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728398319.000324",
+          "user": "yu",
+          "text": "still noisy but should clear once the burst drains. not chasing that separately.",
+          "thread_ts": "1728398291.000317"
+        }
+      ]
+    },
+    {
+      "ts": "1728398527.000331",
+      "user": "pk",
+      "text": "hit ratio is back over 90%. audio starts are looking much better on the live panel.",
+      "reactions": [
+        {
+          "name": "relieved",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728398527.000331",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728398551.000338",
+          "user": "bo",
+          "text": "good, origin traffic is returning to the old baseline too",
+          "thread_ts": "1728398527.000331"
+        }
+      ]
+    },
+    {
+      "ts": "1728398778.000345",
+      "user": "rs",
+      "text": "support noise is dropping off. a couple of retries still, but the worst looks over.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728398778.000345",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728398804.000352",
+          "user": "yu",
+          "text": "keeping an eye on it another few mins before we call it",
+          "thread_ts": "1728398778.000345"
+        }
+      ]
+    },
+    {
+      "ts": "1728399129.000359",
+      "user": "yu",
+      "text": "cache hit ratio stable again, object storage throttling has stopped, and latency is back in family.",
+      "reactions": [
+        {
+          "name": "white_check_mark",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1728399129.000359",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728399153.000366",
+          "user": "bo",
+          "text": "cool, i'll update the incident notes with the exact config change and the timeline",
+          "thread_ts": "1728399129.000359"
+        }
+      ]
+    },
+    {
+      "ts": "1728399604.000373",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-1781 resolved by @yu. Duration 44m 49s. Audio start latency returned to normal after reverting the cdn-edge cache key change.",
+      "reactions": [
+        {
+          "name": "white_check_mark",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1728399604.000373",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1728399622.000380",
+          "user": "pk",
+          "text": "nice. let's make sure the action items capture the query-param normalization thing, otherwise this will bite us again",
+          "thread_ts": "1728399604.000373"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

@@ -1,0 +1,491 @@
+{
+  "id": "slack/inc-2058/2026-01-13.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-2058: Edge capacity halved during a node pool upgrade",
+  "url": "https://slack.castlane.internal/archives/C04CFNXZ/p1768329731000107",
+  "channel": "#inc-2058",
+  "channel_id": "C04CFNXZ",
+  "incident": "INC-2058",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-01-13",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-01-13T19:11:19Z",
+  "messages": [
+    {
+      "ts": "1768329731.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeNodeNotReady (namespace=edge cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1768329731.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768329739.000114",
+          "user": "alertmanager",
+          "subtype": "bot_message",
+          "text": "[FIRING:1] KubeNodeNotReady (namespace=edge cluster=prod-us-east severity=warning)",
+          "thread_ts": "1768329731.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1768329748.000121",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeNodeNotReady (namespace=edge cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1768329748.000121",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768329755.000128",
+          "user": "hq",
+          "text": "seeing 4 nodes flip NotReady in prod-us-east, checking if this is the planned upgrade wave",
+          "thread_ts": "1768329748.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1768329782.000135",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeDeploymentReplicasMismatch (namespace=edge cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1768329782.000135",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768329794.000142",
+          "user": "bo",
+          "text": "cdn-edge ready count is dropping, Grafana panel is ugly",
+          "thread_ts": "1768329782.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1768329821.000149",
+      "user": "rs",
+      "text": "i'm looking at the edge service graphs, p99 is still under 300 but trending up fast",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1768329821.000149",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768329838.000156",
+          "user": "yu",
+          "text": "are we actually on the node pool upgrade or is this a bad node issue?",
+          "thread_ts": "1768329821.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1768329862.000163",
+      "user": "hq",
+      "text": "confirmed, upgrade started at 18:42 in prod-us-east. the drain pattern looks like multiple nodes at once, not a single bad node",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1768329862.000163",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768329879.000170",
+          "user": "bo",
+          "text": "that would explain the replica mismatch. cdn-edge is at 16 ready now",
+          "thread_ts": "1768329862.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1768329906.000177",
+      "user": "yu",
+      "text": "p99 on audio through edge is now 410 ms and climbing, retry rate is also up",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1768329906.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768329918.000184",
+          "user": "rs",
+          "text": "same for feed fetches, not just audio",
+          "thread_ts": "1768329906.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1768329961.000191",
+      "user": "hq",
+      "text": "need to know if this is still within expected upgrade behavior or if we're actually degrading traffic",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1768329961.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768329979.000198",
+          "user": "bo",
+          "text": "capacity is definitely down. 12 of 24 ready pods now",
+          "thread_ts": "1768329961.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1768330017.000205",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeDeploymentReplicasMismatch (namespace=edge cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1768330017.000205",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330028.000212",
+          "user": "yu",
+          "text": "customer reports just started coming in on #incidents",
+          "thread_ts": "1768330017.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1768330051.000219",
+      "user": "rs",
+      "text": "we're at 50 percent ready replicas in cdn-edge. lat spikes are real, not just noise",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1768330051.000219",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330067.000226",
+          "user": "hq",
+          "text": "ok, declaring this is edge capacity, not app crash loops",
+          "thread_ts": "1768330051.000219"
+        }
+      ]
+    },
+    {
+      "ts": "1768330142.000233",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2058 declared by @hq. Sev2. Channel is now #inc-2058.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1768330142.000233",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330157.000240",
+          "user": "hq",
+          "text": "scope is cdn-edge plus the node pool upgrade path in prod-us-east. please keep eyes on latency and ready counts",
+          "thread_ts": "1768330142.000233"
+        }
+      ]
+    },
+    {
+      "ts": "1768330184.000247",
+      "user": "yu",
+      "text": "grafana shows p99 at 540 ms peak, error rate touched 6 percent in the last 3 min window",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1768330184.000247",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330199.000254",
+          "user": "bo",
+          "text": "so the upgrade is technically 'healthy' from k8s pov and still wrecking us. great.",
+          "thread_ts": "1768330184.000247"
+        }
+      ]
+    },
+    {
+      "ts": "1768330226.000261",
+      "user": "hq",
+      "text": "any sign of a bad deploy here? if not, i'm staying on the upgrade path",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1768330226.000261",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330241.000268",
+          "user": "rs",
+          "text": "no deploy change on cdn-edge. replicas mismatch lines up exactly with the drain window",
+          "thread_ts": "1768330226.000261"
+        }
+      ]
+    },
+    {
+      "ts": "1768330278.000275",
+      "user": "bo",
+      "text": "i checked the pod spread, we don't have a PDB on cdn-edge. that seems... relevant",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1768330278.000275",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330293.000282",
+          "user": "hq",
+          "text": "yes, that's the hole. bulk drain plus no PDB",
+          "thread_ts": "1768330278.000275"
+        }
+      ]
+    },
+    {
+      "ts": "1768330324.000289",
+      "user": "yu",
+      "text": "replacement pods are scheduling now that the drain wave moved on. ready count is back to 14",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1768330324.000289",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330338.000296",
+          "user": "rs",
+          "text": "error rate already bending down a little",
+          "thread_ts": "1768330324.000289"
+        }
+      ]
+    },
+    {
+      "ts": "1768330391.000303",
+      "user": "hq",
+      "text": "good, seems like this is going to self recover once the upgrade finishes the wave. no action on payouts or feeds, only edge serving",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1768330391.000303",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330409.000310",
+          "user": "bo",
+          "text": "still want to get ahead of the next wave if there is one",
+          "thread_ts": "1768330391.000303"
+        }
+      ]
+    },
+    {
+      "ts": "1768330447.000317",
+      "user": "yu",
+      "text": "ready pods 18 now, latency still high but moving the right way",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1768330447.000317",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330462.000324",
+          "user": "hq",
+          "text": "keep watching. if it stalls i'll ping platform, but right now i think we ride it out",
+          "thread_ts": "1768330447.000317"
+        }
+      ]
+    },
+    {
+      "ts": "1768330546.000331",
+      "user": "rs",
+      "text": "first good sign, 5xx and timeouts are falling off in Grafana",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1768330546.000331",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330558.000338",
+          "user": "bo",
+          "text": "nice. still annoying that the cloud provider drained four nodes at once",
+          "thread_ts": "1768330546.000331"
+        }
+      ]
+    },
+    {
+      "ts": "1768330593.000345",
+      "user": "yu",
+      "text": "ready count hit 20, p99 is down to 260 ms",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1768330593.000345",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330607.000352",
+          "user": "hq",
+          "text": "that's the recovery pattern we expected",
+          "thread_ts": "1768330593.000345"
+        }
+      ]
+    },
+    {
+      "ts": "1768330699.000359",
+      "user": "bo",
+      "text": "back to 23 ready, traffic looks mostly normal again",
+      "reactions": [
+        {
+          "name": "relieved",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1768330699.000359",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330714.000366",
+          "user": "rs",
+          "text": "yeah, p99 nearly back at baseline",
+          "thread_ts": "1768330699.000359"
+        }
+      ]
+    },
+    {
+      "ts": "1768330865.000373",
+      "user": "yu",
+      "text": "24 ready replicas again. edge is fully back",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1768330865.000373",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768330876.000380",
+          "user": "hq",
+          "text": "good. let's hold for a bit and make sure there isn't a second drain wave",
+          "thread_ts": "1768330865.000373"
+        }
+      ]
+    },
+    {
+      "ts": "1768331202.000387",
+      "user": "rs",
+      "text": "latency and error rate have been flat for 5 min, no retry spike now",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1768331202.000387",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768331215.000394",
+          "user": "bo",
+          "text": "i'm comfortable calling this recovered soon",
+          "thread_ts": "1768331202.000387"
+        }
+      ]
+    },
+    {
+      "ts": "1768331468.000401",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2058 resolved by @hq. Duration 29m 6s.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 5
+        }
+      ],
+      "thread_ts": "1768331468.000401",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1768331479.000408",
+          "user": "hq",
+          "text": "closing it. root cause is the drain policy meeting no PDB on cdn-edge. we'll write up the fix and add the guardrail",
+          "thread_ts": "1768331468.000401"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

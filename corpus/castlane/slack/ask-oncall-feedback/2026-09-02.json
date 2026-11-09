@@ -1,0 +1,224 @@
+{
+  "id": "slack/ask-oncall-feedback/2026-09-02.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#ask-oncall-feedback: good answer on DNS",
+  "url": "https://slack.castlane.internal/archives/C0XESDI/p1788357731000107",
+  "channel": "#ask-oncall-feedback",
+  "channel_id": "C0XESDI",
+  "incident": null,
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-09-02",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-09-02T14:20:40Z",
+  "messages": [
+    {
+      "ts": "1788357731.000107",
+      "user": "hq",
+      "text": "During the page yesterday, @ask-oncall found the CoreDNS runbook and the Kubernetes debugging DNS page in like 3 seconds. That was actually useful, not just a link dump.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        },
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1788357731.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1788357764.000114",
+          "user": "ne",
+          "text": "nice, did it land on the right bit or just search the whole wiki?",
+          "thread_ts": "1788357731.000107"
+        },
+        {
+          "ts": "1788357790.000121",
+          "user": "hq",
+          "text": "Right bit. It pointed me at the DNS resolution checklist and the `kubectl -n kube-system logs deploy/coredns` bit immediately.",
+          "thread_ts": "1788357731.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1788357903.000128",
+      "user": "ne",
+      "text": "Can it read the Postgres docs too, or is it only wiki pages we already had indexed? Asking because that would be pretty handy for pg-feeds stuff.",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1788357903.000128",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1788357941.000135",
+          "user": "hq",
+          "text": "that would save a bunch of tab hunting for me too",
+          "thread_ts": "1788357903.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1788357979.000142",
+      "user": "dara",
+      "text": "Yes, a subset is vendored. It can answer from the Postgres runbooks, the PgBouncer notes, and the Patroni migration docs that we copied into the internal knowledge bundle.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1788357979.000142",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1788358014.000149",
+          "user": "ne",
+          "text": "oh nice, so not live crawling the whole wiki?",
+          "thread_ts": "1788357979.000142"
+        },
+        {
+          "ts": "1788358046.000156",
+          "user": "dara",
+          "text": "Right, curated set only. Less surprise, fewer stale edges.",
+          "thread_ts": "1788357979.000142"
+        }
+      ]
+    },
+    {
+      "ts": "1788358142.000163",
+      "user": "hq",
+      "text": "Good. The DNS answer was a lot better than me grepping random docs while watching the alert flap.",
+      "reactions": [
+        {
+          "name": "laughing",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1788358142.000163",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1788358173.000170",
+          "user": "ne",
+          "text": "what did it suggest, if you remember?",
+          "thread_ts": "1788358142.000163"
+        },
+        {
+          "ts": "1788358208.000177",
+          "user": "hq",
+          "text": "It told me to check kube-dns upstream reachability first, then the CoreDNS configmap, then whether the node had broken resolv.conf. Which was basically the path we ended up taking.",
+          "thread_ts": "1788358142.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1788358337.000184",
+      "user": "ne",
+      "text": "If it can surface the pgbouncer-feeds admin port docs too, that would be perfect. I always forget the exact `psql` incantation for transaction pooling checks.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1788358337.000184",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1788358369.000191",
+          "user": "dara",
+          "text": "It has the admin console notes, yes. No direct actions though, just read-only guidance.",
+          "thread_ts": "1788358337.000184"
+        }
+      ]
+    },
+    {
+      "ts": "1788358445.000198",
+      "user": "hq",
+      "text": "That feels like the right line. Helpful, but not trying to be an autopilot for prod changes.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1788358445.000198",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1788358478.000205",
+          "user": "ne",
+          "text": "agreed. if it starts trying to `kubectl apply` stuff, i'm out",
+          "thread_ts": "1788358445.000198"
+        },
+        {
+          "ts": "1788358501.000212",
+          "user": "dara",
+          "text": "It won't. Read-only only, and it prefers linking the exact doc section over improvising.",
+          "thread_ts": "1788358445.000198"
+        }
+      ]
+    },
+    {
+      "ts": "1788358642.000219",
+      "user": "ne",
+      "text": "Can we get more of the pg-feeds troubleshooting pages vendored next? The replica lag one would be useful for oncall.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1788358642.000219",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1788358678.000226",
+          "user": "dara",
+          "text": "Yep, I can add that. If you have a doc that keeps getting used in pages, send it over and I will pull it into the bundle.",
+          "thread_ts": "1788358642.000219"
+        }
+      ]
+    },
+    {
+      "ts": "1788358784.000233",
+      "user": "hq",
+      "text": "Honestly this is the first time I've used it mid-page and not regretted it. Keep going.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 5
+        }
+      ],
+      "thread_ts": "1788358784.000233",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1788358812.000240",
+          "user": "ne",
+          "text": "same, shipped enough value to keep around",
+          "thread_ts": "1788358784.000233"
+        },
+        {
+          "ts": "1788358840.000247",
+          "user": "dara",
+          "text": "Thanks, that is the kind of feedback we need. If you spot a bad answer, drop it in this channel with the query and the doc it missed.",
+          "thread_ts": "1788358784.000233"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

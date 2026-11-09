@@ -1,0 +1,172 @@
+{
+  "id": "slack/oncall-payouts/2026-08-17.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#oncall-payouts: ledger mismatch question",
+  "url": "https://slack.castlane.internal/archives/C03869J0/p1786957924000107",
+  "channel": "#oncall-payouts",
+  "channel_id": "C03869J0",
+  "incident": null,
+  "allowed_groups": [
+    "payouts-eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-08-17",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-08-17T09:25:18Z",
+  "messages": [
+    {
+      "ts": "1786957924.000107",
+      "user": "nd",
+      "text": "August reconcile is off by 0.02 again. I checked the batch total vs ledger export, same delta as yesterday, but only for one creator payment.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1786957924.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1786957991.000114",
+          "user": "cv",
+          "text": "Looking now. Can you paste the payout id or creator id? 0.02 usually means a late settlement or rounding on the provider side.",
+          "thread_ts": "1786957924.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1786958042.000121",
+      "user": "nd",
+      "text": "payout_8f2c1a. The ledger line is there, but the August file export has the lower amount.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "ts": "1786958127.000128",
+      "user": "cv",
+      "text": "Yep, found it. This one settled after the file cutoff, so the reconcile file picked up the auth amount, then the settlement adjustment landed in the next window. Running the explain now.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1786958127.000128",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1786958158.000135",
+          "user": "nd",
+          "text": "ah ok, so not a bug in the batch?",
+          "thread_ts": "1786958127.000128"
+        },
+        {
+          "ts": "1786958181.000142",
+          "user": "cv",
+          "text": "No, just timing. The monthly file is cut before 06:00 UTC on the 15th, and this one cleared just after that.",
+          "thread_ts": "1786958127.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1786958223.000149",
+      "user": "cv",
+      "text": "```\npayouts-admin reconcile --month 2026-08 --explain\n```",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1786958223.000149",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1786958264.000156",
+          "user": "cv",
+          "text": "Shows payout_8f2c1a as `settled_after_cutoff=true`, delta `0.02`, reason `provider settlement adjustment`.",
+          "thread_ts": "1786958223.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1786958290.000163",
+      "user": "nd",
+      "text": "cool, that matches the ledger export. I was worried we had another drift issue.",
+      "reactions": [
+        {
+          "name": "relieved",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "ts": "1786958341.000170",
+      "user": "cv",
+      "text": "I can add a note to the reconcile ticket so future review stops on this pattern. We have a couple of these every month now.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "ts": "1786958422.000177",
+      "user": "nd",
+      "text": "Please do. Also if the explain output is stable enough, maybe we can link it in the runbook for the cutoff check.",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1786958422.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1786958460.000184",
+          "user": "cv",
+          "text": "Yeah, good call. I can drop the exact command in the monthly checklist.",
+          "thread_ts": "1786958422.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1786958595.000191",
+      "user": "cv",
+      "text": "Added the note. Reconcile is still clean aside from that 0.02. No action needed on payouts.",
+      "reactions": [
+        {
+          "name": "white_check_mark",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "ts": "1786958680.000198",
+      "user": "nd",
+      "text": "ack, thanks. I'll close my side and stop chasing this one.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "ts": "1786958718.000205",
+      "user": "cv",
+      "text": "np. If you see another mismatch, send the payout id and I'll check the explain output again."
+    }
+  ],
+  "generated": true
+}

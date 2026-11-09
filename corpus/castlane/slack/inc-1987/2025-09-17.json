@@ -1,0 +1,74 @@
+{
+  "id": "slack/inc-1987/2025-09-17.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-1987: transcoder pods crash looping (OOMKilled)",
+  "url": "https://slack.castlane.internal/archives/C08TR1987/p1758117760000107",
+  "channel": "#inc-1987",
+  "channel_id": "C08TR1987",
+  "incident": "INC-1987",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2025-09-17",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2025-09-17T14:40:05Z",
+  "messages": [
+    {
+      "ts": "1758117760.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:6] KubePodCrashLooping (namespace=media container=transcoder cluster=prod-us-east severity=warning)"
+    },
+    {
+      "ts": "1758117850.000114",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-1987 declared by @pk. Sev3. transcoder crash looping. IC: @pk."
+    },
+    {
+      "ts": "1758117933.000121",
+      "user": "pk",
+      "text": "transcoder pods OOMKilled, exit code 137, restarting every couple of minutes. TranscodeQueueBacklog at 1.2k and climbing"
+    },
+    {
+      "ts": "1758118142.000128",
+      "user": "rs",
+      "text": "one creator uploaded a 6h live recording as 48kHz wav. ffmpeg holds a lot when it resamples that"
+    },
+    {
+      "ts": "1758118367.000135",
+      "user": "pk",
+      "text": "bumping the memory limit 2Gi -> 4Gi"
+    },
+    {
+      "ts": "1758118375.000142",
+      "user": "pk",
+      "text": "`kubectl -n media set resources deploy/transcoder -c transcoder --limits=memory=4Gi`"
+    },
+    {
+      "ts": "1758118770.000149",
+      "user": "pk",
+      "text": "pods stable, backlog draining"
+    },
+    {
+      "ts": "1758118872.000156",
+      "user": "rs",
+      "text": "should we cap parallel jobs per pod instead? 4Gi x 30 pods is a lot of node"
+    },
+    {
+      "ts": "1758119020.000163",
+      "user": "pk",
+      "text": "follow-up MEDIA-812. leaving 4Gi for now"
+    },
+    {
+      "ts": "1758120005.000170",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-1987 resolved by @pk. Duration 38m."
+    }
+  ]
+}

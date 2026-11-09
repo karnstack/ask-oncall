@@ -1,0 +1,536 @@
+{
+  "id": "slack/inc-1902/2025-04-29.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-1902: redis-feeds out of memory",
+  "url": "https://slack.castlane.internal/archives/C04CF7I8/p1745914443000107",
+  "channel": "#inc-1902",
+  "channel_id": "C04CF7I8",
+  "incident": "INC-1902",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2025-04-29",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2025-04-29T08:32:08Z",
+  "messages": [
+    {
+      "ts": "1745914443.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubePodCrashLooping (namespace=feeds cluster=prod-us-east severity=critical)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1745914443.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914458.000114",
+          "user": "gf",
+          "text": "ack, looking",
+          "thread_ts": "1745914443.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1745914462.000121",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-1902 declared by @gf. Sev3. redis-feeds out of memory while holding transcode queue.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1745914462.000121",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1745914475.000128",
+          "user": "pk",
+          "text": "on it",
+          "thread_ts": "1745914462.000121"
+        },
+        {
+          "ts": "1745914481.000135",
+          "user": "rs",
+          "text": "joining",
+          "thread_ts": "1745914462.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1745914491.000142",
+      "user": "gf",
+      "text": "seeing redis-feeds pod restart in prod-us-east. checking if it is just the pod or writes are actually blocked.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1745914491.000142",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914507.000149",
+          "user": "vi",
+          "text": "I can take a look at the queue side",
+          "thread_ts": "1745914491.000142"
+        }
+      ]
+    },
+    {
+      "ts": "1745914518.000156",
+      "user": "gf",
+      "text": "`kubectl --context prod-us-east -n feeds get pod -l app=redis-feeds`",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1745914518.000156",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914531.000163",
+          "user": "gf",
+          "text": "one pod crashlooping, one replica still up",
+          "thread_ts": "1745914518.000156"
+        }
+      ]
+    },
+    {
+      "ts": "1745914544.000170",
+      "user": "rs",
+      "text": "`redis-cli -h redis-feeds -p 6379 info memory` shows used memory right at the cap. writes are getting refused.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1745914544.000170",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914558.000177",
+          "user": "pk",
+          "text": "that explains the queue not draining",
+          "thread_ts": "1745914544.000170"
+        }
+      ]
+    },
+    {
+      "ts": "1745914572.000184",
+      "user": "vi",
+      "text": "transcode queue is climbing. not huge yet, but drain is flat. consumer side looks stuck-ish.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1745914572.000184",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914584.000191",
+          "user": "gf",
+          "text": "how flat",
+          "thread_ts": "1745914572.000184"
+        }
+      ]
+    },
+    {
+      "ts": "1745914599.000198",
+      "user": "vi",
+      "text": "pending is up from 11 to 64 in the last couple mins. no completions since 08:12.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1745914599.000198",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914612.000205",
+          "user": "rs",
+          "text": "yeah, that is not healthy",
+          "thread_ts": "1745914599.000198"
+        }
+      ]
+    },
+    {
+      "ts": "1745914623.000212",
+      "user": "pk",
+      "text": "checking transcoder pods now, maybe one worker got wedged and stopped acking jobs.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1745914623.000212",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914636.000219",
+          "user": "gf",
+          "text": "please do",
+          "thread_ts": "1745914623.000212"
+        }
+      ]
+    },
+    {
+      "ts": "1745914661.000226",
+      "user": "pk",
+      "text": "`kubectl --context prod-us-east -n media get pods -l app=transcoder` one pod is Running but not making progress, rest are fine.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1745914661.000226",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914678.000233",
+          "user": "vi",
+          "text": "I see the same pod with no logs after 08:12, weird",
+          "thread_ts": "1745914661.000226"
+        }
+      ]
+    },
+    {
+      "ts": "1745914702.000240",
+      "user": "gf",
+      "text": "I am going to restart that consumer pod. if it's stuck, that's probably the path.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1745914702.000240",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914711.000247",
+          "user": "rs",
+          "text": "ack",
+          "thread_ts": "1745914702.000240"
+        }
+      ]
+    },
+    {
+      "ts": "1745914735.000254",
+      "user": "gf",
+      "text": "`kubectl --context prod-us-east -n media delete pod transcoder-7c9f5d8b8b-jq4km`",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1745914735.000254",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914747.000261",
+          "user": "pk",
+          "text": "watching restart",
+          "thread_ts": "1745914735.000254"
+        }
+      ]
+    },
+    {
+      "ts": "1745914773.000268",
+      "user": "vi",
+      "text": "queue is still rising for a bit, but the stuck pod is gone now. let's see if drain resumes.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1745914773.000268",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914786.000275",
+          "user": "gf",
+          "text": "yep",
+          "thread_ts": "1745914773.000268"
+        }
+      ]
+    },
+    {
+      "ts": "1745914814.000282",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubePodCrashLooping (namespace=feeds cluster=prod-us-east severity=critical)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1745914814.000282",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914827.000289",
+          "user": "rs",
+          "text": "same redis pod, looks like OOMKilled on restart",
+          "thread_ts": "1745914814.000282"
+        }
+      ]
+    },
+    {
+      "ts": "1745914851.000296",
+      "user": "gf",
+      "text": "ok so the restart did not save us from the memory cliff. checking sentinel status.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1745914851.000296",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914864.000303",
+          "user": "pk",
+          "text": "maybe failover will kick in once the bad pod fully dies",
+          "thread_ts": "1745914851.000296"
+        }
+      ]
+    },
+    {
+      "ts": "1745914899.000310",
+      "user": "rs",
+      "text": "`redis-cli -h redis-feeds -p 26379 sentinel masters` shows failover starting. replica still healthy.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1745914899.000310",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914911.000317",
+          "user": "vi",
+          "text": "transcoder completions just ticked again, so the queue path is opening back up a bit",
+          "thread_ts": "1745914899.000310"
+        }
+      ]
+    },
+    {
+      "ts": "1745914938.000324",
+      "user": "gf",
+      "text": "writes are still bumpy. i am not touching flags yet, just waiting for sentinel to finish.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1745914938.000324",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745914950.000331",
+          "user": "pk",
+          "text": "same, no reason to kick at it",
+          "thread_ts": "1745914938.000324"
+        }
+      ]
+    },
+    {
+      "ts": "1745914992.000338",
+      "user": "rs",
+      "text": "sentinel says promotion in progress. replica is taking over.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1745914992.000338",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745915006.000345",
+          "user": "gf",
+          "text": "good",
+          "thread_ts": "1745914992.000338"
+        }
+      ]
+    },
+    {
+      "ts": "1745915049.000352",
+      "user": "vi",
+      "text": "queue length stopped climbing. still ugly, but no longer accelerating.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1745915049.000352",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745915060.000359",
+          "user": "pk",
+          "text": "drain rate is back, just slow",
+          "thread_ts": "1745915049.000352"
+        }
+      ]
+    },
+    {
+      "ts": "1745915137.000366",
+      "user": "gf",
+      "text": "I think the consumer restart was the right move. the loss was in the Redis memory pressure window, not in the jobs themselves.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1745915137.000366",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745915149.000373",
+          "user": "rs",
+          "text": "agreed, no sign of dropped jobs yet",
+          "thread_ts": "1745915137.000366"
+        }
+      ]
+    },
+    {
+      "ts": "1745915238.000380",
+      "user": "vi",
+      "text": "transcode backlog is coming down now. peak was around 184 uploads queued behind it.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1745915238.000380",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745915251.000387",
+          "user": "gf",
+          "text": "yeah, that matches what I saw on Grafana",
+          "thread_ts": "1745915238.000380"
+        }
+      ]
+    },
+    {
+      "ts": "1745915284.000394",
+      "user": "rs",
+      "text": "writes resumed cleanly after promotion. replica is master now and healthy.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1745915284.000394",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745915296.000401",
+          "user": "pk",
+          "text": "nice",
+          "thread_ts": "1745915284.000394"
+        }
+      ]
+    },
+    {
+      "ts": "1745915381.000408",
+      "user": "gf",
+      "text": "monitoring for a couple more mins. if drain keeps moving and redis stays stable, we can close this out.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1745915381.000408",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745915396.000415",
+          "user": "vi",
+          "text": "completions look normal again",
+          "thread_ts": "1745915381.000408"
+        }
+      ]
+    },
+    {
+      "ts": "1745915482.000422",
+      "user": "gf",
+      "text": "back to baseline. queue is draining normally and redis memory settled after failover.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1745915482.000422",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745915495.000429",
+          "user": "rs",
+          "text": "good enough to resolve?",
+          "thread_ts": "1745915482.000422"
+        }
+      ]
+    },
+    {
+      "ts": "1745915521.000436",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-1902 resolved by @gf. Duration 17m 39s.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1745915521.000436",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1745915528.000443",
+          "user": "gf",
+          "text": "resolved",
+          "thread_ts": "1745915521.000436"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

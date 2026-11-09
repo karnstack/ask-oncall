@@ -1,0 +1,214 @@
+{
+  "id": "slack/edge/2026-11-03.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#edge: surrogate keys for bulk purges",
+  "url": "https://slack.castlane.internal/archives/C05P6IS/p1793714592000107",
+  "channel": "#edge",
+  "channel_id": "C05P6IS",
+  "incident": null,
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-11-03",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-11-03T14:27:48Z",
+  "messages": [
+    {
+      "ts": "1793714592.000107",
+      "user": "bo",
+      "text": "following up on the purge rate limit thing from yesterday, can we tag audio responses with surrogate keys like `show:<show_id>` and `episode:<episode_id>` so a takedown becomes one purge instead of a bunch of per-url purges?",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1793714592.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1793714641.000114",
+          "user": "yu",
+          "text": "yeah, that would let us hit the cdn with a single key purge for the response object and anything derived from it. less churn too.",
+          "thread_ts": "1793714592.000107"
+        },
+        {
+          "ts": "1793714662.000121",
+          "user": "lm",
+          "text": "are you thinking the response metadata already has both ids at stitch time, or do we need to plumb episode through from upload-api?",
+          "thread_ts": "1793714592.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1793714770.000128",
+      "user": "yu",
+      "text": "for the audio response path, we already know show_id and episode_id when we write the response manifest. so adding both keys there is straightforward. the only open question is key count per response, because some responses already carry a couple of segment and cache keys.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1793714770.000128",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1793714822.000135",
+          "user": "bo",
+          "text": "what's the hard cap on surrogate keys per object on the edge side?",
+          "thread_ts": "1793714770.000128"
+        },
+        {
+          "ts": "1793714853.000142",
+          "user": "yu",
+          "text": "config-wise we can store a few dozen comfortably, but I don't want to assume we should. the issue is header size and purge fanout when people start stacking lots of tags.",
+          "thread_ts": "1793714770.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1793714958.000149",
+      "user": "lm",
+      "text": "for takedowns, I think `show:<show_id>` plus `episode:<episode_id>` is enough. if we purge both, every response variant for that episode should go. no need to tag by response id unless we need one-off invalidations.",
+      "reactions": [
+        {
+          "name": "thumbsup",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1793714958.000149",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793715001.000156",
+          "user": "bo",
+          "text": "agree. one response object can have maybe 2 keys from this change, maybe 3 if we keep the existing cache namespace key. that feels fine.",
+          "thread_ts": "1793714958.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1793715164.000163",
+      "user": "yu",
+      "text": "worth checking if the current response generator already emits any surrogate keys at all. if not, this should be additive. if yes, we need to make sure we don't blow up the purge request size with old + new tags.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1793715164.000163",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793715200.000170",
+          "user": "lm",
+          "text": "I can grep the edge templates and confirm. if there are existing keys, I suspect it's just the show-level one.",
+          "thread_ts": "1793715164.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1793715308.000177",
+      "user": "bo",
+      "text": "also, can we keep the key format consistent with the rest of purge tooling? `show:` and `episode:` looks good, but I want to make sure we don't end up with some weird url-safe encoding thing.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1793715308.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793715351.000184",
+          "user": "yu",
+          "text": "yeah, plain ASCII tokens. no encoding needed. purge API treats them as opaque strings anyway.",
+          "thread_ts": "1793715308.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1793715509.000191",
+      "user": "lm",
+      "text": "if we do this, we'd probably want a quick smoke in staging, then a real purge on one known episode to verify it clears both the response object and the cached audio derivative.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1793715509.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1793715543.000198",
+          "user": "bo",
+          "text": "I can set that up in staging-us-east with a throwaway episode. then we can compare before/after in cdn logs.",
+          "thread_ts": "1793715509.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1793715731.000205",
+      "user": "yu",
+      "text": "question back, do we want the purge API caller to send both keys every time, or should edge derive `show:<show_id>` from `episode:<episode_id>` server-side?",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1793715731.000205",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1793715764.000212",
+          "user": "lm",
+          "text": "I would keep it explicit. deriving means one more lookup in the hot path, and the caller already has both ids.",
+          "thread_ts": "1793715731.000205"
+        },
+        {
+          "ts": "1793715790.000219",
+          "user": "bo",
+          "text": "+1 explicit. less magic, easier to reason about retries too.",
+          "thread_ts": "1793715731.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1793715997.000226",
+      "user": "yu",
+      "text": "ok, I'll put together the change so audio responses emit both keys, and add a note in the runbook about purge count expectations. if we hit any header weirdness in staging, I'll trim the old response-level tag first.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1793715997.000226",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1793716032.000233",
+          "user": "lm",
+          "text": "cool, please paste the staging object names once you have them, I'll run the purge test.",
+          "thread_ts": "1793715997.000226"
+        },
+        {
+          "ts": "1793716068.000240",
+          "user": "bo",
+          "text": "I'll also check whether takedown events need to call the purge endpoint once or twice, depending on how the API batches keys. if once is enough, that's the win we want.",
+          "thread_ts": "1793715997.000226"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

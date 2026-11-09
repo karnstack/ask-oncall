@@ -1,0 +1,487 @@
+{
+  "id": "slack/inc-2003/2025-10-14.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-2003: Expired certificate on the audio host",
+  "url": "https://slack.castlane.internal/archives/C04CFNTJ/p1760430660000107",
+  "channel": "#inc-2003",
+  "channel_id": "C04CFNTJ",
+  "incident": "INC-2003",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2025-10-14",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2025-10-14T09:23:41Z",
+  "messages": [
+    {
+      "ts": "1760430660.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeClientCertificateExpiration (namespace=edge cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1760430660.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1760430684.000114",
+          "user": "bo",
+          "text": "hmm, that's the audio host cert again?",
+          "thread_ts": "1760430660.000107"
+        },
+        {
+          "ts": "1760430701.000121",
+          "user": "yu",
+          "text": "i'm checking.",
+          "thread_ts": "1760430660.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1760430850.000128",
+      "user": "dara",
+      "text": "support is seeing playback failures from a few apps. anyone got eyes on edge?",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1760430850.000128",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760430873.000135",
+          "user": "hq",
+          "text": "seeing a couple of user reports in #oncall too.",
+          "thread_ts": "1760430850.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1760431268.000142",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2003 declared by @yu. Sev2. Expired certificate on the audio host.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1760431268.000142",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1760431282.000149",
+          "user": "yu",
+          "text": "ack, i'm in.",
+          "thread_ts": "1760431268.000142"
+        },
+        {
+          "ts": "1760431300.000156",
+          "user": "bo",
+          "text": "got it, joining.",
+          "thread_ts": "1760431268.000142"
+        }
+      ]
+    },
+    {
+      "ts": "1760431325.000163",
+      "user": "yu",
+      "text": "looking at `cdn-edge` right now. seeing TLS handshake failures on audio fetches.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1760431325.000163",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760431351.000170",
+          "user": "dara",
+          "text": "support says clients are retrying a lot, mostly playback URLs not loading.",
+          "thread_ts": "1760431325.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1760431459.000177",
+      "user": "yu",
+      "text": "log pattern is ugly, lots of handshake errors. service pods look healthy though.",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1760431459.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760431487.000184",
+          "user": "hq",
+          "text": "so transport layer only? no app 5xx?",
+          "thread_ts": "1760431459.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1760431558.000191",
+      "user": "bo",
+      "text": "grafana is showing the edge 2xx line dropping and tls errors climbing. not just one region.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1760431558.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760431580.000198",
+          "user": "yu",
+          "text": "yeah, consistent across prod-us-east ingress.",
+          "thread_ts": "1760431558.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1760431632.000205",
+      "user": "hq",
+      "text": "if anyone wants the panel, use `https://grafana.castlane.internal/d/cdn-edge` and look at request success + tls failures. it's pretty obvious.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1760431632.000205",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760431664.000212",
+          "user": "dara",
+          "text": "thanks, i can see the drop now.",
+          "thread_ts": "1760431632.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1760431803.000219",
+      "user": "yu",
+      "text": "test client is throwing `NET::ERR_CERT_DATE_INVALID` on an episode URL. cert is actually expired, not just warning soon.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1760431803.000219",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1760431825.000226",
+          "user": "bo",
+          "text": "ouch.",
+          "thread_ts": "1760431803.000219"
+        },
+        {
+          "ts": "1760431851.000233",
+          "user": "hq",
+          "text": "so that explains the user reports.",
+          "thread_ts": "1760431803.000219"
+        }
+      ]
+    },
+    {
+      "ts": "1760431998.000240",
+      "user": "yu",
+      "text": "checking cert-manager status. renewal attempts are getting rate limited by the issuer.",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1760431998.000240",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760432029.000247",
+          "user": "bo",
+          "text": "rate limited how, retries or hard throttle?",
+          "thread_ts": "1760431998.000240"
+        }
+      ]
+    },
+    {
+      "ts": "1760432062.000254",
+      "user": "yu",
+      "text": "looks like issuer-side throttling. prod renewal isn't getting through before expiry window.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1760432062.000254",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760432089.000261",
+          "user": "dara",
+          "text": "is there anything else touching that issuer path?",
+          "thread_ts": "1760432062.000254"
+        }
+      ]
+    },
+    {
+      "ts": "1760432226.000268",
+      "user": "yu",
+      "text": "found a staging loop still asking for certs against the same issuer path. that's probably burning capacity.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1760432226.000268",
+      "reply_count": 3,
+      "replies": [
+        {
+          "ts": "1760432249.000275",
+          "user": "hq",
+          "text": "ugh, staging loop?",
+          "thread_ts": "1760432226.000268"
+        },
+        {
+          "ts": "1760432261.000282",
+          "user": "bo",
+          "text": "same issuer as prod?",
+          "thread_ts": "1760432226.000268"
+        },
+        {
+          "ts": "1760432282.000289",
+          "user": "yu",
+          "text": "yeah, apparently.",
+          "thread_ts": "1760432226.000268"
+        }
+      ]
+    },
+    {
+      "ts": "1760432321.000296",
+      "user": "dara",
+      "text": "can we stop that loop now?",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1760432321.000296",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760432339.000303",
+          "user": "yu",
+          "text": "doing it.",
+          "thread_ts": "1760432321.000296"
+        }
+      ]
+    },
+    {
+      "ts": "1760432534.000310",
+      "user": "yu",
+      "text": "staging loop stopped. watching issuer retries settle down.",
+      "reactions": [
+        {
+          "name": "check_mark",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1760432534.000310",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760432561.000317",
+          "user": "bo",
+          "text": "nice.",
+          "thread_ts": "1760432534.000310"
+        }
+      ]
+    },
+    {
+      "ts": "1760432673.000324",
+      "user": "hq",
+      "text": "if you need to confirm, cert-manager should start normal retries again for prod cert shortly.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1760432673.000324",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760432698.000331",
+          "user": "yu",
+          "text": "yep, seeing that now.",
+          "thread_ts": "1760432673.000324"
+        }
+      ]
+    },
+    {
+      "ts": "1760432771.000338",
+      "user": "yu",
+      "text": "prod cert-manager is retrying normally again. still waiting on the new cert to land on the ingress path.",
+      "reactions": [
+        {
+          "name": "hourglass_flowing_sand",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1760432771.000338",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760432794.000345",
+          "user": "dara",
+          "text": "thanks for the update.",
+          "thread_ts": "1760432771.000338"
+        }
+      ]
+    },
+    {
+      "ts": "1760432992.000352",
+      "user": "bo",
+      "text": "small test from a browser here still fails, but fewer retries. looks like propagation delay now.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1760432992.000352",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760433018.000359",
+          "user": "yu",
+          "text": "same. no redeploys needed, just waiting for the new cert to show up.",
+          "thread_ts": "1760432992.000352"
+        }
+      ]
+    },
+    {
+      "ts": "1760433267.000366",
+      "user": "yu",
+      "text": "new certificate is available on the ingress path now. checking from a couple regions.",
+      "reactions": [
+        {
+          "name": "check_mark",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1760433267.000366",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760433289.000373",
+          "user": "hq",
+          "text": "nice. do a couple more fetches before we call it.",
+          "thread_ts": "1760433267.000366"
+        }
+      ]
+    },
+    {
+      "ts": "1760433486.000380",
+      "user": "yu",
+      "text": "playback tests are succeeding from multiple regions now. no more cert errors.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1760433486.000380",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1760433509.000387",
+          "user": "bo",
+          "text": "good.",
+          "thread_ts": "1760433486.000380"
+        },
+        {
+          "ts": "1760433521.000394",
+          "user": "dara",
+          "text": "support side is quieting down too.",
+          "thread_ts": "1760433486.000380"
+        }
+      ]
+    },
+    {
+      "ts": "1760433697.000401",
+      "user": "hq",
+      "text": "grafana looks stable again, edge success rate is back where it should be.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1760433697.000401",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1760433718.000408",
+          "user": "yu",
+          "text": "agree, i'm watching a few more minutes.",
+          "thread_ts": "1760433697.000401"
+        }
+      ]
+    },
+    {
+      "ts": "1760433792.000415",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2003 resolved by @yu. Duration 42m. Expired certificate on the audio host.",
+      "reactions": [
+        {
+          "name": "check_mark",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1760433792.000415",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1760433808.000422",
+          "user": "yu",
+          "text": "resolved. i'll file the followups and note the staging loop issue.",
+          "thread_ts": "1760433792.000415"
+        },
+        {
+          "ts": "1760433821.000429",
+          "user": "dara",
+          "text": "thanks everyone.",
+          "thread_ts": "1760433792.000415"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

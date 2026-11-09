@@ -1,0 +1,54 @@
+{
+  "id": "slack/incidents/2026-09-15.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#incidents, 2026-09-15",
+  "url": "https://slack.castlane.internal/archives/C01INCDNTS/p1789448551000107",
+  "channel": "#incidents",
+  "channel_id": "C01INCDNTS",
+  "incident": "INC-2207",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-09-15",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-09-15T12:43:20Z",
+  "messages": [
+    {
+      "ts": "1789448551.000107",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2207 declared by @sec-ir. Sev2. Restricted incident: details are in a private channel."
+    },
+    {
+      "ts": "1789450815.000114",
+      "user": "jh",
+      "text": "FYI the September creator payout batch (normally 06:00 UTC) is on hold at the security team's request. Will update here when it runs."
+    },
+    {
+      "ts": "1789459206.000121",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] PayoutBatchLate (namespace=payouts cluster=prod-us-east severity=page)"
+    },
+    {
+      "ts": "1789459260.000128",
+      "user": "jh",
+      "text": "^ expected, see above"
+    },
+    {
+      "ts": "1789476200.000135",
+      "user": "jh",
+      "text": "Payout batch done at 12:41 UTC, all September payouts sent. About six hours later than usual.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ]
+    }
+  ]
+}

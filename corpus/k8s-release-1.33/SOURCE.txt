@@ -1,0 +1,1 @@
+source: https://github.com/kubernetes/website/tree/release-1.33 (raw files fetched 2026-11-08), CC BY 4.0

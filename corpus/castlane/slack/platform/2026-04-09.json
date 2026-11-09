@@ -1,0 +1,202 @@
+{
+  "id": "slack/platform/2026-04-09.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#platform: raising the transcoder HPA max",
+  "url": "https://slack.castlane.internal/archives/C0YUOZUI/p1775743392000107",
+  "channel": "#platform",
+  "channel_id": "C0YUOZUI",
+  "incident": null,
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-04-09",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-04-09T14:20:10Z",
+  "messages": [
+    {
+      "ts": "1775743392.000107",
+      "user": "vi",
+      "text": "Now that the network migration backlog is mostly clear, can we revisit transcoder HPA max? It's still capped at 30 and we keep hitting it during the afternoon peak.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1775743392.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775743441.000114",
+          "user": "hq",
+          "text": "I was about to ask the same. We had 3 pods pinned at max for most of yesterday.",
+          "thread_ts": "1775743392.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1775743518.000121",
+      "user": "rs",
+      "text": "What are we actually buying by raising it to 45? More headroom, sure, but that means more nodes on the media pool and we're already paying for the migration overages this week.",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1775743518.000121",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775743562.000128",
+          "user": "pk",
+          "text": "Also the backlog isn't just raw throughput. A chunk of it is the same shows getting retried, so extra replicas may just spread the pain around.",
+          "thread_ts": "1775743518.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1775743664.000135",
+      "user": "vi",
+      "text": "Yeah. I checked the last 24h, queue depth spikes line up with the same 2 windows. If we add lanes for high priority jobs, we can keep normal jobs from starving without bumping the whole deployment.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1775743664.000135",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1775743699.000142",
+          "user": "hq",
+          "text": "Priority lanes in transcoder-slow too, or just transcoder?",
+          "thread_ts": "1775743664.000135"
+        },
+        {
+          "ts": "1775743735.000149",
+          "user": "vi",
+          "text": "Just transcoder for now. Slow lane is mostly long audio and it's not the thing saturating.",
+          "thread_ts": "1775743664.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1775743811.000156",
+      "user": "rs",
+      "text": "I like lanes more than a max increase. Raising to 45 is a blunt tool, and if the node pool is already tight we end up fighting kube scheduling instead of the backlog.",
+      "reactions": [
+        {
+          "name": "thumbsup",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1775743811.000156",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1775743862.000163",
+          "user": "pk",
+          "text": "Agree. We can reserve a priority lane for fresh uploads and keep retries lower.",
+          "thread_ts": "1775743811.000156"
+        },
+        {
+          "ts": "1775743888.000170",
+          "user": "hq",
+          "text": "And keep the HPA at 30 so we don't turn a backlog spike into a cluster cost spike.",
+          "thread_ts": "1775743811.000156"
+        }
+      ]
+    },
+    {
+      "ts": "1775743986.000177",
+      "user": "vi",
+      "text": "I can wire the lane split behind a flag, something like `transcoder.priority_lanes_enabled`, and ship it to staging first.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1775743986.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775744024.000184",
+          "user": "rs",
+          "text": "Good. We should watch whether feed rebuilds get indirectly affected too, but I think that's separate.",
+          "thread_ts": "1775743986.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1775744100.000191",
+      "user": "pk",
+      "text": "For the record, if we do nothing and just raise max to 45, I think the next complaint is going to be node pressure on prod-us-east. The pods are CPU heavy enough already.",
+      "reactions": [
+        {
+          "name": "warning",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1775744100.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775744137.000198",
+          "user": "hq",
+          "text": "Yep, and then we'd be tuning around node capacity instead of job scheduling policy.",
+          "thread_ts": "1775744100.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1775744242.000205",
+      "user": "rs",
+      "text": "Let's not change the HPA cap yet. Add priority lanes, measure for a day, then revisit if the 30 cap is still the limiting factor.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1775744242.000205",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775744283.000212",
+          "user": "vi",
+          "text": "Ack, I'll draft the flag and patch the queue routing.",
+          "thread_ts": "1775744242.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1775744381.000219",
+      "user": "hq",
+      "text": "Decision: keep transcoder HPA max at 30. Add priority lanes instead. If it still chokes after that, we can revisit capacity with actual data.",
+      "reactions": [
+        {
+          "name": "white_check_mark",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1775744381.000219",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1775744410.000226",
+          "user": "pk",
+          "text": "Works for me.",
+          "thread_ts": "1775744381.000219"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

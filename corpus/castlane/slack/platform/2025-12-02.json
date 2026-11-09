@@ -1,0 +1,224 @@
+{
+  "id": "slack/platform/2025-12-02.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#platform: wrong kubectl context",
+  "url": "https://slack.castlane.internal/archives/C0YUOZUI/p1764666723000107",
+  "channel": "#platform",
+  "channel_id": "C0YUOZUI",
+  "incident": null,
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2025-12-02",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2025-12-02T09:24:08Z",
+  "messages": [
+    {
+      "ts": "1764666723.000107",
+      "user": "ne",
+      "text": "almost fat-fingered `kubectl scale deploy feed-builder -n feeds --replicas=6` in prod-eu-west because my prompt colour looked too close to prod-us-east this morning. caught it before enter, but yeah, that's gross.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1764666723.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1764666761.000114",
+          "user": "hq",
+          "text": "wait, same command, wrong context? what prompt are you using?",
+          "thread_ts": "1764666723.000107"
+        },
+        {
+          "ts": "1764666785.000121",
+          "user": "ne",
+          "text": "plain bash prompt with a tiny cluster suffix. eu-west and us-east are both just kind of dark red on my terminal theme. not ideal.",
+          "thread_ts": "1764666723.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1764666817.000128",
+      "user": "gf",
+      "text": "we keep telling people to use `kubectx`, but context names are still too easy to gloss over when you're moving fast. a bad day is one typo away.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764666817.000128",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764666842.000135",
+          "user": "hq",
+          "text": "yeah, `kubectx` helps, but only if your eyes actually land on it. the rest is muscle memory and hope.",
+          "thread_ts": "1764666817.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1764666895.000142",
+      "user": "ne",
+      "text": "proposal: make prod contexts require confirmation on `kubectl` ops that change state. like a tiny `are you sure?` if context matches `prod-*` and verb is apply/scale/delete/patch.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        },
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764666895.000142",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1764666929.000149",
+          "user": "gf",
+          "text": "honestly yes, for prod contexts only. annoying is fine if it saves one bad scale or rollout.",
+          "thread_ts": "1764666895.000142"
+        },
+        {
+          "ts": "1764666958.000156",
+          "user": "hq",
+          "text": "could do a wrapper or kubectl plugin. i'd rather not make people fight it for read-only stuff though.",
+          "thread_ts": "1764666895.000142"
+        }
+      ]
+    },
+    {
+      "ts": "1764667004.000163",
+      "user": "ne",
+      "text": "something like:\n```bash\nif [[ \"$KUBE_CONTEXT\" == prod-* ]] && [[ \"$cmd\" =~ ^(apply|scale|delete|patch)$ ]]; then\n  read -r -p \"prod context $KUBE_CONTEXT, continue? [y/N] \" ans\nfi\n```",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1764667004.000163",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1764667030.000170",
+          "user": "gf",
+          "text": "yep. and make it impossible to bypass by accident, maybe require typing the full context name, not just y.",
+          "thread_ts": "1764667004.000163"
+        },
+        {
+          "ts": "1764667064.000177",
+          "user": "hq",
+          "text": "full context name is good. if you're doing destructive stuff in prod, one extra second is cheap.",
+          "thread_ts": "1764667004.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1764667113.000184",
+      "user": "ne",
+      "text": "also, can we stop pretending colour is enough? my terminal makes prod-us-east and prod-eu-west both look like angry tomato. maybe one should be blue and the other orange or something less ambiguous.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764667113.000184",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1764667141.000191",
+          "user": "hq",
+          "text": "i vote for impossible-to-ignore symbols too. maybe `prod-us-east` gets a `[WRITE]` marker and `prod-eu-west` gets `[SERVE]` or similar.",
+          "thread_ts": "1764667113.000184"
+        },
+        {
+          "ts": "1764667166.000198",
+          "user": "gf",
+          "text": "or just make prod contexts bright and staging grey. but the real fix is confirm prompts on mutation commands.",
+          "thread_ts": "1764667113.000184"
+        }
+      ]
+    },
+    {
+      "ts": "1764667208.000205",
+      "user": "hq",
+      "text": "i can wire up a `kubectx` alias in our shell bootstrap so prod contexts render with a warning prefix. if we do confirmation too, it's belt and suspenders.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764667208.000205",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764667244.000212",
+          "user": "ne",
+          "text": "that'd help. i am not trusting my eyeballs at 09:00 anymore.",
+          "thread_ts": "1764667208.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1764667275.000219",
+      "user": "gf",
+      "text": "we should probably write this up as a small platform ADR. not huge, just a standard for prod context prompts and colours, so everyon e stops inventing their own terminal aesthetics.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764667275.000219",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764667309.000226",
+          "user": "hq",
+          "text": "yeah, and tie it to the danger zone commands. maybe `kubectl edit` too.",
+          "thread_ts": "1764667275.000219"
+        }
+      ]
+    },
+    {
+      "ts": "1764667382.000233",
+      "user": "ne",
+      "text": "for now i'm going to change my prompt to scream louder and add a shell function that refuses to run `kubectl` against prod unless i type the full context twice. overkill, maybe. but i want the friction.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 5
+        }
+      ],
+      "thread_ts": "1764667382.000233",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1764667420.000240",
+          "user": "gf",
+          "text": "overkill is fine when the alternative is scaling the wrong cluster.",
+          "thread_ts": "1764667382.000233"
+        },
+        {
+          "ts": "1764667448.000247",
+          "user": "hq",
+          "text": "+1. i'll make a ticket for the shared wrapper and drop it in #platform once i've got a draft.",
+          "thread_ts": "1764667382.000233"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

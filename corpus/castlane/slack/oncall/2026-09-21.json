@@ -1,0 +1,203 @@
+{
+  "id": "slack/oncall/2026-09-21.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#oncall hand-off, week of 2026-09-21",
+  "url": "https://slack.castlane.internal/archives/C0EYUKXW/p1789978324000107",
+  "channel": "#oncall",
+  "channel_id": "C0EYUKXW",
+  "incident": null,
+  "allowed_groups": [
+    "eng",
+    "contractors"
+  ],
+  "version": 1,
+  "effective_at": "2026-09-21",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-09-21T08:23:40Z",
+  "messages": [
+    {
+      "ts": "1789978324.000107",
+      "user": "ext-ml",
+      "text": "Morning, handing off on-call for the week. Quiet overall, just a couple things from my side: redis-feeds had a memory warning overnight, and the cert on one of the feed-serving endpoints got renewed by hand after cert-manager missed the window. No user impact that I saw.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1789978324.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1789978381.000114",
+          "user": "gf",
+          "text": "ack, saw the redis warning in Grafana. It cleared after the cache pressure dropped?",
+          "thread_ts": "1789978324.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1789978424.000121",
+      "user": "ext-ml",
+      "text": "Yeah, it stayed warning only, no restart, no queue growth. I left a note in the incident log anyway.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1789978424.000121",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1789978460.000128",
+          "user": "tw",
+          "text": "got it. anything else I need to know before I take over?",
+          "thread_ts": "1789978424.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1789978503.000135",
+      "user": "ext-ml",
+      "text": "Nothing urgent. Feeds looked stable, transcode queue was flat, and payouts were quiet too. I did not touch any flags.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1789978503.000135",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1789978539.000142",
+          "user": "gf",
+          "text": "good week for once",
+          "thread_ts": "1789978503.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1789978578.000149",
+      "user": "tw",
+      "text": "nice. for the cert, was that just a one-off renewal on the edge side?",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1789978578.000149",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1789978612.000156",
+          "user": "ext-ml",
+          "text": "yeah, manual `kubectl` patch plus a quick reload. cert-manager is healthy again now.",
+          "thread_ts": "1789978578.000149"
+        },
+        {
+          "ts": "1789978630.000163",
+          "user": "gf",
+          "text": "thanks for fixing that before it became a pager thing",
+          "thread_ts": "1789978578.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1789978686.000170",
+      "user": "ext-ml",
+      "text": "One question before I drop, do contractors get access to postmortems too, or should I just ask around in #platform?",
+      "reactions": [
+        {
+          "name": "question",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1789978686.000170",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1789978721.000177",
+          "user": "tw",
+          "text": "ask in #platform. I do not want to guess policy in here.",
+          "thread_ts": "1789978686.000170"
+        },
+        {
+          "ts": "1789978742.000184",
+          "user": "gf",
+          "text": "+1, #platform is the right place for that",
+          "thread_ts": "1789978686.000170"
+        }
+      ]
+    },
+    {
+      "ts": "1789978811.000191",
+      "user": "tw",
+      "text": "I will keep an eye on redis-feeds and the certs today. Ping me if anything flares up while you are wrapping.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1789978811.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1789978844.000198",
+          "user": "ext-ml",
+          "text": "will do. passing the baton now.",
+          "thread_ts": "1789978811.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1789978890.000205",
+      "user": "gf",
+      "text": "hand-off looks good from my side. I will watch for any noise on the feed side.",
+      "reactions": [
+        {
+          "name": "ok_hand",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1789978890.000205",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1789978925.000212",
+          "user": "tw",
+          "text": "thanks",
+          "thread_ts": "1789978890.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1789978997.000219",
+      "user": "ext-ml",
+      "text": "Cool, I am out. Have a quiet one.",
+      "reactions": [
+        {
+          "name": "wave",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1789978997.000219",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1789979020.000226",
+          "user": "gf",
+          "text": "too late to jinx it now",
+          "thread_ts": "1789978997.000219"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

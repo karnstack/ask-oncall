@@ -1,0 +1,218 @@
+{
+  "id": "slack/oncall/2026-08-24.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#oncall hand-off, week of 2026-08-24",
+  "url": "https://slack.castlane.internal/archives/C0EYUKXW/p1787562000000107",
+  "channel": "#oncall",
+  "channel_id": "C0EYUKXW",
+  "incident": null,
+  "allowed_groups": [
+    "eng",
+    "contractors"
+  ],
+  "version": 1,
+  "effective_at": "2026-08-24",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-08-24T10:23:08Z",
+  "messages": [
+    {
+      "ts": "1787562000.000107",
+      "user": "ext-rb",
+      "text": "Monday hand-off for #oncall, using the handbook template.\n\nCurrent active items:\n- One open sev3, `TranscodeQueueBacklog`, tracking in #inc-4821.\n- Two silences active in Alertmanager:\n  - flapping `NodeFilesystemSpaceFillingUp` on a media node\n  - a noisy `KubePodNotReady` on a feeds pod after a restart\n\nWhat I looked at:\n- backlog is still elevated, but not growing fast right now\n- transcoders are healthy, just slower than normal because the queue is long\n- no sign yet of worker crash looping\n\nHanding off to @hq for the rest of Monday. I will be around for 30 min if you want context.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1787562000.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1787562131.000114",
+          "user": "hq",
+          "text": "ack, thanks. Can you paste the silence expiry for the filesystem one? I want to make sure it does not run too long.",
+          "thread_ts": "1787562000.000107"
+        },
+        {
+          "ts": "1787562182.000121",
+          "user": "ext-rb",
+          "text": "Yep, it expires at 11:15 UTC. It was set for 2h after the node disk cleanup started.",
+          "thread_ts": "1787562000.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1787562318.000128",
+      "user": "rs",
+      "text": "+1 on the handoff. For the backlog, are we still at the same burn as last night, or did it slow after the deploy?",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1787562318.000128",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1787562400.000135",
+          "user": "ext-rb",
+          "text": "It slowed a bit after the redeploy, but not enough to clear. Queue length is down maybe 8 percent from peak, still above the alert threshold.",
+          "thread_ts": "1787562318.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1787562607.000142",
+      "user": "hq",
+      "text": "I am taking over now.\n\nI see the silences in Alertmanager. For the `NodeFilesystemSpaceFillingUp`, is that the media node in prod-us-east or the eu-west serving node?",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1787562607.000142",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1787562682.000149",
+          "user": "ext-rb",
+          "text": "prod-us-east, one of the media nodes. It was paging from kubelet eviction pressure, but the cleanup job freed enough space that it stopped firing.",
+          "thread_ts": "1787562607.000142"
+        }
+      ]
+    },
+    {
+      "ts": "1787562895.000156",
+      "user": "rs",
+      "text": "For the other silence, how long is the `KubePodNotReady` one set for? I do not see any follow-up in the channel.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1787562895.000156",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1787562968.000163",
+          "user": "hq",
+          "text": "That one expires at 12:00 UTC. It was covering a single feeds pod while it restarted, no user impact.",
+          "thread_ts": "1787562895.000156"
+        }
+      ]
+    },
+    {
+      "ts": "1787563231.000170",
+      "user": "hq",
+      "text": "I am going to keep eyes on #inc-4821 and the transcode queue. If backlog keeps climbing I will check `redis-cli` and the worker pods next.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1787563231.000170",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1787563304.000177",
+          "user": "rs",
+          "text": "sounds good. if you need the last few checks, the queue was `transcode` only, `feed-rebuild` was flat.",
+          "thread_ts": "1787563231.000170"
+        }
+      ]
+    },
+    {
+      "ts": "1787563699.000184",
+      "user": "ext-rb",
+      "text": "One more thing before I drop: if the filesystem silence needs extending, I would rather not, the node is stable now. If it fires again, probably better to let it page.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1787563699.000184",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1787563743.000191",
+          "user": "hq",
+          "text": "agreed. I will let it expire unless it comes back.",
+          "thread_ts": "1787563699.000184"
+        }
+      ]
+    },
+    {
+      "ts": "1787564510.000198",
+      "user": "hq",
+      "text": "Quick update, backlog is still open but flat for the last 20 min. No new transcode errors, just slow drain.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1787564510.000198",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1787564592.000205",
+          "user": "rs",
+          "text": "good sign. if it stays flat through the hour, maybe the queue just needs time.",
+          "thread_ts": "1787564510.000198"
+        }
+      ]
+    },
+    {
+      "ts": "1787565927.000212",
+      "user": "hq",
+      "text": "Checked the silence expiry again, both look fine. filesystem silence still ends at 11:15 UTC, pod silence at 12:00 UTC.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1787565927.000212",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1787565970.000219",
+          "user": "ext-rb",
+          "text": "yep, that matches what I had in handoff.",
+          "thread_ts": "1787565927.000212"
+        }
+      ]
+    },
+    {
+      "ts": "1787566959.000226",
+      "user": "rs",
+      "text": "I am going to watch the sev3 for another bit. If the queue drops below alert threshold I will note it in #inc-4821.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1787566959.000226",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1787566988.000233",
+          "user": "hq",
+          "text": "ack, thanks.",
+          "thread_ts": "1787566959.000226"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

@@ -1,0 +1,469 @@
+{
+  "id": "slack/inc-2230/2026-10-06.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-2230: Alert noise after every page opened an incident",
+  "url": "https://slack.castlane.internal/archives/C04CFPDF/p1791255672000107",
+  "channel": "#inc-2230",
+  "channel_id": "C04CFPDF",
+  "incident": "INC-2230",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-10-06",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-10-06T18:40:02Z",
+  "messages": [
+    {
+      "ts": "1791255672.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeJobFailed (namespace=feeds cluster=prod-us-east severity=page) stats-hourly has failed",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791255672.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791255688.000114",
+          "user": "incident-bot",
+          "subtype": "bot_message",
+          "text": "INC-2230 declared by @rs. Sev4. KubeJobFailed for stats-hourly in feeds.",
+          "thread_ts": "1791255672.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1791255723.000121",
+      "user": "rs",
+      "text": "ugh, again. pulling grafana now. https://grafana.castlane.internal/d/platform-download-stats",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791255723.000121",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791255761.000128",
+          "user": "zi",
+          "text": "i'm looking at the job history, this smells like the same startup flake from last week",
+          "thread_ts": "1791255723.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1791255802.000135",
+      "user": "dara",
+      "text": "ack. is this the one that usually retries through and clears itself?",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791255802.000135",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791255830.000142",
+          "user": "rs",
+          "text": "yeah. but because of the new policy every page opens a fresh incident, so now it's loud loud",
+          "thread_ts": "1791255802.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1791255914.000149",
+      "user": "rs",
+      "text": "grafana shows failed then success a few minutes later. not a dead job, just a bad first attempt.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791255914.000149",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791255957.000156",
+          "user": "zi",
+          "text": "checking the wrapper logs. if it's the same pod startup timing thing, we can probably make it retry in place",
+          "thread_ts": "1791255914.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1791256089.000163",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeJobFailed (namespace=feeds cluster=prod-us-east severity=page) stats-hourly has failed",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791256089.000163",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791256102.000170",
+          "user": "dara",
+          "text": "there it is again. that's the second one this morning already?",
+          "thread_ts": "1791256089.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1791256180.000177",
+      "user": "rs",
+      "text": "yep. this is exactly the problem. the alert is valid but it's creating incident spam. not silencing yet though.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791256180.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791256211.000184",
+          "user": "zi",
+          "text": "agree. silencing now just hides the symptom and we keep missing the real pattern",
+          "thread_ts": "1791256180.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1791256346.000191",
+      "user": "dara",
+      "text": "can you confirm whether the job is actually missing runs or just failing first attempt?",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791256346.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791256385.000198",
+          "user": "rs",
+          "text": "one missed run earlier, but it recovered before the next schedule. data delay was like 10 to 15 min, not a full outage",
+          "thread_ts": "1791256346.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1791256518.000205",
+      "user": "zi",
+      "text": "i'm trying a manual run in staging first to see if the same image starts slow there too. not sure it'll reproduce, but worth a shot.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791256518.000205",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791256561.000212",
+          "user": "rs",
+          "text": "good. i also want to compare the job failures over the last 6h vs 30m",
+          "thread_ts": "1791256518.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1791256722.000219",
+      "user": "rs",
+      "text": "`changes(kube_job_status_failed{job=\"stats-hourly\", namespace=\"feeds\"}[6h])` is ugly. same pattern, multiple single-attempt failures, then it clears.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791256722.000219",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791256750.000226",
+          "user": "dara",
+          "text": "so not a one-off node issue then",
+          "thread_ts": "1791256722.000219"
+        }
+      ]
+    },
+    {
+      "ts": "1791256915.000233",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeJobFailed (namespace=feeds cluster=prod-us-east severity=page) stats-hourly has failed",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1791256915.000233",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791256929.000240",
+          "user": "rs",
+          "text": "third one. ok, this is enough to stop treating it as random",
+          "thread_ts": "1791256915.000233"
+        }
+      ]
+    },
+    {
+      "ts": "1791257057.000247",
+      "user": "zi",
+      "text": "staging manual run passed on first try. prod still looks like the pod starts before one dependency is ready. we can probably add a small backoff to the wrapper.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791257057.000247",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791257098.000254",
+          "user": "dara",
+          "text": "if we do that, can we keep the retry count low? i don't want this masking a real break for hours",
+          "thread_ts": "1791257057.000247"
+        }
+      ]
+    },
+    {
+      "ts": "1791257223.000261",
+      "user": "rs",
+      "text": "thinking 2 retries with a short backoff, then surface failure. enough to cover the transient startup thing without hiding sustained issues.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791257223.000261",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791257259.000268",
+          "user": "zi",
+          "text": "works for me. the first attempt is the flaky one, the second usually lands fine",
+          "thread_ts": "1791257223.000261"
+        }
+      ]
+    },
+    {
+      "ts": "1791257426.000275",
+      "user": "dara",
+      "text": "what about the alert itself, should we bump the `for`? 5m seems too eager for a batch job that self-heals in under 20m.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791257426.000275",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791257462.000282",
+          "user": "rs",
+          "text": "yeah, i was going to say that. 5m is turning a brief blip into a page. 20m seems safer",
+          "thread_ts": "1791257426.000275"
+        }
+      ]
+    },
+    {
+      "ts": "1791257688.000289",
+      "user": "zi",
+      "text": "i'm going to patch the job wrapper now in the deploy branch, but not roll yet. want to make sure we agree on the alert change first.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791257688.000289",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791257712.000296",
+          "user": "rs",
+          "text": "ack. let's do both together, otherwise we'll just keep opening incidents while the job is still twitchy",
+          "thread_ts": "1791257688.000289"
+        }
+      ]
+    },
+    {
+      "ts": "1791257939.000303",
+      "user": "dara",
+      "text": "please don't use a silence. i've seen this movie, we forget to unsilence and then real stuff gets missed.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791257939.000303",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791257964.000310",
+          "user": "rs",
+          "text": "yeah, no silence. fix the job, then tune the alert",
+          "thread_ts": "1791257939.000303"
+        }
+      ]
+    },
+    {
+      "ts": "1791258191.000317",
+      "user": "rs",
+      "text": "i'm writing the action items as i go. FEED-2914 for retry/backoff, FEED-2915 for the alert `for` change.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791258191.000317",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791258228.000324",
+          "user": "dara",
+          "text": "good. add the dashboard panel item too, this keeps being annoying to reason about in the moment",
+          "thread_ts": "1791258191.000317"
+        }
+      ]
+    },
+    {
+      "ts": "1791258487.000331",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeJobFailed (namespace=feeds cluster=prod-us-east severity=page) stats-hourly has failed",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791258487.000331",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791258511.000338",
+          "user": "rs",
+          "text": "fourth page from the same thing. yep, decision time, this is the fifth noisy stats-hourly incident of the week if you count the duplicates",
+          "thread_ts": "1791258487.000331"
+        }
+      ]
+    },
+    {
+      "ts": "1791258680.000345",
+      "user": "zi",
+      "text": "i've got the wrapper change ready. if we roll it with the `for` bump, we can stop the incident churn tonight.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791258680.000345",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791258723.000352",
+          "user": "dara",
+          "text": "do it. i'm fine calling this a batch-job flake problem, not a service outage",
+          "thread_ts": "1791258680.000345"
+        }
+      ]
+    },
+    {
+      "ts": "1791259544.000359",
+      "user": "rs",
+      "text": "rolled the retry change, and i'm updating the alert rule to 20m now. should calm the paging without hiding a sustained failure.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1791259544.000359",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791259578.000366",
+          "user": "zi",
+          "text": "watching the next scheduled run. if it passes cleanly, we can leave it and stop burning time on duplicates",
+          "thread_ts": "1791259544.000359"
+        }
+      ]
+    },
+    {
+      "ts": "1791260530.000373",
+      "user": "dara",
+      "text": "next run came up clean in prod. no new failure edge. looks like the transient startup issue was the whole thing.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791260530.000373",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791260569.000380",
+          "user": "rs",
+          "text": "nice. i'll keep this open until we get a full stable stretch, but this is the right fix",
+          "thread_ts": "1791260530.000373"
+        }
+      ]
+    },
+    {
+      "ts": "1791311951.000387",
+      "user": "rs",
+      "text": "24h of stability now, no new pages from stats-hourly. closing this out.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791311951.000387",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791312002.000394",
+          "user": "incident-bot",
+          "subtype": "bot_message",
+          "text": "INC-2230 resolved by @rs. Duration 15h 38m.",
+          "thread_ts": "1791311951.000387"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

@@ -1,0 +1,603 @@
+{
+  "id": "slack/inc-2028/2025-11-25.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-2028: One very large show held the feed rebuild lock for 40 minutes",
+  "url": "https://slack.castlane.internal/archives/C04CFNVE/p1764062292000107",
+  "channel": "#inc-2028",
+  "channel_id": "C04CFNVE",
+  "incident": "INC-2028",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2025-11-25",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2025-11-25T10:04:01Z",
+  "messages": [
+    {
+      "ts": "1764062292.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] FeedBuildLagHigh (namespace=feeds cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764062292.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1764062308.000114",
+          "user": "tw",
+          "text": "seeing this, pulling grafana now",
+          "thread_ts": "1764062292.000107"
+        },
+        {
+          "ts": "1764062321.000121",
+          "user": "zi",
+          "text": "ack, checking feed-builder queue",
+          "thread_ts": "1764062292.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1764062329.000128",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2028 declared by @zi. Sev3. Feed rebuild lag climbing in prod-us-east.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1764062329.000128",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764062342.000135",
+          "user": "ne",
+          "text": "joined, what changed?",
+          "thread_ts": "1764062329.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1764062360.000142",
+      "user": "zi",
+      "text": "lag is up to 11m and rising, looks like rebuild workers are jammed on one show maybe",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764062360.000142",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764062377.000149",
+          "user": "tw",
+          "text": "I am in feed-builder logs, seeing repeated same show id work",
+          "thread_ts": "1764062360.000142"
+        }
+      ]
+    },
+    {
+      "ts": "1764062411.000156",
+      "user": "ne",
+      "text": "can someone paste the queue depth? grafana panel is a bit noisy for me",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764062411.000156",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764062432.000163",
+          "user": "zi",
+          "text": "worker queue 148 and climbing, baseline is like single digits",
+          "thread_ts": "1764062411.000156"
+        }
+      ]
+    },
+    {
+      "ts": "1764062464.000170",
+      "user": "tw",
+      "text": "I think this started at 09:10, there was an artwork update event for a huge show. feed-builder picked it up and started a full rebuild.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764062464.000170",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1764062491.000177",
+          "user": "ne",
+          "text": "huge as in how huge?",
+          "thread_ts": "1764062464.000170"
+        },
+        {
+          "ts": "1764062504.000184",
+          "user": "tw",
+          "text": "around 12k episodes, so yeah not a normal one",
+          "thread_ts": "1764062464.000170"
+        }
+      ]
+    },
+    {
+      "ts": "1764062538.000191",
+      "user": "zi",
+      "text": "checking if the same show is requeued or if we have a stuck job. `kubectl -n feeds logs deploy/feed-builder --since=30m | grep feedlock`",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764062538.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764062559.000198",
+          "user": "tw",
+          "text": "I can run the admin tool too if needed",
+          "thread_ts": "1764062538.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1764062590.000205",
+      "user": "ne",
+      "text": "if it is the same show then the retries are probably eating the pool. would explain why unrelated rebuilds are waiting.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764062590.000205",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764062609.000212",
+          "user": "zi",
+          "text": "yeah looks like head of line blocking, not a crash",
+          "thread_ts": "1764062590.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1764062642.000219",
+      "user": "tw",
+      "text": "got it, same show id shows up over and over. lock is held, retries are coming back fast.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764062642.000219",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1764062658.000226",
+          "user": "ne",
+          "text": "so the lock is doing its job and still hurting us, nice",
+          "thread_ts": "1764062642.000219"
+        },
+        {
+          "ts": "1764062671.000233",
+          "user": "tw",
+          "text": "exactly",
+          "thread_ts": "1764062642.000219"
+        }
+      ]
+    },
+    {
+      "ts": "1764062717.000240",
+      "user": "zi",
+      "text": "trying to see if there is any recent deploy or flag change. `flagctl get feeds.writes_paused`",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764062717.000240",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764062733.000247",
+          "user": "zi",
+          "text": "false, nothing paused",
+          "thread_ts": "1764062717.000240"
+        }
+      ]
+    },
+    {
+      "ts": "1764062768.000254",
+      "user": "ne",
+      "text": "I do not think writes are the issue anyway. this smells like a single expensive rebuild path.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764062768.000254",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764062784.000261",
+          "user": "tw",
+          "text": "yep",
+          "thread_ts": "1764062768.000254"
+        }
+      ]
+    },
+    {
+      "ts": "1764062899.000268",
+      "user": "zi",
+      "text": "confirmed from logs, full rebuild is still running under feedlock for the same show. no crash, just busy. queue is getting hammered by retries.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764062899.000268",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764062922.000275",
+          "user": "ne",
+          "text": "can we stop the retries from occupying workers?",
+          "thread_ts": "1764062899.000268"
+        }
+      ]
+    },
+    {
+      "ts": "1764062955.000282",
+      "user": "tw",
+      "text": "not cleanly from here. if I kill the current job it will probably just resurface, and we lose where it is. better to let the big one finish unless someone has a safer knob.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764062955.000282",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764062981.000289",
+          "user": "zi",
+          "text": "agree, no manual kill yet",
+          "thread_ts": "1764062955.000282"
+        }
+      ]
+    },
+    {
+      "ts": "1764063027.000296",
+      "user": "ne",
+      "text": "I am checking whether private feeds are getting hit too, because they share the same workers.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764063027.000296",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764063049.000303",
+          "user": "ne",
+          "text": "yeah there are a few delayed refreshes but nothing broken",
+          "thread_ts": "1764063027.000296"
+        }
+      ]
+    },
+    {
+      "ts": "1764063098.000310",
+      "user": "zi",
+      "text": "queue depth still climbing. I am going to watch one worker pod and see if the same show just spins in and out.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764063098.000310",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764063116.000317",
+          "user": "tw",
+          "text": "watching the same",
+          "thread_ts": "1764063098.000310"
+        }
+      ]
+    },
+    {
+      "ts": "1764063186.000324",
+      "user": "tw",
+      "text": "yep, it is exactly that. same show retries keep getting scheduled, other rebuilds are waiting behind them.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764063186.000324",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764063204.000331",
+          "user": "ne",
+          "text": "that explains the lag curve",
+          "thread_ts": "1764063186.000324"
+        }
+      ]
+    },
+    {
+      "ts": "1764063291.000338",
+      "user": "zi",
+      "text": "I am holding off on any reruns or manual pokes. if this clears when the full rebuild ends, we know enough.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764063291.000338",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764063310.000345",
+          "user": "tw",
+          "text": "same",
+          "thread_ts": "1764063291.000338"
+        }
+      ]
+    },
+    {
+      "ts": "1764063358.000352",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] FeedBuildLagHigh (namespace=feeds cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764063358.000352",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764063372.000359",
+          "user": "ne",
+          "text": "still active, lag is now 26m",
+          "thread_ts": "1764063358.000352"
+        }
+      ]
+    },
+    {
+      "ts": "1764063464.000366",
+      "user": "zi",
+      "text": "the weird part is the lock is fine, but we treat the blocked same-show work like it should make progress. it cannot.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764063464.000366",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764063481.000373",
+          "user": "tw",
+          "text": "that is basically the bug, yeah",
+          "thread_ts": "1764063464.000366"
+        }
+      ]
+    },
+    {
+      "ts": "1764063620.000380",
+      "user": "ne",
+      "text": "grafana shows worker saturation mostly on feed-builder, not on the other namespaces. so this is isolated to feeds.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764063620.000380",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764063635.000387",
+          "user": "zi",
+          "text": "good, at least not a broader platform issue",
+          "thread_ts": "1764063620.000380"
+        }
+      ]
+    },
+    {
+      "ts": "1764063856.000394",
+      "user": "tw",
+      "text": "big rebuild just finished, lock released. waiting to see if the retries drain now.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1764063856.000394",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1764063871.000401",
+          "user": "zi",
+          "text": "nice, queue is starting to move",
+          "thread_ts": "1764063856.000394"
+        },
+        {
+          "ts": "1764063879.000408",
+          "user": "ne",
+          "text": "finally",
+          "thread_ts": "1764063856.000394"
+        }
+      ]
+    },
+    {
+      "ts": "1764063912.000415",
+      "user": "zi",
+      "text": "lag curve is dropping now, retries stopped blocking workers. still a bit behind but recovering.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1764063912.000415",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764063929.000422",
+          "user": "tw",
+          "text": "nice",
+          "thread_ts": "1764063912.000415"
+        }
+      ]
+    },
+    {
+      "ts": "1764064087.000429",
+      "user": "ne",
+      "text": "I checked a couple delayed shows, their rebuilds are going through again. no bad state so far.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764064087.000429",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764064104.000436",
+          "user": "zi",
+          "text": "same here",
+          "thread_ts": "1764064087.000429"
+        }
+      ]
+    },
+    {
+      "ts": "1764064361.000443",
+      "user": "tw",
+      "text": "queue is almost back to baseline. lag is under 8m and falling.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764064361.000443",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764064379.000450",
+          "user": "ne",
+          "text": "good enough to stop worrying, not good enough to forget",
+          "thread_ts": "1764064361.000443"
+        }
+      ]
+    },
+    {
+      "ts": "1764064638.000457",
+      "user": "zi",
+      "text": "down to normal-ish, but I want the alert fully clear before we close. I am grabbing exact timings from grafana.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1764064638.000457",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764064656.000464",
+          "user": "tw",
+          "text": "I have the log timestamps already",
+          "thread_ts": "1764064638.000457"
+        }
+      ]
+    },
+    {
+      "ts": "1764064989.000471",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[RESOLVED] FeedBuildLagHigh (namespace=feeds cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1764064989.000471",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1764065002.000478",
+          "user": "zi",
+          "text": "back to normal, closing out",
+          "thread_ts": "1764064989.000471"
+        }
+      ]
+    },
+    {
+      "ts": "1764065011.000485",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2028 resolved by @zi. Duration 00:53:19. Feed rebuild lag returned to normal.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 5
+        }
+      ],
+      "thread_ts": "1764065011.000485",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1764065024.000492",
+          "user": "ne",
+          "text": "good catch on the same-show retries, that was nasty",
+          "thread_ts": "1764065011.000485"
+        },
+        {
+          "ts": "1764065041.000499",
+          "user": "tw",
+          "text": "yeah, one giant show and a too-eager retry loop, classic combo",
+          "thread_ts": "1764065011.000485"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

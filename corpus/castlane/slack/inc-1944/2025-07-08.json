@@ -1,0 +1,581 @@
+{
+  "id": "slack/inc-1944/2025-07-08.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-1944: Duplicate payouts for 14 creators",
+  "url": "https://slack.castlane.internal/archives/C04CF7LQ/p1751954412000107",
+  "channel": "#inc-1944",
+  "channel_id": "C04CF7LQ",
+  "incident": "INC-1944",
+  "allowed_groups": [
+    "payouts-eng"
+  ],
+  "version": 1,
+  "effective_at": "2025-07-08",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2025-07-08T11:20:24Z",
+  "messages": [
+    {
+      "ts": "1751954412.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] PayoutBatchLate (namespace=payouts cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1751954412.000107",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1751954420.000114",
+          "user": "nd",
+          "text": "got it, looking at batch start now",
+          "thread_ts": "1751954412.000107"
+        },
+        {
+          "ts": "1751954431.000121",
+          "user": "jh",
+          "text": "i'm on payouts-worker logs",
+          "thread_ts": "1751954412.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1751954627.000128",
+      "user": "nd",
+      "text": "batch kicked off cleanly, seeing normal progress so far. leave it for a bit.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1751954627.000128",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751954645.000135",
+          "user": "cv",
+          "text": "ack, ping if it gets weird",
+          "thread_ts": "1751954627.000128"
+        }
+      ]
+    },
+    {
+      "ts": "1751954899.000142",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] KubeJobFailed (namespace=payouts cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1751954899.000142",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1751954913.000149",
+          "user": "jh",
+          "text": "huh. one of the transfer submit jobs just failed",
+          "thread_ts": "1751954899.000142"
+        },
+        {
+          "ts": "1751954929.000156",
+          "user": "nd",
+          "text": "provider timeout? checking the job payload",
+          "thread_ts": "1751954899.000142"
+        }
+      ]
+    },
+    {
+      "ts": "1751954998.000163",
+      "user": "jh",
+      "text": "seeing timeout on submit. looks like the job got far enough to POST, then hung waiting for response.",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1751954998.000163",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751955014.000170",
+          "user": "cv",
+          "text": "do we know if it actually reached the payment provider or just died client side?",
+          "thread_ts": "1751954998.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1751955086.000177",
+      "user": "nd",
+      "text": "not sure yet. i'm going to retry one failed job from `payouts` and watch the provider ref.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1751955086.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751955104.000184",
+          "user": "jh",
+          "text": "ok but only one, let's not fan this out until we know what's happening",
+          "thread_ts": "1751955086.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1751955182.000191",
+      "user": "nd",
+      "text": "retry done. weirdly it submitted again, new provider ref. that's not great.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1751955182.000191",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1751955201.000198",
+          "user": "jh",
+          "text": "wait, new ref as in new transfer? or same one with a different local id?",
+          "thread_ts": "1751955182.000191"
+        },
+        {
+          "ts": "1751955218.000205",
+          "user": "nd",
+          "text": "new transfer. i'm checking a second creator now to see if it's the same pattern",
+          "thread_ts": "1751955182.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1751955347.000212",
+      "user": "cv",
+      "text": "if the first one already made it through, we may be double-paying. can we stop retries for the batch?",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1751955347.000212",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751955362.000219",
+          "user": "jh",
+          "text": "agreed, pausing manual retries until we know what keying is doing",
+          "thread_ts": "1751955347.000212"
+        }
+      ]
+    },
+    {
+      "ts": "1751955404.000226",
+      "user": "nd",
+      "text": "i've got 2 creators now with 2 provider refs each. both from the retried path. pausing payouts.",
+      "reactions": [
+        {
+          "name": "warning",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1751955404.000226",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751955418.000233",
+          "user": "cv",
+          "text": "calling it out loud, do not retry anything else",
+          "thread_ts": "1751955404.000226"
+        }
+      ]
+    },
+    {
+      "ts": "1751955451.000240",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-1944 declared by @nd. Sev2. Duplicate payouts suspected during monthly batch. Use this channel for coordination.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1751955451.000240",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751955465.000247",
+          "user": "jh",
+          "text": "ok, incident declared",
+          "thread_ts": "1751955451.000240"
+        }
+      ]
+    },
+    {
+      "ts": "1751955618.000254",
+      "user": "jh",
+      "text": "pulling payout request rows for the affected batch. i want to compare original submit metadata vs retry metadata.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1751955618.000254",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751955644.000261",
+          "user": "nd",
+          "text": "i'm in the app too, checking the retry path code path and the job args",
+          "thread_ts": "1751955618.000254"
+        }
+      ]
+    },
+    {
+      "ts": "1751955789.000268",
+      "user": "cv",
+      "text": "can somebody confirm whether the provider timeout happened before or after the transfer was accepted? that's the key question.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1751955789.000268",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751955811.000275",
+          "user": "jh",
+          "text": "for at least one creator, provider accepted the first submit. our worker just didn't get the response in time",
+          "thread_ts": "1751955789.000268"
+        }
+      ]
+    },
+    {
+      "ts": "1751956075.000282",
+      "user": "nd",
+      "text": "found it. the retry path is minting a fresh idempotency key, not reusing the original payout identity.",
+      "reactions": [
+        {
+          "name": "facepalm",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1751956075.000282",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751956092.000289",
+          "user": "cv",
+          "text": "yeah, that would explain the duplicate refs",
+          "thread_ts": "1751956075.000282"
+        }
+      ]
+    },
+    {
+      "ts": "1751956226.000296",
+      "user": "jh",
+      "text": "i've got 8 creators with duplicate transfer refs so far. still counting.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1751956226.000296",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751956251.000303",
+          "user": "nd",
+          "text": "same. some are probably already final at the provider side, so we need to treat this as real money movement, not just logs",
+          "thread_ts": "1751956226.000296"
+        }
+      ]
+    },
+    {
+      "ts": "1751956443.000310",
+      "user": "cv",
+      "text": "should we freeze the rest of the batch and build the affected creator list first? i don't want more retries while we're still sorting this out.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1751956443.000310",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751956459.000317",
+          "user": "jh",
+          "text": "yes. no more retries. i can script the duplicate extraction from payouts data",
+          "thread_ts": "1751956443.000310"
+        }
+      ]
+    },
+    {
+      "ts": "1751956882.000324",
+      "user": "jh",
+      "text": "reconciliation is showing duplicate transfer refs for multiple creators. this is real, not a logging artifact.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1751956882.000324",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1751956899.000331",
+          "user": "nd",
+          "text": "how many do we have?",
+          "thread_ts": "1751956882.000324"
+        },
+        {
+          "ts": "1751956918.000338",
+          "user": "jh",
+          "text": "looking like a full list of 14. still verifying one by one",
+          "thread_ts": "1751956882.000324"
+        }
+      ]
+    },
+    {
+      "ts": "1751957286.000345",
+      "user": "nd",
+      "text": "pausing payout processing now. i'll keep the queue from moving until we know exactly what got duplicated.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1751957286.000345",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751957300.000352",
+          "user": "cv",
+          "text": "thanks. i'm going through the retry workflow with jh",
+          "thread_ts": "1751957286.000345"
+        }
+      ]
+    },
+    {
+      "ts": "1751958311.000359",
+      "user": "jh",
+      "text": "confirmed. retry path generates a different idempotency key every time. the key is tied to execution context, not creator+month.",
+      "reactions": [
+        {
+          "name": "boom",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1751958311.000359",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1751958329.000366",
+          "user": "nd",
+          "text": "ugh. that's the bug.",
+          "thread_ts": "1751958311.000359"
+        },
+        {
+          "ts": "1751958346.000373",
+          "user": "cv",
+          "text": "so the provider did exactly what it was told",
+          "thread_ts": "1751958311.000359"
+        }
+      ]
+    },
+    {
+      "ts": "1751959203.000380",
+      "user": "nd",
+      "text": "duplicate list is final at 14 creators. sending the names into our tracker now and starting recovery planning.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1751959203.000380",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751959228.000387",
+          "user": "jh",
+          "text": "copy. i'll keep the data pulls going for transfer refs and timestamps",
+          "thread_ts": "1751959203.000380"
+        }
+      ]
+    },
+    {
+      "ts": "1751960717.000394",
+      "user": "cv",
+      "text": "we've got the recoverable set separated. starting reversals for the ones the provider can still unwind.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1751960717.000394",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751960741.000401",
+          "user": "nd",
+          "text": "i'll stay on verification and make sure no one flips the batch back on early",
+          "thread_ts": "1751960717.000394"
+        }
+      ]
+    },
+    {
+      "ts": "1751962792.000408",
+      "user": "jh",
+      "text": "first few reversals landed cleanly. keeping the same reconciliation sheet updated as we go.",
+      "reactions": [
+        {
+          "name": "relieved",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1751962792.000408",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751962811.000415",
+          "user": "cv",
+          "text": "good. i'm watching for any partials or odd statuses",
+          "thread_ts": "1751962792.000408"
+        }
+      ]
+    },
+    {
+      "ts": "1751965844.000422",
+      "user": "cv",
+      "text": "11 reversals recovered successfully. 3 still pending provider response / not recoverable yet.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1751965844.000422",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751965862.000429",
+          "user": "nd",
+          "text": "ok, keep pushing on the remaining 3. if they don't come back we need finance in the loop",
+          "thread_ts": "1751965844.000422"
+        }
+      ]
+    },
+    {
+      "ts": "1751970918.000436",
+      "user": "jh",
+      "text": "the last 3 are not recoverable. amounts total 4,860.00 USD. flagging for write-off and moving on.",
+      "reactions": [
+        {
+          "name": "sad",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1751970918.000436",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751970939.000443",
+          "user": "cv",
+          "text": "copy. that's the line we needed to close",
+          "thread_ts": "1751970918.000436"
+        }
+      ]
+    },
+    {
+      "ts": "1751971947.000450",
+      "user": "nd",
+      "text": "hotfix is in place in `payouts` now, and the guard to persist the payout identity across retries is holding in checks.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1751971947.000450",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751971964.000457",
+          "user": "jh",
+          "text": "i'm doing one more pass on the manual retry path before we unpause",
+          "thread_ts": "1751971947.000450"
+        }
+      ]
+    },
+    {
+      "ts": "1751973178.000464",
+      "user": "jh",
+      "text": "verification looks good. retry path now reuses the original creator/month key, and the manual approval checklist is in the runbook.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1751973178.000464",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751973200.000471",
+          "user": "cv",
+          "text": "ok, no more open questions from my side",
+          "thread_ts": "1751973178.000464"
+        }
+      ]
+    },
+    {
+      "ts": "1751973609.000478",
+      "user": "nd",
+      "text": "payout queue resumed after checking the hotfix and the safeguards. thanks both.",
+      "reactions": [
+        {
+          "name": "check",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1751973609.000478",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1751973624.000485",
+          "user": "incident-bot",
+          "subtype": "bot_message",
+          "text": "INC-1944 resolved by @nd. Duration 5h 20m.",
+          "thread_ts": "1751973609.000478"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

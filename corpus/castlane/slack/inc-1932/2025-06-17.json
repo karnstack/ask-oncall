@@ -1,0 +1,446 @@
+{
+  "id": "slack/inc-1932/2025-06-17.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-1932: 401s for renewed private feed subscribers",
+  "url": "https://slack.castlane.internal/archives/C04CF7KT/p1750147812000107",
+  "channel": "#inc-1932",
+  "channel_id": "C04CF7KT",
+  "incident": "INC-1932",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2025-06-17",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2025-06-17T10:12:18Z",
+  "messages": [
+    {
+      "ts": "1750147812.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] TargetDown (namespace=feeds cluster=prod-eu-west severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1750147812.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750147828.000114",
+          "user": "ok",
+          "text": "hmm, that's probably noisy but I'm checking private-feeds anyway",
+          "thread_ts": "1750147812.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1750147921.000121",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] Watchdog (namespace=feeds cluster=prod-eu-west severity=none)",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1750147921.000121",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750147938.000128",
+          "user": "zi",
+          "text": "watchdog plus one TargetDown, ok. looking at 401s in prod-eu-west",
+          "thread_ts": "1750147921.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1750148047.000135",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-1932 declared by @ay. Sev2. 401s for renewed private feed subscribers. private-feeds in prod-eu-west.",
+      "reactions": [
+        {
+          "name": "ack",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1750148047.000135",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750148061.000142",
+          "user": "ay",
+          "text": "i'm on it. starting from feed auth path, not touching anything broad yet",
+          "thread_ts": "1750148047.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1750148134.000149",
+      "user": "ok",
+      "text": "grafana shows the 401 rate climbing on private-feeds. it's not total outage, seems to hit some renewed subs only",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1750148134.000149",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750148156.000156",
+          "user": "zi",
+          "text": "yep, seeing requests with valid-looking pft_ urls but auth failing on the endpoint",
+          "thread_ts": "1750148134.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1750148222.000163",
+      "user": "ay",
+      "text": "checking recent sync activity. if this is cache staleness, older tokens should still work while newly renewed ones miss",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1750148222.000163",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750148239.000170",
+          "user": "ok",
+          "text": "that matches what i'm seeing, some feeds fetch fine, then retrying apps get 401 on the same show",
+          "thread_ts": "1750148222.000163"
+        }
+      ]
+    },
+    {
+      "ts": "1750148321.000177",
+      "user": "zi",
+      "text": "can confirm from logs, same subscriber can flip from success to 401 depending on which token got renewed. smells like allow-list lag",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1750148321.000177",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750148344.000184",
+          "user": "ay",
+          "text": "pulling the worker logs now",
+          "thread_ts": "1750148321.000177"
+        }
+      ]
+    },
+    {
+      "ts": "1750148469.000191",
+      "user": "ay",
+      "text": "found a bad renewal record in the sync loop. it stopped advancing after that entry, so later renewals weren't making it into the cache",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1750148469.000191",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750148495.000198",
+          "user": "ok",
+          "text": "ugh, so payment side is ahead of feed auth. that's the split",
+          "thread_ts": "1750148469.000191"
+        }
+      ]
+    },
+    {
+      "ts": "1750148538.000205",
+      "user": "zi",
+      "text": "i'm comparing last successful sync time vs current. cache is definitely stale for newly renewed subs, older entries still admitted",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1750148538.000205",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750148561.000212",
+          "user": "ay",
+          "text": "good, no sign of a wider auth regression then",
+          "thread_ts": "1750148538.000205"
+        }
+      ]
+    },
+    {
+      "ts": "1750148696.000219",
+      "user": "ok",
+      "text": "should we bounce the worker or restart the sync job? don't want to poke the endpoint if the cache is just frozen",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1750148696.000219",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750148713.000226",
+          "user": "ay",
+          "text": "manual restart of the sync worker is the least risky path. i'll do that after one more look at the malformed record",
+          "thread_ts": "1750148696.000219"
+        }
+      ]
+    },
+    {
+      "ts": "1750148883.000233",
+      "user": "ay",
+      "text": "confirmed. malformed record is the blocker. no token exposure in the logs, just parse failure then the loop stalls",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1750148883.000233",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750148906.000240",
+          "user": "zi",
+          "text": "good. privacy-wise that's still sensitive but at least we're not dealing with leak symptoms",
+          "thread_ts": "1750148883.000233"
+        }
+      ]
+    },
+    {
+      "ts": "1750149047.000247",
+      "user": "ay",
+      "text": "restarting the subscription sync worker now",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1750149047.000247",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750149062.000254",
+          "user": "ok",
+          "text": "ack, watching 401s and cache freshness",
+          "thread_ts": "1750149047.000247"
+        }
+      ]
+    },
+    {
+      "ts": "1750149311.000261",
+      "user": "ay",
+      "text": "restart is in. sync loop is advancing again, new records are being picked up",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1750149311.000261",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750149339.000268",
+          "user": "zi",
+          "text": "seeing fresh cache updates land. still a few 401s but rate is dropping",
+          "thread_ts": "1750149311.000261"
+        }
+      ]
+    },
+    {
+      "ts": "1750149718.000275",
+      "user": "ok",
+      "text": "some podcast apps are hammering retries, total 401 count still noisy even though fresh renewals are starting to work",
+      "reactions": [
+        {
+          "name": "thinking_face",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1750149718.000275",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750149740.000282",
+          "user": "ay",
+          "text": "yeah, expected retry churn. need to wait for the cached misses to age out",
+          "thread_ts": "1750149718.000275"
+        }
+      ]
+    },
+    {
+      "ts": "1750150162.000289",
+      "user": "zi",
+      "text": "one thing, dashboard still shows a lag on the sync worker, but it's not growing now. i think we're past the stall",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1750150162.000289",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750150179.000296",
+          "user": "ay",
+          "text": "agree, watching the slope instead of the raw count",
+          "thread_ts": "1750150162.000289"
+        }
+      ]
+    },
+    {
+      "ts": "1750150934.000303",
+      "user": "ok",
+      "text": "first renewed subscribers are succeeding again from my test device. feed fetch returns 200 now",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1750150934.000303",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750150953.000310",
+          "user": "zi",
+          "text": "same here, and retries are tapering off",
+          "thread_ts": "1750150934.000303"
+        }
+      ]
+    },
+    {
+      "ts": "1750151887.000317",
+      "user": "ay",
+      "text": "can we confirm no more stale-cache misses on newly renewed accounts? i'm checking a few known impacted subs",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1750151887.000317",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750151909.000324",
+          "user": "ok",
+          "text": "i've got 3 of 3 green on renewed tokens from the last hour",
+          "thread_ts": "1750151887.000317"
+        }
+      ]
+    },
+    {
+      "ts": "1750153286.000331",
+      "user": "zi",
+      "text": "401 rate is back at baseline. no new misses in the last 20 min",
+      "reactions": [
+        {
+          "name": "relieved",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1750153286.000331",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750153304.000338",
+          "user": "ay",
+          "text": "good. keep it open a bit longer for verification",
+          "thread_ts": "1750153286.000331"
+        }
+      ]
+    },
+    {
+      "ts": "1750153923.000345",
+      "user": "ok",
+      "text": "still clean. retry traffic normalized too, nothing unusual in private-feeds logs",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1750153923.000345",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750153939.000352",
+          "user": "zi",
+          "text": "yep, looks steady",
+          "thread_ts": "1750153923.000345"
+        }
+      ]
+    },
+    {
+      "ts": "1750154897.000359",
+      "user": "ay",
+      "text": "i've got enough to close. impact was feed-layer auth failures only, no evidence of token exposure or unauthorized access",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1750154897.000359",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750154921.000366",
+          "user": "ok",
+          "text": "+1",
+          "thread_ts": "1750154897.000359"
+        }
+      ]
+    },
+    {
+      "ts": "1750155123.000373",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-1932 resolved by @ay. Duration 2h 2m. private-feeds renewed subscriber 401s mitigated.",
+      "reactions": [
+        {
+          "name": "ack",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1750155123.000373",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1750155138.000380",
+          "user": "zi",
+          "text": "will file the followups for staleness alerting and malformed-record quarantine",
+          "thread_ts": "1750155123.000373"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

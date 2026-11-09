@@ -1,0 +1,105 @@
+{
+  "id": "slack/inc-2276/2026-10-21.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-2276: pg-feeds leader on a degraded volume, controlled switchover",
+  "url": "https://slack.castlane.internal/archives/C09PK2276/p1792550324000107",
+  "channel": "#inc-2276",
+  "channel_id": "C09PK2276",
+  "incident": "INC-2276",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-10-21",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-10-21T09:15:42Z",
+  "messages": [
+    {
+      "ts": "1792550324.000107",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] FeedBuildLagHigh (namespace=feeds cluster=prod-us-east severity=page)\nfeed_builder_lag_seconds > 300 for 10m"
+    },
+    {
+      "ts": "1792550410.000114",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2276 declared by @hq. Sev2. FeedBuildLagHigh, pg-feeds slow. IC: @hq."
+    },
+    {
+      "ts": "1792550465.000121",
+      "user": "hq",
+      "text": "pg-feeds-0 (leader) is slow. iostat on the node shows ~900ms await on its volume, dmesg has I/O errors for the disk. want to move the leader off it"
+    },
+    {
+      "ts": "1792550520.000128",
+      "user": "hq",
+      "text": "asked #ask-oncall \"how do I fail over postgres?\", it gave me the repmgr steps from postgres-failover.md v2. trying"
+    },
+    {
+      "ts": "1792550671.000135",
+      "user": "hq",
+      "text": "`repmgr -f /etc/repmgr.conf standby switchover --siblings-follow --dry-run` on pg-feeds-1 -> `bash: repmgr: command not found`"
+    },
+    {
+      "ts": "1792550712.000142",
+      "user": "hq",
+      "text": "no /etc/repmgr.conf either. are we not on repmgr??"
+    },
+    {
+      "ts": "1792550763.000149",
+      "user": "hq",
+      "text": "ok. we're on patroni since june, runbook v3. #ask-oncall cited a page that doesn't exist any more. lost 4 min"
+    },
+    {
+      "ts": "1792550840.000156",
+      "user": "hq",
+      "text": "`flagctl set feeds.writes_paused true --reason \"INC-2276 pg-feeds switchover\"`"
+    },
+    {
+      "ts": "1792550910.000163",
+      "user": "hq",
+      "text": "cl_active for feed_builder at 0"
+    },
+    {
+      "ts": "1792551002.000170",
+      "user": "hq",
+      "text": "`kubectl -n feeds exec -it pg-feeds-0 -c postgres -- patronictl switchover pg-feeds --leader pg-feeds-0 --candidate pg-feeds-1 --force`"
+    },
+    {
+      "ts": "1792551075.000177",
+      "user": "hq",
+      "text": "pg-feeds-1 is Leader, TL 15. pg-feeds-0 replica, streaming. RECONNECT feeds done on all 3 pgbouncer pods"
+    },
+    {
+      "ts": "1792551220.000184",
+      "user": "hq",
+      "text": "`flagctl set feeds.writes_paused false --reason \"INC-2276 done\"`"
+    },
+    {
+      "ts": "1792551731.000191",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[RESOLVED] FeedBuildLagHigh (namespace=feeds cluster=prod-us-east)"
+    },
+    {
+      "ts": "1792551900.000198",
+      "user": "hq",
+      "text": "cordoned the node, ticket for the volume PLAT-4459. resolving"
+    },
+    {
+      "ts": "1792551920.000205",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2276 resolved by @hq. Duration 25m. Postmortem owner: @hq."
+    },
+    {
+      "ts": "1792574142.000212",
+      "user": "dara",
+      "text": "looked at why #ask-oncall said repmgr. v2 was deleted from the runbooks registry on 2026-06-18, but the nightly job only upserts what it reads, so v2's chunks never left the index. there is also a copy of v2 in wiki-export-2024/Postgres_Failover.md. fixing both, details in the postmortem"
+    }
+  ]
+}

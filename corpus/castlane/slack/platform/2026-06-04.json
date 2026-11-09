@@ -1,0 +1,226 @@
+{
+  "id": "slack/platform/2026-06-04.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#platform: Patroni switchover practice in staging",
+  "url": "https://slack.castlane.internal/archives/C0YUOZUI/p1780585331000107",
+  "channel": "#platform",
+  "channel_id": "C0YUOZUI",
+  "incident": null,
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-06-04",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-06-04T15:21:04Z",
+  "messages": [
+    {
+      "ts": "1780585331.000107",
+      "user": "mbe",
+      "text": "Quick heads up, I want to do a practice session in staging before the cutover. Thinking tomorrow, 2026-06-05, in staging-us-east, just to walk through the Patroni-backed flow and make sure everyone is comfortable with the steps.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1780585331.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1780585382.000114",
+          "user": "hq",
+          "text": "works for me, I can join",
+          "thread_ts": "1780585331.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1780585458.000121",
+      "user": "tw",
+      "text": "I am in too. Bring questions, even the annoying ones, I'd rather answer them before we touch prod.",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1780585458.000121",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1780585501.000128",
+          "user": "dara",
+          "text": "same, I'll block time",
+          "thread_ts": "1780585458.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1780585587.000135",
+      "user": "mbe",
+      "text": "Cool. Let's keep it focused on staging-us-east, with hq, tw, dara, and me. If others want to listen in, that's fine, but main goal is the walkthrough and Q&A.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1780585587.000135",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1780585630.000142",
+          "user": "hq",
+          "text": "good, less chaos that way",
+          "thread_ts": "1780585587.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1780585724.000149",
+      "user": "dara",
+      "text": "What time tomorrow?",
+      "thread_ts": "1780585724.000149",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1780585752.000156",
+          "user": "mbe",
+          "text": "09:30 UTC works for me.",
+          "thread_ts": "1780585724.000149"
+        },
+        {
+          "ts": "1780585780.000163",
+          "user": "tw",
+          "text": "fine by me",
+          "thread_ts": "1780585724.000149"
+        }
+      ]
+    },
+    {
+      "ts": "1780585856.000170",
+      "user": "mbe",
+      "text": "Agenda is simple, 30 to 45 mins. First the staging namespace setup, then the Patroni bits, then a dry run of the cutover checklist, then questions.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1780585856.000170",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1780585891.000177",
+          "user": "hq",
+          "text": "nice, that should cover it",
+          "thread_ts": "1780585856.000170"
+        }
+      ]
+    },
+    {
+      "ts": "1780585939.000184",
+      "user": "tw",
+      "text": "Please bring any weird edge cases you are worried about, especially around reads during the switch.",
+      "reactions": [
+        {
+          "name": "thread",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1780585939.000184",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1780585978.000191",
+          "user": "mbe",
+          "text": "yeah exactly, I'd like those surfaced in staging instead of on the day.",
+          "thread_ts": "1780585939.000184"
+        }
+      ]
+    },
+    {
+      "ts": "1780586043.000198",
+      "user": "dara",
+      "text": "I can also ask a couple of questions about rollback timing and what we expect people to watch for in the room.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1780586043.000198",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1780586081.000205",
+          "user": "mbe",
+          "text": "perfect, bring all of that.",
+          "thread_ts": "1780586043.000198"
+        }
+      ]
+    },
+    {
+      "ts": "1780586182.000212",
+      "user": "hq",
+      "text": "Should we keep it to platform folks only, or invite anyone from feeds too?",
+      "thread_ts": "1780586182.000212",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1780586225.000219",
+          "user": "mbe",
+          "text": "For this one, just platform. If feeds has questions, send them over and we can fold them in.",
+          "thread_ts": "1780586182.000212"
+        }
+      ]
+    },
+    {
+      "ts": "1780586317.000226",
+      "user": "tw",
+      "text": "Sounds good. staging-us-east, tomorrow 09:30 UTC, hq tw dara and mbe, questions welcome.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1780586317.000226",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1780586351.000233",
+          "user": "dara",
+          "text": "yep, I'll be there",
+          "thread_ts": "1780586317.000226"
+        }
+      ]
+    },
+    {
+      "ts": "1780586426.000240",
+      "user": "mbe",
+      "text": "I'll post the calendar hold shortly. Bring questions, even the ones you think are too small.",
+      "reactions": [
+        {
+          "name": "white_check_mark",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1780586426.000240",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1780586464.000247",
+          "user": "hq",
+          "text": "ack",
+          "thread_ts": "1780586426.000240"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

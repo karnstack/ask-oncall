@@ -1,0 +1,210 @@
+{
+  "id": "slack/incidents/2026-10-14.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#incidents, 2026-10-14",
+  "url": "https://slack.castlane.internal/archives/C0LUFLQ2/p1791969124000107",
+  "channel": "#incidents",
+  "channel_id": "C0LUFLQ2",
+  "incident": null,
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-10-14",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-10-14T13:10:41Z",
+  "messages": [
+    {
+      "ts": "1791969124.000107",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2253 declared by @rs. Sev3. [FIRING:1] KubeJobFailed (namespace=feeds cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791969124.000107",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791969138.000114",
+          "user": "rs",
+          "text": "stats-hourly flaked on a transient db timeout, rerunning now.",
+          "thread_ts": "1791969124.000107"
+        }
+      ]
+    },
+    {
+      "ts": "1791969251.000121",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2253 resolved by @rs. Duration 0:02:07.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        }
+      ],
+      "thread_ts": "1791969251.000121",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791969264.000128",
+          "user": "zi",
+          "text": "nice, job is green again.",
+          "thread_ts": "1791969251.000121"
+        }
+      ]
+    },
+    {
+      "ts": "1791972225.000135",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2254 declared by @zi. Sev3. [FIRING:1] TargetDown (namespace=feeds cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791972225.000135",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1791972242.000142",
+          "user": "zi",
+          "text": "redis_exporter on one node missed a scrape, looks like a restart blip.",
+          "thread_ts": "1791972225.000135"
+        },
+        {
+          "ts": "1791972261.000149",
+          "user": "hq",
+          "text": "seeing it recover already, no customer impact.",
+          "thread_ts": "1791972225.000135"
+        }
+      ]
+    },
+    {
+      "ts": "1791972309.000156",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2254 resolved by @zi. Duration 0:01:24.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791972309.000156",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791972319.000163",
+          "user": "yu",
+          "text": "tiny one, thanks.",
+          "thread_ts": "1791972309.000156"
+        }
+      ]
+    },
+    {
+      "ts": "1791977253.000170",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2255 declared by @hq. Sev3. [FIRING:1] CPUThrottlingHigh (namespace=feeds cluster=prod-us-east severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 1
+        }
+      ],
+      "thread_ts": "1791977253.000170",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791977270.000177",
+          "user": "hq",
+          "text": "feed-builder got nudged by a burst of rebuilds, scaling should clear it.",
+          "thread_ts": "1791977253.000170"
+        }
+      ]
+    },
+    {
+      "ts": "1791977406.000184",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2255 resolved by @hq. Duration 0:02:33.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 4
+        }
+      ],
+      "thread_ts": "1791977406.000184",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791977418.000191",
+          "user": "rs",
+          "text": "looks stable again.",
+          "thread_ts": "1791977406.000184"
+        }
+      ]
+    },
+    {
+      "ts": "1791983299.000198",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2256 declared by @yu. Sev3. [FIRING:1] KubePodNotReady (namespace=edge cluster=prod-eu-west severity=warning)",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791983299.000198",
+      "reply_count": 2,
+      "replies": [
+        {
+          "ts": "1791983321.000205",
+          "user": "yu",
+          "text": "one cdn-edge pod was stuck on a bad probe, restarting fixed it.",
+          "thread_ts": "1791983299.000198"
+        },
+        {
+          "ts": "1791983343.000212",
+          "user": "zi",
+          "text": "feeds are fine, just edge noise.",
+          "thread_ts": "1791983299.000198"
+        }
+      ]
+    },
+    {
+      "ts": "1791983427.000219",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2256 resolved by @yu. Duration 0:02:08.",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 2
+        }
+      ],
+      "thread_ts": "1791983427.000219",
+      "reply_count": 1,
+      "replies": [
+        {
+          "ts": "1791983441.000226",
+          "user": "hq",
+          "text": "good catch.",
+          "thread_ts": "1791983427.000219"
+        }
+      ]
+    }
+  ],
+  "generated": true
+}

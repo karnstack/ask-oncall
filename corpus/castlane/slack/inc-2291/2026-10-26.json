@@ -1,0 +1,236 @@
+{
+  "id": "slack/inc-2291/2026-10-26.json",
+  "source": "slack",
+  "type": "slack",
+  "title": "#inc-2291: PgBouncerPoolSaturated on pgbouncer-feeds (prod-us-east, then prod-eu-west)",
+  "url": "https://slack.castlane.internal/archives/C09QX2291/p1792983962000107",
+  "channel": "#inc-2291",
+  "channel_id": "C09QX2291",
+  "incident": "INC-2291",
+  "allowed_groups": [
+    "eng"
+  ],
+  "version": 1,
+  "effective_at": "2026-10-26",
+  "superseded_by": null,
+  "is_current": true,
+  "deleted_at": null,
+  "updated_at": "2026-10-26T04:20:02Z",
+  "messages": [
+    {
+      "ts": "1792983962.000107",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2291 declared by @tw. Sev2. `PgBouncerPoolSaturated` on pgbouncer-feeds (cluster prod-us-east). IC: @tw. Status page: not posted."
+    },
+    {
+      "ts": "1792983969.000114",
+      "user": "alertmanager",
+      "subtype": "bot_message",
+      "text": "[FIRING:1] PgBouncerPoolSaturated (namespace=feeds database=feeds cluster=prod-us-east severity=page)\nsum by (namespace, database) (pgbouncer_pools_client_waiting_connections) > 10 for 3m\nRunbook: https://runbooks.castlane.internal/pgbouncer"
+    },
+    {
+      "ts": "1792983990.000121",
+      "user": "tw",
+      "text": "paged for pgbouncer-feeds. cl_waiting 300+ on all 3 pods, feed-builder erroring"
+    },
+    {
+      "ts": "1792984075.000128",
+      "user": "tw",
+      "text": "feed-builder logs full of `FATAL: sorry, too many clients already` (SQLSTATE 53300). some `query_wait_timeout` too"
+    },
+    {
+      "ts": "1792984120.000135",
+      "user": "tw",
+      "text": "feed fetches ~9x normal. looks like one episode went viral, top show in the charts tonight. feed-builder HPA maxed at 40, KubeHpaMaxedOut firing as well"
+    },
+    {
+      "ts": "1792984212.000142",
+      "user": "tw",
+      "text": "following the runbook https://runbooks.castlane.internal/pgbouncer . pool is 40 like it says. scaling out"
+    },
+    {
+      "ts": "1792984230.000149",
+      "user": "tw",
+      "text": "`kubectl -n feeds scale deploy/pgbouncer-feeds --replicas=4`"
+    },
+    {
+      "ts": "1792984385.000156",
+      "user": "tw",
+      "text": "worse?? more 53300 not fewer. /feed error rate 4% -> 11%"
+    },
+    {
+      "ts": "1792984460.000163",
+      "user": "rs",
+      "text": "here, secondary. want me to look at the pg side?"
+    },
+    {
+      "ts": "1792984481.000170",
+      "user": "tw",
+      "text": "yes pls"
+    },
+    {
+      "ts": "1792984618.000177",
+      "user": "rs",
+      "text": "pg-feeds-0 has 397 connections. max_connections is 400. it's full"
+    },
+    {
+      "ts": "1792984650.000184",
+      "user": "rs",
+      "text": "so it's not pgbouncer that's out of room, postgres is out of slots"
+    },
+    {
+      "ts": "1792984682.000191",
+      "user": "tw",
+      "text": "paging data platform"
+    },
+    {
+      "ts": "1792984815.000198",
+      "user": "tw",
+      "text": "@ask-oncall how do I see how many clients are waiting on pgbouncer-feeds",
+      "thread_ts": "1792984815.000198",
+      "reply_count": 5,
+      "replies": [
+        {
+          "ts": "1792984819.000205",
+          "user": "ask-oncall",
+          "subtype": "bot_message",
+          "text": "Connect to the admin console on one pod and run `SHOW POOLS;` [1]. `cl_waiting` is the number of clients waiting for a server connection, and `sv_active` equal to the pool size means the pool is full [1].\n```\nkubectl -n feeds exec deploy/pgbouncer-feeds -- psql -h 127.0.0.1 -p 6432 -U pgbouncer pgbouncer\n```\n[1] PgBouncer (pgbouncer-feeds, pgbouncer-payouts)",
+          "thread_ts": "1792984815.000198"
+        },
+        {
+          "ts": "1792984862.000212",
+          "user": "tw",
+          "text": "and on the replica?",
+          "thread_ts": "1792984815.000198"
+        },
+        {
+          "ts": "1792984866.000219",
+          "user": "ask-oncall",
+          "subtype": "bot_message",
+          "text": "A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time [1]. To check how many replicas are available, run `kubectl get rs` [1].\n[1] ReplicaSet",
+          "thread_ts": "1792984815.000198"
+        },
+        {
+          "ts": "1792984900.000226",
+          "user": "tw",
+          "text": "no. the postgres replica",
+          "thread_ts": "1792984815.000198"
+        },
+        {
+          "ts": "1792984950.000233",
+          "user": "tw",
+          "text": "nvm did it by hand. `feeds_ro` row in SHOW POOLS: cl_waiting 0, sv_active 11. replicas are fine, it's only the leader pool (`feeds`)",
+          "thread_ts": "1792984815.000198"
+        }
+      ]
+    },
+    {
+      "ts": "1792985028.000240",
+      "user": "mbe",
+      "text": "here. DON'T add pgbouncer pods. every pod opens its own pool per user. 4 pods x 40 x 4 users = 640 server conns against max_connections 400",
+      "reactions": [
+        {
+          "name": "eyes",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "ts": "1792985050.000247",
+      "user": "mbe",
+      "text": "it was 2 pods when that runbook was written. we went to 3 in september (PLAT-4410) and nobody redid the math. that one's on me"
+    },
+    {
+      "ts": "1792985070.000254",
+      "user": "tw",
+      "text": "scaling back to 3"
+    },
+    {
+      "ts": "1792985101.000261",
+      "user": "tw",
+      "text": "`kubectl -n feeds scale deploy/pgbouncer-feeds --replicas=3`"
+    },
+    {
+      "ts": "1792985260.000268",
+      "user": "mbe",
+      "text": "trying a lower pool on pgbouncer-feeds-7c9d5b6f4-2xq8p first"
+    },
+    {
+      "ts": "1792985464.000275",
+      "user": "mbe",
+      "text": "WORKAROUND, works on the first pod. on every pgbouncer-feeds pod:\n```\nkubectl -n feeds exec <pod> -- psql -h 127.0.0.1 -p 6432 -U pgbouncer pgbouncer -c \"SET default_pool_size = 25;\"\nkubectl -n feeds exec <pod> -- psql -h 127.0.0.1 -p 6432 -U pgbouncer pgbouncer -c \"RECONNECT feeds;\"\n```\n3 x 25 x 4 = 300, under 400. clients queue in pgbouncer for a bit instead of getting 53300. do NOT raise it back. configmap fix after",
+      "reactions": [
+        {
+          "name": "+1",
+          "count": 3
+        },
+        {
+          "name": "white_check_mark",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "ts": "1792985500.000282",
+      "user": "rs",
+      "text": "+1"
+    },
+    {
+      "ts": "1792985592.000289",
+      "user": "tw",
+      "text": "done on all 3 pods"
+    },
+    {
+      "ts": "1792985810.000296",
+      "user": "tw",
+      "text": "53300 gone from feed-builder logs. cl_waiting peaked around 400, draining now. /feed errors 11% -> 0.6%"
+    },
+    {
+      "ts": "1792985895.000303",
+      "user": "mbe",
+      "text": "pg-feeds-0 at 302 connections. good"
+    },
+    {
+      "ts": "1792986060.000310",
+      "user": "mbe",
+      "text": "patching pgbouncer-feeds-config to default_pool_size = 25 so a restart doesn't undo it. PR in a sec"
+    },
+    {
+      "ts": "1792986562.000317",
+      "user": "ok",
+      "text": "joining from prod-eu-west. got paged for PgBouncerPoolSaturated on pgbouncer-feeds there at 03:40. asked #ask-oncall at 03:43 and it said check the pool is 40 and scale out :grimacing: glad I scrolled up here before doing it"
+    },
+    {
+      "ts": "1792986590.000324",
+      "user": "mbe",
+      "text": "same thing, eu has 3 pods too. apply the 03:31 workaround ^ there"
+    },
+    {
+      "ts": "1792986750.000331",
+      "user": "ok",
+      "text": "applied on eu, 53300 stopped"
+    },
+    {
+      "ts": "1792987090.000338",
+      "user": "tw",
+      "text": "errors back to baseline in both regions. leaving the incident open until the configmap PR is merged"
+    },
+    {
+      "ts": "1792987533.000345",
+      "user": "dara",
+      "text": "reading back. the #ask-oncall answer ok got at 03:43 came from pgbouncer v3. the index is built nightly at 02:00, so nothing posted in this channel tonight is in it until tomorrow. I'll write that up for the postmortem"
+    },
+    {
+      "ts": "1792987960.000352",
+      "user": "mbe",
+      "text": "configmap PR merged https://git.castlane.internal/platform/k8s/pull/3318 . runbook v4 by wednesday"
+    },
+    {
+      "ts": "1792988402.000359",
+      "user": "incident-bot",
+      "subtype": "bot_message",
+      "text": "INC-2291 resolved by @tw. Duration 1h14m. Postmortem owner: @mbe."
+    }
+  ]
+}

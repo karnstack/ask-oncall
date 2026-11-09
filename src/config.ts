@@ -14,8 +14,12 @@ export const CHUNK_MIN_TOKENS = 80; // merge a leaf section below this into the 
 export const CANDIDATES = 50;
 export const RRF_K = 60;
 
-// The answer model reads the top TOP_K fused chunks.
-export const TOP_K = 5;
+// The reranker reads the first RERANK_CANDIDATES fused chunks and keeps at
+// most RERANK_KEEP.
+export const RERANK_MODEL = "gpt-5.4-mini";
+export const RERANK_CANDIDATES = 50;
+export const RERANK_KEEP = 5;
+export const RERANK_CLIP_TOKENS = 200;
 
 // The answer model.
 export const ANSWER_MODEL = "gpt-5.4-mini";

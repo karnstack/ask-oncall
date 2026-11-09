@@ -1,10 +1,12 @@
-// The question path: search both legs, fuse, and answer from the top five.
+// The question path: search both legs, fuse, rerank, and answer from what the
+// reranker kept.
 //   npm run ask -- "How do I fail over Postgres?"
 import { parseArgs } from "node:util";
 import { answer, sourceLine } from "./answer.ts";
-import { TOP_K } from "./config.ts";
+import { RERANK_CANDIDATES, RERANK_KEEP } from "./config.ts";
 import { pool } from "./db.ts";
-import { hybridSearch } from "./search.ts";
+import { rerank } from "./rerank.ts";
+import { hybridSearch, type Hit } from "./search.ts";
 
 export type AskOptions = {
   onDelta?: (text: string) => void;
@@ -19,16 +21,26 @@ export async function ask(question: string, opts: AskOptions = {}) {
   const first = await hybridSearch(question);
   Object.assign(ms, first.ms);
 
-  // 2. answer from the top five
-  const sources = first.fused.slice(0, TOP_K);
-  const a = await answer(question, sources, { onDelta: opts.onDelta });
+  // 2. the reranker reads the top candidates and keeps at most five
+  const candidates = first.fused.slice(0, RERANK_CANDIDATES);
+  let kept: Hit[] = [];
+  if (candidates.length) {
+    const rr = await rerank(question, candidates);
+    kept = rr.kept;
+    ms.rerank = rr.ms;
+    usd += rr.usd;
+  }
+
+  // 3. answer from what was kept (the first five, if the reranker kept none)
+  if (!kept.length) kept = candidates.slice(0, RERANK_KEEP);
+  const a = await answer(question, kept, { onDelta: opts.onDelta });
   const text = a.text;
   ms.firstToken = performance.now() - t0 - a.ms + a.firstTokenMs;
   ms.answer = a.ms;
   usd += a.usd;
   ms.total = performance.now() - t0;
 
-  return { question, text, sources, ms, usd };
+  return { question, text, sources: kept, candidates, ms, usd };
 }
 
 // ---- the command line ---------------------------------------------------------

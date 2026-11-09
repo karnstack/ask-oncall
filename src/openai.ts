@@ -1,5 +1,5 @@
-// The one OpenAI client, and a streamed response for answers. Every call is
-// priced (ledger.ts).
+// The one OpenAI client, and the two ways the code calls a model: a plain
+// response, and a streamed one for answers. Every call is priced (ledger.ts).
 import OpenAI from "openai";
 import type { ResponseUsage } from "openai/resources/responses/responses";
 import { countTokens } from "gpt-tokenizer/encoding/o200k_base";
@@ -18,6 +18,14 @@ const usageOf = (u: ResponseUsage | undefined): Usage => ({
 // Refuse to start if the input alone would cross the budget.
 function guard(model: string, input: string) {
   assertBudget((countTokens(input) * PRICES[model].input) / 1_000_000);
+}
+
+export async function respond(stage: string, model: string, input: string) {
+  guard(model, input);
+  const t0 = performance.now();
+  const res = await openai().responses.create({ model, input, reasoning: { effort: "none" }, store: false });
+  const usage = usageOf(res.usage);
+  return { text: res.output_text, usage, usd: record(stage, model, usage), ms: performance.now() - t0 };
 }
 
 export async function respondStream(stage: string, model: string, input: string, onDelta?: (s: string) => void) {

@@ -21,6 +21,10 @@ export const CHUNK_MIN_TOKENS = 80; // merge a leaf section below this into the 
 export const CANDIDATES = 50;
 export const RRF_K = 60;
 
+// HNSW keeps ef_search candidates while it walks the graph: at least the
+// vector leg's LIMIT, or the leg returns fewer rows than it asked for.
+export const HNSW_EF_SEARCH = 100;
+
 // The reranker reads the first RERANK_CANDIDATES fused chunks and keeps at
 // most RERANK_KEEP. 25 measured as good as 50 at half the tokens.
 export const RERANK_MODEL = "gpt-5.4-mini";

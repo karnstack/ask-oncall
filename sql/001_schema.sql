@@ -50,6 +50,8 @@ create table if not exists chunks (
 );
 create index if not exists chunks_tsv on chunks using gin (tsv);
 create index if not exists chunks_doc_id on chunks (doc_id);
+-- HNSW: approximate nearest neighbours, m 16 and ef_construction 64 (the defaults)
+create index if not exists chunks_embedding_hnsw on chunks using hnsw (embedding vector_cosine_ops);
 
 -- Slack messages as they arrive (src/events.ts), before and after the export.
 create table if not exists slack_messages (

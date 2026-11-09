@@ -151,9 +151,27 @@ export async function syncSources(docs: Doc[], stats = emptyStats()): Promise<Sy
   return stats;
 }
 
-// A near-copy of a deleted document takes its status: it is tombstoned too,
-// with duplicate_of naming the original. Nothing in the copy's own front
-// matter could have told us: it is another source, under another id.
+// A copy of a superseded document stops being current. Like a tombstone, one
+// transaction: the document row and its chunks change together, or neither.
+export async function supersede(id: string, supersededBy: string | null, duplicateOf: string) {
+  const client = await pool.connect();
+  try {
+    await client.query("begin");
+    await client.query(`update documents set is_current = false, superseded_by = $2, duplicate_of = $3 where id = $1`, [id, supersededBy, duplicateOf]);
+    await client.query(`update chunks set is_current = false, superseded_by = $2 where doc_id = $1`, [id, supersededBy]);
+    await client.query("commit");
+  } catch (e) {
+    await client.query("rollback");
+    throw e;
+  } finally {
+    client.release();
+  }
+}
+
+// Near-copies of dead documents (deleted, or superseded) take their status:
+// a copy of a deleted document is tombstoned, a copy of a superseded one stops
+// being current. The front matter cannot do this: the 2024 wiki export says
+// is_current: true, because it knows nothing about the runbook registry.
 export async function markNearCopies(dead: Doc[]): Promise<NearCopy[]> {
   const passage = (body: string, crumb: string) => (body.startsWith(crumb) ? body.slice(crumb.length) : body);
   const rows = (await pool.query(`select doc_id, body, breadcrumb from chunks where source not in ('k8s-docs', 'prom-runbooks') order by doc_id, n`)).rows;
@@ -161,7 +179,9 @@ export async function markNearCopies(dead: Doc[]): Promise<NearCopy[]> {
   const deadTexts = dead.map((d) => ({ docId: d.id, chunks: chunkByHeadings(d).map((c) => d.text.slice(c.start, c.end)) }));
   const copies = findNearCopies(live, deadTexts);
   for (const copy of copies) {
-    await tombstone(copy.docId, copy.of);
+    const ref = dead.find((d) => d.id === copy.of)!;
+    if (ref.meta.deletedAt) await tombstone(copy.docId, ref.id);
+    else await supersede(copy.docId, ref.meta.supersededBy, ref.id);
   }
   return copies;
 }

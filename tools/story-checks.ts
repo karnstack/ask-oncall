@@ -3,10 +3,12 @@
 //   node tools/story-checks.ts
 import { loadCastlane } from "../src/corpus.ts";
 import { pool } from "../src/db.ts";
+import { hybridSearch } from "../src/search.ts";
 import { reconcilePlan } from "../src/sync.ts";
 
 const V2 = "runbooks/postgres-failover.md@v2";
 const WIKI = "wiki-export-2024/Postgres_Failover.md";
+const PGB3 = "runbooks/pgbouncer.md@v3";
 const count = async (sql: string, params: unknown[] = []) => Number((await pool.query(sql, params)).rows[0].n);
 
 const checks: [string, () => Promise<boolean | string>][] = [
@@ -24,6 +26,14 @@ const checks: [string, () => Promise<boolean | string>][] = [
   ["reconcile refuses a listing that drops more than half", async () => {
     const known = (await pool.query(`select id from documents where deleted_at is null and source not in ('k8s-docs', 'prom-runbooks')`)).rows.map((r) => r.id);
     return reconcilePlan(known, known.filter((id) => id.startsWith("runbooks/"))).refused;
+  }],
+  // two versions, one right answer
+  ["the pool-size question never retrieves a superseded version", async () => {
+    for (const q of ["What should default_pool_size be on pgbouncer-feeds?", "default_pool_size pgbouncer-feeds", "pgbouncer-feeds pool size setting"]) {
+      const { fused } = await hybridSearch(q, { currentOnly: true });
+      if (fused.some((h) => h.docId === PGB3)) return `v3 retrieved for "${q}"`;
+    }
+    return true;
   }],
   ["every live Castlane document has chunks", async () => {
     const live = loadCastlane().filter((d) => !d.meta.deletedAt && d.id !== WIKI).map((d) => d.id);

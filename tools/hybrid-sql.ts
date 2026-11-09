@@ -15,7 +15,7 @@ await client.query("set enable_indexscan = off"); // exact search on the vector 
 await client.query(readFileSync(join(import.meta.dirname, "..", "sql", "hybrid.sql"), "utf8"));
 const sql = (await client.query(`execute hybrid($1, $2)`, [toPg(await embedQuestion(question)), question])).rows;
 client.release();
-const code = (await hybridSearch(question)).fused;
+const code = (await hybridSearch(question, { currentOnly: true })).fused;
 console.log(`rank  sql.hybrid                                          code (rrf)`);
 for (let i = 0; i < 10; i++) console.log(`${String(i + 1).padStart(4)}  ${(sql[i]?.id ?? "").padEnd(50)}  ${code[i]?.id ?? ""}`);
 const same = sql.slice(0, 10).filter((r, i) => r.id === code[i]?.id).length;

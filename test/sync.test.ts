@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { documentHash, reconcilePlan, tombstone } from "../src/sync.ts";
+import { documentHash, reconcilePlan, supersede, tombstone } from "../src/sync.ts";
 import { pool } from "../src/db.ts";
 import type { Doc } from "../src/corpus.ts";
 
@@ -63,4 +63,18 @@ test("a tombstone that fails half way rolls back", async (t) => {
   t.mock.method(pool, "connect", async () => client);
   await assert.rejects(tombstone("runbooks/pgbouncer.md@v3"), /connection lost/);
   assert.deepEqual(client.sent, ["begin", "update documents", "delete from", "rollback"]);
+});
+
+test("a copy of a superseded document stops being current in one transaction", async (t) => {
+  const client = fakeClient();
+  t.mock.method(pool, "connect", async () => client);
+  await supersede("wiki-export-2024/Postgres_Failover.md", "runbooks/postgres-failover.md@v3", "runbooks/postgres-failover.md@v2");
+  assert.deepEqual(client.sent, ["begin", "update documents", "update chunks", "commit"]);
+});
+
+test("a supersede that fails half way rolls back", async (t) => {
+  const client = fakeClient("update chunks");
+  t.mock.method(pool, "connect", async () => client);
+  await assert.rejects(supersede("wiki-export-2024/Postgres_Failover.md", "runbooks/postgres-failover.md@v3", "runbooks/postgres-failover.md@v2"), /connection lost/);
+  assert.deepEqual(client.sent, ["begin", "update documents", "update chunks", "rollback"]);
 });

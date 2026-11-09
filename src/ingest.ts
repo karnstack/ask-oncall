@@ -2,7 +2,7 @@
 //   npm run ingest
 // Each source is listed, every changed document is re-chunked and re-embedded
 // (only new text costs), every missing document is tombstoned within the
-// reconcile bound, and near-copies of deleted documents are tombstoned too.
+// reconcile bound, and near-copies of dead documents take their status.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadAlertRunbooks, loadCastlane, loadKubernetesDocs } from "./corpus.ts";
@@ -25,8 +25,8 @@ console.log(
 );
 for (const r of stats.refused) console.log(`reconcile refused: ${r}`);
 
-// documents the sources mark deleted
-const dead = castlane.filter((d) => d.meta.deletedAt);
+// dead documents the sources still describe: deleted, or superseded
+const dead = castlane.filter((d) => d.meta.deletedAt || (!d.meta.isCurrent && d.meta.supersededBy));
 const copies = await markNearCopies(dead);
 for (const c of copies) console.log(`near-copy: ${c.docId} is ${c.matched} of ${c.chunks} chunks like ${c.of} (max Jaccard ${c.max.toFixed(3)})`);
 

@@ -23,6 +23,10 @@ test("rrf keeps the top `limit`", () => {
   assert.equal(rrf([list], 60, 50).length, 50);
 });
 
+test("the current filter sits next to the tombstone check", () => {
+  assert.deepEqual(whereSql({ currentOnly: true }, 2), { sql: "d.deleted_at is null and d.is_current", params: [] });
+});
+
 test("every filter keeps live documents only; parameters number from `first`", () => {
   assert.deepEqual(whereSql({}, 2), { sql: "d.deleted_at is null", params: [] });
   assert.equal(whereSql({ service: "pgbouncer-payouts" }, 3).sql, "d.deleted_at is null and $3 = any(c.service)");

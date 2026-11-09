@@ -15,7 +15,7 @@ import { loadAlertRunbooks, loadCastlane, loadKubernetesDocs, type Doc } from ".
 import { pool } from "../src/db.ts";
 import { embedQuestion } from "../src/embed.ts";
 import { rerank } from "../src/rerank.ts";
-import { hybridSearch, vectorSearch, wordSearch, type Hit } from "../src/search.ts";
+import { hybridSearch, vectorSearch, wordSearch, type Filter, type Hit } from "../src/search.ts";
 
 export type Target = { doc: string; section?: string; contains?: string; start?: number; end?: number };
 export type Question = {
@@ -24,6 +24,7 @@ export type Question = {
   q: string;
   targets: Target[][]; // every inner list is one thing the answer needs; any alternative in it counts
   asker?: string; // Castlane questions: who asked
+  current_only?: boolean; // Castlane questions: a superseded document never counts
 };
 
 const QUESTIONS = join(import.meta.dirname, "..", "questions");
@@ -145,10 +146,15 @@ export function twoSetRule(written: { before: number; after: number; n: number }
 
 export type Leg = "vector" | "word" | "hybrid" | "rerank";
 
-export async function retrieve(leg: Leg, q: Question): Promise<Hit[]> {
-  if (leg === "vector") return vectorSearch(await embedQuestion(q.q));
-  if (leg === "word") return wordSearch(q.q);
-  const { fused } = await hybridSearch(q.q);
+export function filterFor(set: SetName, q: Question): Filter {
+  if (set !== "castlane") return {}; // the public sets are scored unfiltered
+  return { currentOnly: q.current_only };
+}
+
+export async function retrieve(leg: Leg, q: Question, filter: Filter): Promise<Hit[]> {
+  if (leg === "vector") return vectorSearch(await embedQuestion(q.q), filter);
+  if (leg === "word") return wordSearch(q.q, filter);
+  const { fused } = await hybridSearch(q.q, filter);
   if (leg === "hybrid") return fused;
   const rr = await rerank(q.q, fused.slice(0, RERANK_CANDIDATES));
   return [...rr.ranked, ...fused.slice(RERANK_CANDIDATES)];
@@ -159,7 +165,7 @@ export async function runSet(set: SetName, leg: Leg, labels: Labels, opts: { bud
   const scores: Score[] = [];
   const budget: number[] = [];
   for (const q of questions) {
-    const ranked = await retrieve(leg, q);
+    const ranked = await retrieve(leg, q, filterFor(set, q));
     scores.push(scoreQuestion(labels, q, ranked));
     if (opts.budget) budget.push(recallWithinBudget(labels, q, ranked, opts.budget));
   }

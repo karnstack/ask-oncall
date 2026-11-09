@@ -13,6 +13,7 @@ import { hybridSearch, type Filter, type Hit } from "./search.ts";
 export type AskOptions = {
   thread?: string[]; // earlier messages in the thread, oldest first
   service?: string;
+  now?: Date;
   onDelta?: (text: string) => void;
 };
 
@@ -30,8 +31,8 @@ export async function ask(question: string, opts: AskOptions = {}) {
     usd += r.usd;
   }
 
-  // 2. both legs
-  const filter: Filter = { service: opts.service };
+  // 2. both legs, current documents only
+  const filter: Filter = { currentOnly: true, service: opts.service };
   const first = await hybridSearch(searched, filter);
   Object.assign(ms, first.ms);
 
@@ -47,7 +48,7 @@ export async function ask(question: string, opts: AskOptions = {}) {
 
   // 4. answer from what was kept (the first five, if the reranker kept none)
   if (!kept.length) kept = candidates.slice(0, RERANK_KEEP);
-  const a = await answer(searched, kept, { onDelta: opts.onDelta });
+  const a = await answer(searched, kept, { now: opts.now, onDelta: opts.onDelta });
   const text = a.text;
   ms.firstToken = performance.now() - t0 - a.ms + a.firstTokenMs;
   ms.answer = a.ms;
@@ -62,15 +63,16 @@ export async function ask(question: string, opts: AskOptions = {}) {
 if (import.meta.main) {
   const { values, positionals } = parseArgs({
     allowPositionals: true,
-    options: { thread: { type: "string", multiple: true }, service: { type: "string" } },
+    options: { thread: { type: "string", multiple: true }, service: { type: "string" }, now: { type: "string" } },
   });
   const question = positionals.join(" ");
   if (!question) throw new Error(`usage: npm run ask -- "your question" [--thread "earlier message"]`);
-  const r = await ask(question, { thread: values.thread, service: values.service, onDelta: (s) => process.stdout.write(s) });
+  const now = values.now ? new Date(values.now) : new Date();
+  const r = await ask(question, { thread: values.thread, service: values.service, now, onDelta: (s) => process.stdout.write(s) });
   console.log("\n");
   if (r.searched !== question) console.log(`searched as: ${r.searched}`);
   console.log(`sources:`);
-  r.sources.forEach((s, i) => console.log(`  ${sourceLine(s, i)}${s.breadcrumb ? `\n      ${s.breadcrumb}` : ""}`));
+  r.sources.forEach((s, i) => console.log(`  ${sourceLine(s, i, now)}${s.breadcrumb ? `\n      ${s.breadcrumb}` : ""}`));
   console.log(`time: ${Object.entries(r.ms).map(([k, v]) => `${k} ${Math.round(v)} ms`).join(", ")}`);
   console.log(`cost: $${r.usd.toFixed(5)}`);
   await pool.end();

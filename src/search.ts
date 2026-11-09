@@ -14,16 +14,19 @@ export type Hit = {
   url: string;
   breadcrumb: string;
   body: string;
+  version: number | null;
+  updatedAt: string | null;
   start: number;
   end: number;
   score: number;
 };
 
 export const HIT_COLUMNS = `c.id, c.doc_id as "docId", c.n, c.source, c.title, c.url, c.breadcrumb, c.body,
-  c.start_char as start, c.end_char as "end"`;
+  c.version, c.updated_at::text as "updatedAt", c.start_char as start, c.end_char as "end"`;
 
 // What the question asked for. Every filter runs inside both legs.
 export type Filter = {
+  currentOnly?: boolean; // only documents in effect now
   service?: string; // a service the question names
 };
 
@@ -34,6 +37,7 @@ export function whereSql(filter: Filter, first: number): { sql: string; params: 
   const parts = ["d.deleted_at is null"];
   const params: unknown[] = [];
   const param = (v: unknown) => `$${first + params.push(v) - 1}`;
+  if (filter.currentOnly) parts.push(`d.is_current`);
   if (filter.service) parts.push(`${param(filter.service)} = any(c.service)`);
   return { sql: parts.join(" and "), params };
 }

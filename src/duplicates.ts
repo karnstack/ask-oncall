@@ -1,6 +1,6 @@
 // A delete removes one document, not its copies. Word 5-grams and Jaccard
-// find a document that is nearly the text of a deleted one, in another
-// source and under another id.
+// find a document that is nearly the text of a dead one (deleted, or
+// superseded), in another source and under another id.
 import { DUPLICATE_JACCARD } from "./config.ts";
 
 export function shingles(text: string, n = 5): Set<string> {

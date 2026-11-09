@@ -10,11 +10,12 @@ export const CHUNK_OVERLAP = 64;
 export const CHUNK_MAX_TOKENS = 512; // split a section at blank lines above this
 export const CHUNK_MIN_TOKENS = 80; // merge a leaf section below this into the next
 
-// The answer model reads the top TOP_K chunks.
-export const TOP_K = 5;
-
-// A search leg's list, for scoring: its top 50.
+// The first stage: each leg's top 50, fused by reciprocal rank fusion.
 export const CANDIDATES = 50;
+export const RRF_K = 60;
+
+// The answer model reads the top TOP_K fused chunks.
+export const TOP_K = 5;
 
 // The answer model.
 export const ANSWER_MODEL = "gpt-5.4-mini";

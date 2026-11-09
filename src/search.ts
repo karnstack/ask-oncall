@@ -1,7 +1,9 @@
-// Search, one SQL statement each, every one runnable in psql: the vector leg
-// and the word leg.
-import { CANDIDATES, TOP_K } from "./config.ts";
+// The first stage: two legs, each one SQL statement you can run in psql, and
+// reciprocal rank fusion to merge them. sql/hybrid.sql is the same fusion as a
+// single statement.
+import { CANDIDATES, RRF_K } from "./config.ts";
 import { pool, toPg } from "./db.ts";
+import { embedQuestion } from "./embed.ts";
 
 export type Hit = {
   id: string;
@@ -21,7 +23,7 @@ export const HIT_COLUMNS = `c.id, c.doc_id as "docId", c.n, c.source, c.title, c
 
 // The vector leg: cosine distance, nearest first. With no vector index this
 // is exact search: every row is compared.
-export async function vectorSearch(vec: Float32Array, k = TOP_K): Promise<Hit[]> {
+export async function vectorSearch(vec: Float32Array, k = CANDIDATES): Promise<Hit[]> {
   const { rows } = await pool.query(
     `select ${HIT_COLUMNS}, 1 - (c.embedding <=> $1::vector) as score
        from chunks c
@@ -50,4 +52,37 @@ export async function wordSearch(question: string, k = CANDIDATES): Promise<Hit[
     [question],
   );
   return rows;
+}
+
+// Reciprocal rank fusion (Cormack, Clarke and Buettcher, 2009): each list adds
+// 1 / (k + rank) for every chunk it holds. Scores are never compared, only
+// ranks, so a cosine and a ts_rank can be merged.
+export function rrf<T extends { id: string }>(lists: T[][], k = RRF_K, limit = CANDIDATES): (T & { score: number })[] {
+  const acc = new Map<string, { hit: T; score: number }>();
+  for (const list of lists)
+    list.forEach((hit, i) => {
+      const e = acc.get(hit.id) ?? { hit, score: 0 };
+      e.score += 1 / (k + i + 1);
+      acc.set(hit.id, e);
+    });
+  return [...acc.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((e) => ({ ...e.hit, score: e.score }));
+}
+
+// Both legs, fused, one after the other: embed the question, search by
+// vector, then search by words.
+export async function hybridSearch(question: string) {
+  const ms = { embed: 0, vector: 0, word: 0 };
+  const timed = async <T>(stage: keyof typeof ms, fn: () => Promise<T>) => {
+    const t0 = performance.now();
+    const result = await fn();
+    ms[stage] = performance.now() - t0;
+    return result;
+  };
+  const vec = await timed("embed", () => embedQuestion(question));
+  const vector = await timed("vector", () => vectorSearch(vec));
+  const word = await timed("word", () => wordSearch(question));
+  return { vector, word, fused: rrf([vector, word]), ms };
 }

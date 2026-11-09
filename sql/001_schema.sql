@@ -50,3 +50,13 @@ create table if not exists chunks (
 );
 create index if not exists chunks_tsv on chunks using gin (tsv);
 create index if not exists chunks_doc_id on chunks (doc_id);
+
+-- Slack messages as they arrive (src/events.ts), before and after the export.
+create table if not exists slack_messages (
+  channel_id  text not null,
+  ts          text not null,
+  thread_ts   text,
+  user_handle text not null,
+  text        text not null,
+  primary key (channel_id, ts)
+);

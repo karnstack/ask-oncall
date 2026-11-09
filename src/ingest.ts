@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadAlertRunbooks, loadCastlane, loadKubernetesDocs } from "./corpus.ts";
 import { pool } from "./db.ts";
+import { slackSource } from "./events.ts";
 import { spentSoFar } from "./ledger.ts";
 import { emptyStats, markNearCopies, syncSources } from "./sync.ts";
 
@@ -15,7 +16,12 @@ await pool.query(readFileSync(join(import.meta.dirname, "..", "sql", "001_schema
 
 const castlane = loadCastlane(); // every file, deleted ones included
 const live = castlane.filter((d) => !d.meta.deletedAt);
-const listing = [...loadKubernetesDocs(), ...loadAlertRunbooks(), ...live];
+const listing = [
+  ...loadKubernetesDocs(),
+  ...loadAlertRunbooks(),
+  ...live.filter((d) => d.source !== "slack"),
+  ...(await slackSource(live.filter((d) => d.source === "slack"))),
+];
 console.log(`listed ${listing.length} documents (${listing.length - live.length} public, ${live.length} Castlane)`);
 
 const stats = await syncSources(listing, emptyStats());

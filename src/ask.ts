@@ -1,14 +1,15 @@
 // The question path: rewrite a follow-up, search both legs inside the asker's
-// permissions, fuse, rerank, answer from what the reranker kept, and check
-// the answer.
+// permissions, fuse, rerank, answer from what the reranker kept, check the
+// answer, and log one line.
 //   npm run ask -- "How do I fail over Postgres?" --as tw
 //   npm run ask -- "and on the replica?" --as tw --thread "how do I see how many clients are waiting on pgbouncer-feeds"
 import { parseArgs } from "node:util";
-import { principalsOf, userByHandle } from "./access.ts";
+import { principalsHash, principalsOf, userByHandle } from "./access.ts";
 import { answer, sourceLine } from "./answer.ts";
 import { checkAnswer, citedSentence, notFoundAnswer, passed, quotedSpans } from "./checks.ts";
 import { RERANK_CANDIDATES } from "./config.ts";
 import { pool } from "./db.ts";
+import { logQuestion } from "./log.ts";
 import { rerank } from "./rerank.ts";
 import { rewriteFollowUp } from "./rewrite.ts";
 import { hybridSearch, type Filter, type Hit } from "./search.ts";
@@ -65,9 +66,19 @@ export async function ask(question: string, opts: AskOptions) {
   }
   ms.total = performance.now() - t0;
 
-  // 5. check it
+  // 5. check it, and log one line that can replay it
   const checks = checkAnswer(text, kept);
+  const cited = [...new Set([...text.matchAll(/\[(\d+)\]/g)].map((m) => kept[Number(m[1]) - 1]?.id).filter(Boolean))];
   const version = await indexVersion();
+  logQuestion({
+    at: new Date().toISOString(), question, rewrite: searched === question ? null : searched, asker: opts.asker,
+    principalsHash: principalsHash(principals), filter: { currentOnly: true, scope: opts.scope ?? null, service: opts.service ?? null },
+    indexVersion: version,
+    ranks: { vector: first.vector.slice(0, 10).map((h) => h.id), word: first.word.slice(0, 10).map((h) => h.id), fused: first.fused.slice(0, 10).map((h) => h.id) },
+    kept: kept.map((h) => h.id), sent: kept.map((h) => h.id), cited, notFound: checks.notFound,
+    checks: { badCitations: checks.badCitations, unverifiedQuotes: checks.unverifiedQuotes, foreignLinks: checks.foreignLinks },
+    ms: Object.fromEntries(Object.entries(ms).map(([k, v]) => [k, Math.round(v)])), usd, answer: text, feedback: null,
+  });
   return { question, searched, text, sources: kept, candidates, checks, ms, usd, indexVersion: version };
 }
 

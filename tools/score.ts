@@ -1,8 +1,8 @@
 // The question set, scored. Every retrieval change in the course is decided
 // here: recall at k, mean reciprocal rank, and which questions moved.
-//   npm run score -- --set written --save small
-//   npm run score -- --set written,generated --against small
-//   npm run score -- --set castlane
+//   npm run score -- --set written --leg vector --save vector
+//   npm run score -- --set written,generated --leg word --against vector
+//   npm run score -- --set castlane --leg word
 // Labels name a document, optionally a section and a phrase, never a chunk id,
 // so they survive re-chunking. One written question is about 2 points of
 // recall; a change under 3 questions is noise.
@@ -13,7 +13,8 @@ import { countTokens, sectionsOf, type Section } from "../src/chunk.ts";
 import { loadAlertRunbooks, loadCastlane, loadKubernetesDocs, type Doc } from "../src/corpus.ts";
 import { pool } from "../src/db.ts";
 import { embedQuestion } from "../src/embed.ts";
-import { vectorSearch, type Hit } from "../src/search.ts";
+import { CANDIDATES } from "../src/config.ts";
+import { vectorSearch, wordSearch, type Hit } from "../src/search.ts";
 
 export type Target = { doc: string; section?: string; contains?: string; start?: number; end?: number };
 export type Question = {
@@ -141,11 +142,11 @@ export function twoSetRule(written: { before: number; after: number; n: number }
 
 // ---- running a leg over a set ---------------------------------------------------
 
-export type Leg = "vector";
+export type Leg = "vector" | "word";
 
-// The top 50: enough for recall at 20 and for a reciprocal rank.
 export async function retrieve(leg: Leg, q: Question): Promise<Hit[]> {
-  return vectorSearch(await embedQuestion(q.q), 50);
+  if (leg === "vector") return vectorSearch(await embedQuestion(q.q), CANDIDATES);
+  return wordSearch(q.q);
 }
 
 export async function runSet(set: SetName, leg: Leg, labels: Labels, opts: { budget?: number } = {}) {

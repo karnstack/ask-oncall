@@ -13,6 +13,9 @@ export const CHUNK_MIN_TOKENS = 80; // merge a leaf section below this into the 
 // The answer model reads the top TOP_K chunks.
 export const TOP_K = 5;
 
+// A search leg's list, for scoring: its top 50.
+export const CANDIDATES = 50;
+
 // The answer model.
 export const ANSWER_MODEL = "gpt-5.4-mini";
 

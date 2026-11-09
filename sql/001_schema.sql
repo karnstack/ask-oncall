@@ -22,5 +22,7 @@ create table if not exists chunks (
   scope          text,
   service        text[] not null default '{}',
   effective_at   date,
-  updated_at     timestamptz
+  updated_at     timestamptz,
+  tsv            tsvector generated always as (to_tsvector('english', body)) stored
 );
+create index if not exists chunks_tsv on chunks using gin (tsv);

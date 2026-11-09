@@ -6,6 +6,7 @@ export type Hit = {
   id: string;
   docId: string;
   n: number;
+  source: string;
   title: string;
   url: string;
   body: string;
@@ -14,7 +15,7 @@ export type Hit = {
   score: number;
 };
 
-export const HIT_COLUMNS = `c.id, c.doc_id as "docId", c.n, c.title, c.url, c.body,
+export const HIT_COLUMNS = `c.id, c.doc_id as "docId", c.n, c.source, c.title, c.url, c.body,
   c.start_char as start, c.end_char as "end"`;
 
 // Cosine distance, nearest first. With no vector index this is exact search:

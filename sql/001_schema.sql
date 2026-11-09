@@ -2,7 +2,7 @@
 -- and runs this file; `npm run ingest` fills it.
 create extension if not exists vector;
 
--- One row per chunk: its text and its vector.
+-- One row per chunk: its text, its vector, and its document's front matter.
 create table if not exists chunks (
   id             text primary key,        -- doc id + '::' + position
   doc_id         text not null,
@@ -12,5 +12,15 @@ create table if not exists chunks (
   body           text not null,           -- breadcrumb line + text: embedded, searched, sent
   embedding      vector(1536) not null,
   start_char     int not null,            -- the range of the document it covers (for labels)
-  end_char       int not null
+  end_char       int not null,
+  source         text not null,
+  type           text not null,
+  version        int,
+  is_current     boolean not null default true,
+  superseded_by  text,
+  allowed_groups text[] not null,
+  scope          text,
+  service        text[] not null default '{}',
+  effective_at   date,
+  updated_at     timestamptz
 );

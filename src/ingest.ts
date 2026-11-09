@@ -20,8 +20,13 @@ const stats: EmbedStats = { texts: 0, tokens: 0, usd: 0, ms: 0 };
 const vectors = await embed(chunks.map(({ c }) => c.body), { stage: "embed:chunks", stats });
 console.log(`embedded ${stats.tokens} tokens in ${(stats.ms / 1000).toFixed(1)} s, $${stats.usd.toFixed(5)}`);
 
-const columns = ["id", "doc_id", "n", "title", "url", "body", "embedding", "start_char", "end_char"];
-const rowOf = (d: Doc, c: Chunk, v: Float32Array) => [c.id, c.docId, c.n, d.title, d.url, c.body, toPg(v), c.start, c.end];
+// The front matter is copied onto every chunk, so search can filter on it.
+const columns = ["id", "doc_id", "n", "title", "url", "body", "embedding", "start_char", "end_char", "source", "type", "version",
+  "is_current", "superseded_by", "allowed_groups", "scope", "service", "effective_at", "updated_at"];
+const rowOf = (d: Doc, c: Chunk, v: Float32Array) => [
+  c.id, c.docId, c.n, d.title, d.url, c.body, toPg(v), c.start, c.end, d.source, d.meta.type, d.meta.version,
+  d.meta.isCurrent, d.meta.supersededBy, d.meta.allowedGroups, d.meta.scope, d.meta.service, d.meta.effectiveAt, d.meta.updatedAt,
+];
 const updates = columns.slice(1).map((c) => `${c} = excluded.${c}`).join(", ");
 for (let i = 0; i < chunks.length; i += 100) {
   const rows = chunks.slice(i, i + 100).map(({ d, c }, j) => rowOf(d, c, vectors[i + j]));

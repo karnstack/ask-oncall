@@ -1,5 +1,5 @@
-// Loaders: every source becomes a Doc (id, source, title, url, and the text
-// we index). Nothing here calls a model.
+// Loaders: every source becomes a Doc (id, title, url, the text we index, and
+// the front matter the index filters on). Nothing here calls a model.
 //   corpus/k8s-docs        Kubernetes docs, Hugo Markdown (CC BY 4.0)
 //   corpus/prom-runbooks   prometheus-operator alert runbooks (Apache-2.0)
 //   corpus/castlane        Castlane's own documents and Slack channel days
@@ -9,6 +9,20 @@ import { parse as parseYaml } from "yaml";
 
 export const CORPUS = join(import.meta.dirname, "..", "corpus");
 
+export type Meta = {
+  type: string;
+  service: string[];
+  scope: string | null;
+  allowedGroups: string[]; // principals: groups, or user:<handle> for a restricted channel's members
+  author: string | null;
+  version: number | null;
+  effectiveAt: string | null;
+  supersededBy: string | null;
+  isCurrent: boolean;
+  deletedAt: string | null;
+  updatedAt: string | null;
+};
+
 export type Msg = { ts: string; user: string; text: string; replies?: Msg[] };
 
 export type Doc = {
@@ -17,6 +31,12 @@ export type Doc = {
   title: string;
   url: string;
   text: string; // what gets chunked: cleaned Markdown, or a flattened Slack day
+  meta: Meta;
+};
+
+const PUBLIC_META: Meta = {
+  type: "doc", service: [], scope: null, allowedGroups: ["everyone"], author: null,
+  version: null, effectiveAt: null, supersededBy: null, isCurrent: true, deletedAt: null, updatedAt: null,
 };
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -116,7 +136,7 @@ export function loadKubernetesDocs(root = join(CORPUS, "k8s-docs")): Doc[] {
       body = String(fm.short_description).trim() + "\n\n" + body;
     const text = `# ${title}\n\n${body}`.trim();
     if (text.length < 40) continue; // empty section index pages
-    docs.push({ id, source: "k8s-docs", title, url: `https://kubernetes.io/docs/${id}/`, text });
+    docs.push({ id, source: "k8s-docs", title, url: `https://kubernetes.io/docs/${id}/`, text, meta: PUBLIC_META });
   }
   return docs;
 }
@@ -139,13 +159,33 @@ export function loadAlertRunbooks(root = join(CORPUS, "prom-runbooks")): Doc[] {
         title: alert,
         url: `https://runbooks.prometheus-operator.dev/runbooks/${rel.toLowerCase()}/`,
         text,
+        meta: { ...PUBLIC_META, type: "alert-runbook" },
       };
     });
 }
 
 // ---- Castlane ---------------------------------------------------------------
 
+const list = (v: unknown): string[] => (Array.isArray(v) ? v.map(String) : v ? [String(v)] : []);
 const hhmmss = (ts: string) => new Date(Number(ts.split(".")[0]) * 1000).toISOString().slice(11, 19);
+
+// Front matter becomes columns: the deletes, versions and permissions code
+// filters on these, so a loader that drops them loses more than text.
+function metaOf(fm: Record<string, any>): Meta {
+  return {
+    type: String(fm.type),
+    service: list(fm.service),
+    scope: fm.scope ?? null,
+    allowedGroups: list(fm.allowed_groups),
+    author: fm.author ?? null,
+    version: fm.version == null ? null : Number(fm.version),
+    effectiveAt: fm.effective_at == null ? null : String(fm.effective_at),
+    supersededBy: fm.superseded_by ?? null,
+    isCurrent: fm.is_current === true,
+    deletedAt: fm.deleted_at ? String(fm.deleted_at) : null,
+    updatedAt: fm.updated_at ? String(fm.updated_at) : null,
+  };
+}
 
 // A Slack channel day as text: one "HH:MM:SS user: text" line per message,
 // replies indented under their parent.
@@ -158,25 +198,24 @@ export function flattenSlack(title: string, messages: Msg[]): string {
   return lines.join("\n");
 }
 
-// Castlane's documents as they stand today. The folder is the union of
-// everything that ever existed, so skip what the front matter marks deleted.
+// Every Castlane file. The folder is the union of everything that ever
+// existed, so deleted documents are here too, with deletedAt set.
 export function loadCastlane(root = join(CORPUS, "castlane")): Doc[] {
-  const docs: Doc[] = [];
-  for (const file of walk(root).filter((f) => f.endsWith(".md") || f.endsWith(".json"))) {
-    const raw = readFileSync(file, "utf8");
-    if (file.endsWith(".json")) {
-      const { messages, ...fm } = JSON.parse(raw);
-      if (!fm.deleted_at) docs.push({ id: fm.id, source: fm.source, title: fm.title, url: fm.url, text: flattenSlack(fm.title, messages) });
-      continue;
-    }
-    const m = FRONT_MATTER.exec(raw)!;
-    const fm = parseYaml(m[1]);
-    if (!fm.deleted_at) docs.push({ id: fm.id, source: fm.source, title: fm.title, url: fm.url, text: raw.slice(m[0].length).trim() });
-  }
-  return docs;
+  return walk(root)
+    .filter((f) => f.endsWith(".md") || f.endsWith(".json"))
+    .map((file) => {
+      const raw = readFileSync(file, "utf8");
+      if (file.endsWith(".json")) {
+        const { messages, ...fm } = JSON.parse(raw);
+        return { id: fm.id, source: fm.source, title: fm.title, url: fm.url, text: flattenSlack(fm.title, messages), meta: metaOf(fm) };
+      }
+      const m = FRONT_MATTER.exec(raw)!;
+      const fm = parseYaml(m[1]);
+      return { id: fm.id, source: fm.source, title: fm.title, url: fm.url, text: raw.slice(m[0].length).trim(), meta: metaOf(fm) };
+    });
 }
 
-// Today's documents: the public docs and Castlane's.
+// Today's documents: the public docs and every Castlane document not deleted.
 export function loadCorpus(): Doc[] {
-  return [...loadKubernetesDocs(), ...loadAlertRunbooks(), ...loadCastlane()];
+  return [...loadKubernetesDocs(), ...loadAlertRunbooks(), ...loadCastlane().filter((d) => !d.meta.deletedAt)];
 }

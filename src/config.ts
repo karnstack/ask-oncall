@@ -15,9 +15,9 @@ export const CANDIDATES = 50;
 export const RRF_K = 60;
 
 // The reranker reads the first RERANK_CANDIDATES fused chunks and keeps at
-// most RERANK_KEEP.
+// most RERANK_KEEP. 25 measured as good as 50 at half the tokens.
 export const RERANK_MODEL = "gpt-5.4-mini";
-export const RERANK_CANDIDATES = 50;
+export const RERANK_CANDIDATES = 25;
 export const RERANK_KEEP = 5;
 export const RERANK_CLIP_TOKENS = 200;
 

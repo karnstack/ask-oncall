@@ -4,9 +4,11 @@
 export const EMBED_MODEL = "text-embedding-3-small";
 export const EMBED_DIMS = 1536;
 
-// Chunks: fixed windows of 512 tokens, the last 64 repeated in the next.
+// Chunks: fixed windows (the first try), then cuts at headings.
 export const CHUNK_TOKENS = 512;
 export const CHUNK_OVERLAP = 64;
+export const CHUNK_MAX_TOKENS = 512; // split a section at blank lines above this
+export const CHUNK_MIN_TOKENS = 80; // merge a leaf section below this into the next
 
 // The answer model reads the top TOP_K chunks.
 export const TOP_K = 5;

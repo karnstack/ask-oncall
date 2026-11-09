@@ -4,7 +4,7 @@
 // each chunk by its position (doc_id::n).
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { chunkFixed, type Chunk } from "./chunk.ts";
+import { chunkByHeadings, type Chunk } from "./chunk.ts";
 import { loadCorpus, type Doc } from "./corpus.ts";
 import { pool, toPg } from "./db.ts";
 import { embed, type EmbedStats } from "./embed.ts";
@@ -14,7 +14,7 @@ const t0 = performance.now();
 await pool.query(readFileSync(join(import.meta.dirname, "..", "sql", "001_schema.sql"), "utf8"));
 
 const docs = loadCorpus();
-const chunks = docs.flatMap((d) => chunkFixed(d).map((c) => ({ d, c })));
+const chunks = docs.flatMap((d) => chunkByHeadings(d).map((c) => ({ d, c })));
 console.log(`${docs.length} documents, ${chunks.length} chunks`);
 const stats: EmbedStats = { texts: 0, tokens: 0, usd: 0, ms: 0 };
 const vectors = await embed(chunks.map(({ c }) => c.body), { stage: "embed:chunks", stats });

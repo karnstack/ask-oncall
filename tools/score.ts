@@ -9,7 +9,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
-import { sectionsOf, type Section } from "../src/chunk.ts";
+import { countTokens, sectionsOf, type Section } from "../src/chunk.ts";
 import { loadAlertRunbooks, loadCastlane, loadKubernetesDocs, type Doc } from "../src/corpus.ts";
 import { pool } from "../src/db.ts";
 import { embedQuestion } from "../src/embed.ts";
@@ -88,6 +88,22 @@ export function scoreQuestion(labels: Labels, q: Question, ranked: Ranked[]): Sc
   return { id: q.id, type: q.type, asker: q.asker, recall, rr: first >= 0 ? 1 / (first + 1) : 0, firstRank: first >= 0 ? first + 1 : -1 };
 }
 
+// Recall when chunks fill a fixed token budget in rank order: the decision a
+// prompt actually makes, and the one that separates chunkers. The tokens
+// counted are the chunk's text in its document (the breadcrumb line is not
+// counted), as in the course's measurements.
+export function recallWithinBudget(labels: Labels, q: Question, ranked: Ranked[], budget: number) {
+  const sent: Ranked[] = [];
+  let used = 0;
+  for (const c of ranked) {
+    const t = countTokens(labels.passage(c).trim());
+    if (used + t > budget) break;
+    used += t;
+    sent.push(c);
+  }
+  return q.targets.filter((alts) => sent.some((c) => alts.some((t) => labels.matches(c, t)))).length / q.targets.length;
+}
+
 export function summarize(scores: Score[]) {
   const mean = (f: (s: Score) => number) => scores.reduce((a, s) => a + f(s), 0) / (scores.length || 1);
   const row: Record<string, number> = {};
@@ -132,11 +148,16 @@ export async function retrieve(leg: Leg, q: Question): Promise<Hit[]> {
   return vectorSearch(await embedQuestion(q.q), 50);
 }
 
-export async function runSet(set: SetName, leg: Leg, labels: Labels) {
+export async function runSet(set: SetName, leg: Leg, labels: Labels, opts: { budget?: number } = {}) {
   const questions = loadQuestions(set).filter((q) => q.targets.length);
   const scores: Score[] = [];
-  for (const q of questions) scores.push(scoreQuestion(labels, q, await retrieve(leg, q)));
-  return { scores };
+  const budget: number[] = [];
+  for (const q of questions) {
+    const ranked = await retrieve(leg, q);
+    scores.push(scoreQuestion(labels, q, ranked));
+    if (opts.budget) budget.push(recallWithinBudget(labels, q, ranked, opts.budget));
+  }
+  return { scores, withinBudget: budget.length ? budget.reduce((a, b) => a + b, 0) / budget.length : null };
 }
 
 const fmt = (row: Record<string, number>) => Object.entries(row).map(([k, v]) => `${k} ${v.toFixed(3)}`).join("  ");
@@ -161,6 +182,7 @@ if (import.meta.main) {
       leg: { type: "string", default: "vector" },
       save: { type: "string" },
       against: { type: "string" },
+      budget: { type: "string" },
     },
   });
   const labels = Labels.fromCorpus();
@@ -168,9 +190,10 @@ if (import.meta.main) {
   const leg = values.leg as Leg;
   const results: Record<string, { scores: Score[] }> = {};
   for (const set of sets) {
-    const r = await runSet(set, leg, labels);
+    const r = await runSet(set, leg, labels, { budget: values.budget ? Number(values.budget) : undefined });
     results[set] = r;
     report(`${set}, ${leg}`, r.scores);
+    if (r.withinBudget != null) console.log(`  recall within ${values.budget} tokens: ${r.withinBudget.toFixed(3)}`);
     if (set === "castlane") console.log(`  first ranks: ${r.scores.map((s) => `${s.id} ${s.firstRank < 0 ? "-" : s.firstRank}`).join(", ")}`);
   }
   const file = (name: string) => join("runs", `${name}.json`);

@@ -9,7 +9,7 @@ create table if not exists chunks (
   n              int not null,
   title          text not null,
   url            text not null,
-  body           text not null,           -- embedded, searched, sent
+  body           text not null,           -- breadcrumb line + text: embedded, searched, sent
   embedding      vector(1536) not null,
   start_char     int not null,            -- the range of the document it covers (for labels)
   end_char       int not null

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { Labels, movedUpDown, scoreQuestion, summarize, twoSetRule, type Question } from "../tools/score.ts";
+import { Labels, movedUpDown, recallWithinBudget, scoreQuestion, summarize, twoSetRule, type Question } from "../tools/score.ts";
 
 const text = "# Pods\n\nIntro.\n\n## Pod fault recovery\n\nNodes fail.\n\n## Disruptions\n\nA PodDisruptionBudget keeps a minimum number of replicas.";
 const labels = new Labels([{ id: "pods", text }]);
@@ -21,6 +21,15 @@ test("recall at five and reciprocal rank for one question", () => {
   assert.equal(s.rr, 1 / 10);
   assert.equal(s.firstRank, 10);
   assert.equal(summarize([s, { ...s, rr: 1, recall: { 1: 1, 3: 1, 5: 1, 10: 1, 20: 1 } }])["R@5"], 0.5);
+});
+
+test("recall within a token budget fills in rank order and stops at the first chunk that does not fit", () => {
+  const long = "# Big\n\n" + "word ".repeat(3000);
+  const both = new Labels([{ id: "pods", text }, { id: "big", text: long }]);
+  const big = { docId: "big", start: 0, end: long.length }; // about 3,000 tokens
+  const mid = { docId: "big", start: 0, end: 7 + 5 * 1500 }; // about 1,500 tokens
+  assert.equal(recallWithinBudget(both, q, [big, at("A PodDisruptionBudget keeps")], 2000), 0);
+  assert.equal(recallWithinBudget(both, q, [mid, at("A PodDisruptionBudget keeps")], 2000), 1);
 });
 
 test("moved up, moved down, and the top-five line", () => {

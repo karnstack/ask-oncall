@@ -22,7 +22,7 @@ export function cosine(a: Float32Array, b: Float32Array): number {
 
 const top1 = async (qs: { q: string }[]) => {
   const vecs = await embed(qs.map((q) => q.q), { stage: "embed:question" });
-  return Promise.all(vecs.map(async (v) => (await vectorSearch(v, 1))[0].score));
+  return Promise.all(vecs.map(async (v) => (await vectorSearch(v, {}, 1))[0].score));
 };
 const real = await top1(loadQuestions("written"));
 const none = await top1([...loadQuestions("unanswerable"), ...loadQuestions("near-miss")]);

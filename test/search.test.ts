@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { rrf } from "../src/search.ts";
+import { rrf, whereSql } from "../src/search.ts";
 
 test("rrf adds 1 / (60 + rank) from each list", () => {
   const vector = [{ id: "a" }, { id: "b" }, { id: "c" }];
@@ -21,4 +21,9 @@ test("rank 1 and rank 10 are close with k = 60, far apart with k near 0", () => 
 test("rrf keeps the top `limit`", () => {
   const list = Array.from({ length: 80 }, (_, i) => ({ id: `c${i}` }));
   assert.equal(rrf([list], 60, 50).length, 50);
+});
+
+test("a service named in the question becomes a filter; no filter matches everything", () => {
+  assert.deepEqual(whereSql({}, 2), { sql: "true", params: [] });
+  assert.deepEqual(whereSql({ service: "pgbouncer-payouts" }, 3), { sql: "$3 = any(c.service)", params: ["pgbouncer-payouts"] });
 });

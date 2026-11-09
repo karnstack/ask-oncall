@@ -1,5 +1,5 @@
 // The assistant over HTTP, with node:http and nothing else.
-//   POST /ask           {"question": "..."}
+//   POST /ask           {"question": "...", "thread": ["..."]}
 //   npm run serve       (PORT, default 8787)
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { ask } from "./ask.ts";
@@ -19,11 +19,12 @@ async function route(req: IncomingMessage, res: ServerResponse) {
   if (req.method === "GET" && req.url === "/healthz") return send(res, 200, { ok: true });
 
   if (req.method === "POST" && req.url === "/ask") {
-    const { question } = JSON.parse(await readBody(req));
+    const { question, thread } = JSON.parse(await readBody(req));
     if (typeof question !== "string") return send(res, 400, { error: "question is required" });
-    const r = await ask(question);
+    const r = await ask(question, { thread });
     const body = {
       answer: r.text,
+      searched: r.searched,
       sources: r.sources.map((s, i) => ({ n: i + 1, id: s.id, title: s.title, url: s.url, breadcrumb: s.breadcrumb })),
       ms: r.ms,
     };

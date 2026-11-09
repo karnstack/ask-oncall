@@ -27,6 +27,9 @@ export const ANSWER_MODEL = "gpt-5.4-mini";
 // Model-written context for the word leg (the split design, opt-in).
 export const CONTEXT_MODEL = "gpt-5-nano";
 
+// The follow-up rewrite.
+export const REWRITE_MODEL = "gpt-5.4-mini";
+
 // US$ per 1,000,000 tokens, checked 2026-11-08 at
 // https://developers.openai.com/api/docs/pricing (re-check before you trust a bill).
 export type Price = { input: number; cachedInput: number; output: number };

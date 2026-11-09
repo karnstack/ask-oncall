@@ -22,15 +22,31 @@ export type Hit = {
 export const HIT_COLUMNS = `c.id, c.doc_id as "docId", c.n, c.source, c.title, c.url, c.breadcrumb, c.body,
   c.start_char as start, c.end_char as "end"`;
 
+// What the question asked for. Every filter runs inside both legs.
+export type Filter = {
+  service?: string; // a service the question names
+};
+
+// The WHERE clause for a filter, with its parameters numbered from `first`.
+export function whereSql(filter: Filter, first: number): { sql: string; params: unknown[] } {
+  const parts: string[] = [];
+  const params: unknown[] = [];
+  const param = (v: unknown) => `$${first + params.push(v) - 1}`;
+  if (filter.service) parts.push(`${param(filter.service)} = any(c.service)`);
+  return { sql: parts.length ? parts.join(" and ") : "true", params };
+}
+
 // The vector leg: cosine distance, nearest first. With no vector index this
 // is exact search: every row is compared.
-export async function vectorSearch(vec: Float32Array, k = CANDIDATES): Promise<Hit[]> {
+export async function vectorSearch(vec: Float32Array, filter: Filter = {}, k = CANDIDATES): Promise<Hit[]> {
+  const w = whereSql(filter, 2);
   const { rows } = await pool.query(
     `select ${HIT_COLUMNS}, 1 - (c.embedding <=> $1::vector) as score
        from chunks c
+      where ${w.sql}
       order by c.embedding <=> $1::vector
       limit ${k}`,
-    [toPg(vec)],
+    [toPg(vec), ...w.params],
   );
   return rows;
 }
@@ -42,15 +58,16 @@ export async function vectorSearch(vec: Float32Array, k = CANDIDATES): Promise<H
 export const OR_QUERY = `(select to_tsquery('simple', coalesce(string_agg(quote_literal(lexeme), ' | '), ''))
      from unnest(to_tsvector('english', $1)))`;
 
-export async function wordSearch(question: string, k = CANDIDATES): Promise<Hit[]> {
+export async function wordSearch(question: string, filter: Filter = {}, k = CANDIDATES): Promise<Hit[]> {
+  const w = whereSql(filter, 2);
   const { rows } = await pool.query(
     `with q as (select ${OR_QUERY} as q)
      select ${HIT_COLUMNS}, ts_rank(c.tsv, q.q, 1) as score
        from chunks c, q
-      where c.tsv @@ q.q
+      where c.tsv @@ q.q and ${w.sql}
       order by score desc, c.id
       limit ${k}`,
-    [question],
+    [question, ...w.params],
   );
   return rows;
 }
@@ -74,7 +91,7 @@ export function rrf<T extends { id: string }>(lists: T[][], k = RRF_K, limit = C
 
 // Both legs, fused, one after the other: embed the question, search by
 // vector, then search by words.
-export async function hybridSearch(question: string) {
+export async function hybridSearch(question: string, filter: Filter = {}) {
   const ms = { embed: 0, vector: 0, word: 0 };
   const timed = async <T>(stage: keyof typeof ms, fn: () => Promise<T>) => {
     const t0 = performance.now();
@@ -83,7 +100,7 @@ export async function hybridSearch(question: string) {
     return result;
   };
   const vec = await timed("embed", () => embedQuestion(question));
-  const vector = await timed("vector", () => vectorSearch(vec));
-  const word = await timed("word", () => wordSearch(question));
+  const vector = await timed("vector", () => vectorSearch(vec, filter));
+  const word = await timed("word", () => wordSearch(question, filter));
   return { vector, word, fused: rrf([vector, word]), ms };
 }

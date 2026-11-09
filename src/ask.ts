@@ -1,14 +1,18 @@
-// The question path: search both legs, fuse, rerank, and answer from what the
-// reranker kept.
+// The question path: rewrite a follow-up, search both legs, fuse, rerank, and
+// answer from what the reranker kept.
 //   npm run ask -- "How do I fail over Postgres?"
+//   npm run ask -- "and on the replica?" --thread "how do I see how many clients are waiting on pgbouncer-feeds"
 import { parseArgs } from "node:util";
 import { answer, sourceLine } from "./answer.ts";
 import { RERANK_CANDIDATES, RERANK_KEEP } from "./config.ts";
 import { pool } from "./db.ts";
 import { rerank } from "./rerank.ts";
-import { hybridSearch, type Hit } from "./search.ts";
+import { rewriteFollowUp } from "./rewrite.ts";
+import { hybridSearch, type Filter, type Hit } from "./search.ts";
 
 export type AskOptions = {
+  thread?: string[]; // earlier messages in the thread, oldest first
+  service?: string;
   onDelta?: (text: string) => void;
 };
 
@@ -17,40 +21,54 @@ export async function ask(question: string, opts: AskOptions = {}) {
   const ms: Record<string, number> = {};
   let usd = 0;
 
-  // 1. both legs, fused
-  const first = await hybridSearch(question);
+  // 1. a follow-up becomes a standalone question
+  let searched = question;
+  if (opts.thread?.length) {
+    const r = await rewriteFollowUp([...opts.thread, question]);
+    searched = r.question;
+    ms.rewrite = r.ms;
+    usd += r.usd;
+  }
+
+  // 2. both legs
+  const filter: Filter = { service: opts.service };
+  const first = await hybridSearch(searched, filter);
   Object.assign(ms, first.ms);
 
-  // 2. the reranker reads the top candidates and keeps at most five
+  // 3. the reranker reads the top candidates and keeps at most five
   const candidates = first.fused.slice(0, RERANK_CANDIDATES);
   let kept: Hit[] = [];
   if (candidates.length) {
-    const rr = await rerank(question, candidates);
+    const rr = await rerank(searched, candidates);
     kept = rr.kept;
     ms.rerank = rr.ms;
     usd += rr.usd;
   }
 
-  // 3. answer from what was kept (the first five, if the reranker kept none)
+  // 4. answer from what was kept (the first five, if the reranker kept none)
   if (!kept.length) kept = candidates.slice(0, RERANK_KEEP);
-  const a = await answer(question, kept, { onDelta: opts.onDelta });
+  const a = await answer(searched, kept, { onDelta: opts.onDelta });
   const text = a.text;
   ms.firstToken = performance.now() - t0 - a.ms + a.firstTokenMs;
   ms.answer = a.ms;
   usd += a.usd;
   ms.total = performance.now() - t0;
 
-  return { question, text, sources: kept, candidates, ms, usd };
+  return { question, searched, text, sources: kept, candidates, ms, usd };
 }
 
 // ---- the command line ---------------------------------------------------------
 
 if (import.meta.main) {
-  const { positionals } = parseArgs({ allowPositionals: true });
+  const { values, positionals } = parseArgs({
+    allowPositionals: true,
+    options: { thread: { type: "string", multiple: true }, service: { type: "string" } },
+  });
   const question = positionals.join(" ");
-  if (!question) throw new Error(`usage: npm run ask -- "your question"`);
-  const r = await ask(question, { onDelta: (s) => process.stdout.write(s) });
+  if (!question) throw new Error(`usage: npm run ask -- "your question" [--thread "earlier message"]`);
+  const r = await ask(question, { thread: values.thread, service: values.service, onDelta: (s) => process.stdout.write(s) });
   console.log("\n");
+  if (r.searched !== question) console.log(`searched as: ${r.searched}`);
   console.log(`sources:`);
   r.sources.forEach((s, i) => console.log(`  ${sourceLine(s, i)}${s.breadcrumb ? `\n      ${s.breadcrumb}` : ""}`));
   console.log(`time: ${Object.entries(r.ms).map(([k, v]) => `${k} ${Math.round(v)} ms`).join(", ")}`);

@@ -1,0 +1,3002 @@
+[
+  {
+    "id": "sy001",
+    "type": "synthetic",
+    "q": "Can I access a Pod's labels and annotations via environment variables or only via a downwardAPI volume?",
+    "source": "concepts/workloads/pods/downward-api::2",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/downward-api",
+          "start": 1541,
+          "end": 3207
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy002",
+    "type": "synthetic",
+    "q": "How does Kubernetes provide time-limited API tokens to pods for their ServiceAccount authentication?",
+    "source": "reference/access-authn-authz/service-accounts-admin::15",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/service-accounts-admin",
+          "start": 20477,
+          "end": 22217
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy003",
+    "type": "synthetic",
+    "q": "What do minCandidateNodesPercentage and minCandidateNodesAbsolute control in DefaultPreemptionArgs and their defaults?",
+    "source": "reference/config-api/kube-scheduler-config.v1::5",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-scheduler-config.v1",
+          "start": 5766,
+          "end": 7221
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy004",
+    "type": "synthetic",
+    "q": "How do I configure kube-apiserver to trust client certificate headers like user, group, UID, and extra prefixes?",
+    "source": "reference/command-line-tools-reference/kube-apiserver::37",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-apiserver",
+          "start": 59132,
+          "end": 60539
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy005",
+    "type": "synthetic",
+    "q": "Where can I find the API reference for client exec credentials in client.authentication.k8s.io v1?",
+    "source": "reference::9",
+    "targets": [
+      [
+        {
+          "doc": "reference",
+          "start": 9963,
+          "end": 11774
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy006",
+    "type": "synthetic",
+    "q": "Can multiple replication controllers serve traffic for the same service during a rollout or update?",
+    "source": "concepts/workloads/controllers/replicationcontroller::14",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/replicationcontroller",
+          "start": 11981,
+          "end": 12698
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy007",
+    "type": "synthetic",
+    "q": "How does a workload controller associate Pods with a PodGroup using Workload templates?",
+    "source": "concepts/workloads/podgroup-api::7",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/podgroup-api",
+          "start": 5129,
+          "end": 6652
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy008",
+    "type": "synthetic",
+    "q": "What does the Cluster struct provide for exec plugins when authenticating to a Kubernetes cluster?",
+    "source": "reference/config-api/client-authentication.v1beta1::1",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/client-authentication.v1beta1",
+          "start": 1174,
+          "end": 1817
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy009",
+    "type": "synthetic",
+    "q": "How do I configure the number of concurrent garbage collector workers in kube-controller-manager?",
+    "source": "reference/config-api/kube-controller-manager-config.v1alpha1::38",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-controller-manager-config.v1alpha1",
+          "start": 47263,
+          "end": 48562
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy010",
+    "type": "synthetic",
+    "q": "How can I deploy the example frontend ReplicaSet and verify its pods and status with kubectl?",
+    "source": "concepts/workloads/controllers/replicaset::2",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/replicaset",
+          "start": 1997,
+          "end": 3897
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy011",
+    "type": "synthetic",
+    "q": "Can a single Pod run more than one container that share storage and network?",
+    "source": "concepts/workloads/pods::20",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods",
+          "start": 19503,
+          "end": 21471
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy012",
+    "type": "synthetic",
+    "q": "How do I set how frequently an AWS ELB writes access logs for a Kubernetes Service?",
+    "source": "reference/labels-annotations-taints::119",
+    "targets": [
+      [
+        {
+          "doc": "reference/labels-annotations-taints",
+          "start": 78606,
+          "end": 79156
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy013",
+    "type": "synthetic",
+    "q": "Can kubeadm config file include multiple document types in one file separated by ---?",
+    "source": "reference/config-api/kubeadm-config.v1beta4::4",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubeadm-config.v1beta4",
+          "start": 5118,
+          "end": 6980
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy014",
+    "type": "synthetic",
+    "q": "Why does Pod status still show previous image and resource values right after I updated the Pod spec?",
+    "source": "concepts/workloads/pods::14",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods",
+          "start": 13535,
+          "end": 14399
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy015",
+    "type": "synthetic",
+    "q": "Which field configures the service account controller in KubeControllerManagerConfiguration?",
+    "source": "reference/config-api/kube-controller-manager-config.v1alpha1::23",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-controller-manager-config.v1alpha1",
+          "start": 26219,
+          "end": 28299
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy016",
+    "type": "synthetic",
+    "q": "How do I configure which bridge or interface prefix kube-proxy treats as local traffic?",
+    "source": "reference/config-api/kube-proxy-config.v1alpha1::21",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-proxy-config.v1alpha1",
+          "start": 20522,
+          "end": 21586
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy017",
+    "type": "synthetic",
+    "q": "How do I enable container user namespace isolation for a pod in Kubernetes?",
+    "source": "concepts/workloads/pods/user-namespaces::2",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/user-namespaces",
+          "start": 2510,
+          "end": 4579
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy018",
+    "type": "synthetic",
+    "q": "Is the kube-apiserver feature gate for GracefulNodeShutdown enabled by default and what is its stability level?",
+    "source": "reference/command-line-tools-reference/kube-apiserver::23",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-apiserver",
+          "start": 35933,
+          "end": 37733
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy019",
+    "type": "synthetic",
+    "q": "How can I create a persistent (non-expiring) API token for a ServiceAccount in Kubernetes?",
+    "source": "reference/access-authn-authz/service-accounts-admin::17",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/service-accounts-admin",
+          "start": 23121,
+          "end": 24901
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy020",
+    "type": "synthetic",
+    "q": "How can I enable privileged mode for a Linux container in a Pod's securityContext?",
+    "source": "concepts/workloads/pods/advanced-pod-config::7",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/advanced-pod-config",
+          "start": 4154,
+          "end": 5357
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy021",
+    "type": "synthetic",
+    "q": "How can I reduce pod downtime caused by node maintenance or autoscaler-induced evictions?",
+    "source": "concepts/workloads/pods/disruptions::1",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/disruptions",
+          "start": 2384,
+          "end": 3954
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy022",
+    "type": "synthetic",
+    "q": "Which field must be set when configuring JSON logging options for the kubelet?",
+    "source": "reference/config-api/kubelet-config.v1beta1::2",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubelet-config.v1beta1",
+          "start": 1317,
+          "end": 1830
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy023",
+    "type": "synthetic",
+    "q": "When should I use a stateful workload controller instead of a deployment or replicaset?",
+    "source": "concepts/workloads/controllers/statefulset::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/statefulset",
+          "start": 0,
+          "end": 814
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy024",
+    "type": "synthetic",
+    "q": "How can I schedule recurring Jobs in Kubernetes similar to cron?",
+    "source": "concepts/workloads/controllers/job::50",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/job",
+          "start": 62016,
+          "end": 63842
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy025",
+    "type": "synthetic",
+    "q": "What components make up a StatefulSet and how do they provide stable network identity and storage?",
+    "source": "concepts/workloads/controllers/statefulset::2",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/statefulset",
+          "start": 2011,
+          "end": 2852
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy026",
+    "type": "synthetic",
+    "q": "How does Kubernetes decide which pods to evict when a node runs out of resources?",
+    "source": "concepts/workloads/pods/pod-qos::1",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/pod-qos",
+          "start": 402,
+          "end": 1523
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy027",
+    "type": "synthetic",
+    "q": "Do I need to set a Pod field to specify whether containers require Linux or Windows nodes?",
+    "source": "concepts/workloads/pods::5",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods",
+          "start": 4881,
+          "end": 6059
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy028",
+    "type": "synthetic",
+    "q": "How do I disable the automatic forced detach of volumes after a node remains unhealthy for 6 minutes?",
+    "source": "concepts/cluster-administration/node-shutdown::9",
+    "targets": [
+      [
+        {
+          "doc": "concepts/cluster-administration/node-shutdown",
+          "start": 13347,
+          "end": 14971
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy029",
+    "type": "synthetic",
+    "q": "How do containers differ from virtual machines in isolation and resource usage?",
+    "source": "concepts/overview::5",
+    "targets": [
+      [
+        {
+          "doc": "concepts/overview",
+          "start": 5991,
+          "end": 8126
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy030",
+    "type": "synthetic",
+    "q": "What component decides which node a newly created Pod should run on?",
+    "source": "concepts/scheduling-eviction/kube-scheduler::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/kube-scheduler",
+          "start": 0,
+          "end": 666
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy031",
+    "type": "synthetic",
+    "q": "With CompositePodGroup enabled, which resources are treated as scheduling units and use their priority in the queue?",
+    "source": "concepts/scheduling-eviction/pod-priority-preemption::8",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/pod-priority-preemption",
+          "start": 7300,
+          "end": 7915
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy032",
+    "type": "synthetic",
+    "q": "What config type should I supply to kubeadm join when using the --config flag for v1beta4?",
+    "source": "reference/config-api/kubeadm-config.v1beta4::23",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubeadm-config.v1beta4",
+          "start": 34601,
+          "end": 36426
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy033",
+    "type": "synthetic",
+    "q": "Why use a Kubernetes DaemonSet instead of running node-level daemons directly with systemd?",
+    "source": "concepts/workloads/controllers/daemonset::11",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/daemonset",
+          "start": 10792,
+          "end": 11466
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy034",
+    "type": "synthetic",
+    "q": "Can Pods in the same PodGroup have different schedulerName, priority, or preemptionPolicy?",
+    "source": "concepts/workloads/podgroup-api/lifecycle::3",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/podgroup-api/lifecycle",
+          "start": 2101,
+          "end": 3094
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy035",
+    "type": "synthetic",
+    "q": "What CNI spec version must a Kubernetes cluster's network plugin support?",
+    "source": "concepts/extend-kubernetes/compute-storage-net/network-plugins::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/extend-kubernetes/compute-storage-net/network-plugins",
+          "start": 0,
+          "end": 952
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy036",
+    "type": "synthetic",
+    "q": "Which feature gate controls graceful shutdown behavior for nodes and is it enabled by default?",
+    "source": "reference/command-line-tools-reference/kube-apiserver::24",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-apiserver",
+          "start": 37505,
+          "end": 39328
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy037",
+    "type": "synthetic",
+    "q": "How do I set kubelet extra args and node taint effect in kubeadm v1beta4 config?",
+    "source": "reference/config-api/kubeadm-config.v1beta4::12",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubeadm-config.v1beta4",
+          "start": 18211,
+          "end": 19949
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy038",
+    "type": "synthetic",
+    "q": "Can CRDs provide OpenAPI-based validation and defaulting, or do I need an aggregated API for that?",
+    "source": "concepts/extend-kubernetes/api-extension/custom-resources::11",
+    "targets": [
+      [
+        {
+          "doc": "concepts/extend-kubernetes/api-extension/custom-resources",
+          "start": 11608,
+          "end": 15539
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy039",
+    "type": "synthetic",
+    "q": "What happens to pods and replacements when I drain a node that has a PodDisruptionBudget?",
+    "source": "concepts/workloads/pods/disruptions::4",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/disruptions",
+          "start": 7291,
+          "end": 9243
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy040",
+    "type": "synthetic",
+    "q": "How do I increase the number of concurrent statefulset sync workers in kube-controller-manager?",
+    "source": "reference/command-line-tools-reference/kube-controller-manager::10",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-controller-manager",
+          "start": 16049,
+          "end": 17795
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy041",
+    "type": "synthetic",
+    "q": "What happens if a Pod's runtimeClassName references a non-existent RuntimeClass or handler?",
+    "source": "concepts/containers/runtime-class::3",
+    "targets": [
+      [
+        {
+          "doc": "concepts/containers/runtime-class",
+          "start": 2861,
+          "end": 3652
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy042",
+    "type": "synthetic",
+    "q": "Can Kubernetes perform health checks over gRPC and can those checks use TLS?",
+    "source": "concepts/workloads/pods/probes::16",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/probes",
+          "start": 19447,
+          "end": 21508
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy043",
+    "type": "synthetic",
+    "q": "How do I specify which Node name kube-proxy should use instead of the system hostname?",
+    "source": "reference/config-api/kube-proxy-config.v1alpha1::15",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-proxy-config.v1alpha1",
+          "start": 13019,
+          "end": 14800
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy044",
+    "type": "synthetic",
+    "q": "How do I allow access to a Pod's logs and the Pod resource in a Role's rules?",
+    "source": "reference/access-authn-authz/rbac::7",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/rbac",
+          "start": 6597,
+          "end": 8199
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy045",
+    "type": "synthetic",
+    "q": "What must match between a StatefulSet selector and its Pod template labels to avoid creation errors?",
+    "source": "concepts/workloads/controllers/statefulset::3",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/statefulset",
+          "start": 2852,
+          "end": 3605
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy046",
+    "type": "synthetic",
+    "q": "Why can't I run a privileged container or escalate host privileges on a Windows Kubernetes node?",
+    "source": "concepts/configuration/windows-resource-management::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/configuration/windows-resource-management",
+          "start": 0,
+          "end": 1069
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy047",
+    "type": "synthetic",
+    "q": "How does a Workload template relate to CompositePodGroup and PodGroup runtime instances?",
+    "source": "concepts/workloads/compositepodgroup-api::6",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/compositepodgroup-api",
+          "start": 4052,
+          "end": 5666
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy048",
+    "type": "synthetic",
+    "q": "How is a Kubernetes service account's username formatted for ABAC policies?",
+    "source": "reference/access-authn-authz/abac::6",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/abac",
+          "start": 5577,
+          "end": 6426
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy049",
+    "type": "synthetic",
+    "q": "Why is my Pod stuck because the node can't pull its container image and keeps retrying with delays?",
+    "source": "concepts/containers/images::8",
+    "targets": [
+      [
+        {
+          "doc": "concepts/containers/images",
+          "start": 8523,
+          "end": 9247
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy050",
+    "type": "synthetic",
+    "q": "What does the hardPodAffinityWeight field control in the scheduler's inter-pod affinity configuration?",
+    "source": "reference/config-api/kube-scheduler-config.v1::8",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-scheduler-config.v1",
+          "start": 10999,
+          "end": 12060
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy051",
+    "type": "synthetic",
+    "q": "How do I create an empty Kubernetes Secret with the default type using kubectl?",
+    "source": "concepts/configuration/secret::6",
+    "targets": [
+      [
+        {
+          "doc": "concepts/configuration/secret",
+          "start": 7828,
+          "end": 8463
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy052",
+    "type": "synthetic",
+    "q": "Where are the kubelet configuration API versions and their resource types listed in the docs?",
+    "source": "reference::7",
+    "targets": [
+      [
+        {
+          "doc": "reference",
+          "start": 6457,
+          "end": 8307
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy053",
+    "type": "synthetic",
+    "q": "What v1alpha1 resource types are available for configuring the API server?",
+    "source": "reference/config-api/apiserver-config.v1alpha1::0",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-config.v1alpha1",
+          "start": 0,
+          "end": 552
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy054",
+    "type": "synthetic",
+    "q": "How should kube-proxy or other node components authenticate to the API server when not using kubelet TLS bootstrapping?",
+    "source": "reference/access-authn-authz/kubelet-tls-bootstrapping::17",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/kubelet-tls-bootstrapping",
+          "start": 20903,
+          "end": 21970
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy055",
+    "type": "synthetic",
+    "q": "How does Kubernetes expose CSI driver-specific available storage information to the scheduler?",
+    "source": "concepts/storage/storage-capacity::2",
+    "targets": [
+      [
+        {
+          "doc": "concepts/storage/storage-capacity",
+          "start": 1099,
+          "end": 1735
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy056",
+    "type": "synthetic",
+    "q": "How does kube-controller-manager sign service account tokens and what flags configure the keys?",
+    "source": "reference/access-authn-authz/service-accounts-admin::12",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/service-accounts-admin",
+          "start": 15224,
+          "end": 16783
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy057",
+    "type": "synthetic",
+    "q": "How should I name files in a kubeadm patches directory so kubeadm recognizes their target and patch type?",
+    "source": "reference/config-api/kubeadm-config.v1beta3::49",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubeadm-config.v1beta3",
+          "start": 61824,
+          "end": 63165
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy058",
+    "type": "synthetic",
+    "q": "How do I enable kubelet to renew its client and serving TLS certificates automatically?",
+    "source": "reference/access-authn-authz/kubelet-tls-bootstrapping::16",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/kubelet-tls-bootstrapping",
+          "start": 18792,
+          "end": 20903
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy059",
+    "type": "synthetic",
+    "q": "What format should the kubeadm bootstrap token string use for node joining and authentication?",
+    "source": "reference/config-api/kubeadm-config.v1beta4::30",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubeadm-config.v1beta4",
+          "start": 42901,
+          "end": 43777
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy060",
+    "type": "synthetic",
+    "q": "Why do DNS lookups sometimes fail immediately after a StatefulSet Pod is created?",
+    "source": "concepts/workloads/controllers/statefulset::7",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/statefulset",
+          "start": 5243,
+          "end": 7174
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy061",
+    "type": "synthetic",
+    "q": "How does a Kubernetes Service select Pods and expose their listening port by default?",
+    "source": "concepts/services-networking/service::3",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/service",
+          "start": 3865,
+          "end": 5290
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy062",
+    "type": "synthetic",
+    "q": "Can a ReplicaSet be targeted by an HPA for automatic scaling based on Pod CPU usage?",
+    "source": "concepts/workloads/controllers/replicaset::15",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/replicaset",
+          "start": 14738,
+          "end": 15557
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy063",
+    "type": "synthetic",
+    "q": "Where are the settings for registering a new node or control-plane during kubeadm init/join defined?",
+    "source": "reference/config-api/kubeadm-config.v1beta4::62",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubeadm-config.v1beta4",
+          "start": 79801,
+          "end": 80222
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy064",
+    "type": "synthetic",
+    "q": "Where can I find Kubernetes docs on authentication, authorization, and admission control for API access?",
+    "source": "reference/access-authn-authz::0",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz",
+          "start": 0,
+          "end": 1753
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy065",
+    "type": "synthetic",
+    "q": "Do kubelets require a specific CRI API version to register nodes in Kubernetes v1.26+?",
+    "source": "concepts/containers/cri::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/containers/cri",
+          "start": 0,
+          "end": 929
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy066",
+    "type": "synthetic",
+    "q": "What happens if --service-account-max-token-expiration is larger than the external signer's max_token_expiration_seconds?",
+    "source": "reference/access-authn-authz/service-accounts-admin::21",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/service-accounts-admin",
+          "start": 27940,
+          "end": 29032
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy067",
+    "type": "synthetic",
+    "q": "How do I exempt specific preloaded images from credential reverification in the kubelet config?",
+    "source": "reference/config-api/kubelet-config.v1beta1::22",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubelet-config.v1beta1",
+          "start": 20536,
+          "end": 22330
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy068",
+    "type": "synthetic",
+    "q": "If I list plugins for a scheduler extension point, do they replace or add to the defaults?",
+    "source": "reference/config-api/kube-scheduler-config.v1::30",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-scheduler-config.v1",
+          "start": 35456,
+          "end": 36082
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy069",
+    "type": "synthetic",
+    "q": "How should kubelet eviction thresholds be set on nodes with swap enabled to avoid OOM killer and unnecessary evictions?",
+    "source": "concepts/cluster-administration/swap-memory-management::10",
+    "targets": [
+      [
+        {
+          "doc": "concepts/cluster-administration/swap-memory-management",
+          "start": 11118,
+          "end": 12821
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy070",
+    "type": "synthetic",
+    "q": "How do I prevent the Kubelet from registering the node with the API server?",
+    "source": "reference/command-line-tools-reference/kubelet::36",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kubelet",
+          "start": 59144,
+          "end": 60733
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy071",
+    "type": "synthetic",
+    "q": "What field shows the API object returned in the response JSON for audit events?",
+    "source": "reference/config-api/apiserver-audit.v1::4",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-audit.v1",
+          "start": 3322,
+          "end": 5295
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy072",
+    "type": "synthetic",
+    "q": "What field lists the client configurations for egress selector connections in apiserver.k8s.io/v1beta1?",
+    "source": "reference/config-api/apiserver-config.v1beta1::4",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-config.v1beta1",
+          "start": 4294,
+          "end": 5077
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy073",
+    "type": "synthetic",
+    "q": "How can I control how many validating admission policy status workers run concurrently?",
+    "source": "reference/command-line-tools-reference/kube-controller-manager::11",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-controller-manager",
+          "start": 17795,
+          "end": 19060
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy074",
+    "type": "synthetic",
+    "q": "What fields are required when specifying a single resource in the scheduler ResourceSpec?",
+    "source": "reference/config-api/kube-scheduler-config.v1::37",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-scheduler-config.v1",
+          "start": 43037,
+          "end": 43739
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy075",
+    "type": "synthetic",
+    "q": "How can I load admission webhooks and CEL policies from disk instead of the Kubernetes API?",
+    "source": "reference/access-authn-authz/manifest-admission-control::0",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/manifest-admission-control",
+          "start": 0,
+          "end": 1062
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy076",
+    "type": "synthetic",
+    "q": "Which namespaces exist by default in a fresh Kubernetes cluster?",
+    "source": "concepts/overview/working-with-objects/namespaces::2",
+    "targets": [
+      [
+        {
+          "doc": "concepts/overview/working-with-objects/namespaces",
+          "start": 1402,
+          "end": 2282
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy077",
+    "type": "synthetic",
+    "q": "Do mutating admission webhooks run before validating ones during admission processing?",
+    "source": "reference/access-authn-authz/admission-controllers::3",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/admission-controllers",
+          "start": 2378,
+          "end": 3304
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy078",
+    "type": "synthetic",
+    "q": "Will a sidecar container be restarted if the main container exits successfully or with failure under pod restartPolicy?",
+    "source": "concepts/workloads/pods/pod-lifecycle::14",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/pod-lifecycle",
+          "start": 14544,
+          "end": 15583
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy079",
+    "type": "synthetic",
+    "q": "Do component logs show detailed traces like HTTP access and scheduler decisions for debugging?",
+    "source": "concepts/cluster-administration/system-logs::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/cluster-administration/system-logs",
+          "start": 0,
+          "end": 617
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy080",
+    "type": "synthetic",
+    "q": "How do I configure JWT-based user authentication and anonymous access in the apiserver's AuthenticationConfiguration?",
+    "source": "reference/config-api/apiserver-config.v1alpha1::3",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-config.v1alpha1",
+          "start": 2352,
+          "end": 4287
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy081",
+    "type": "synthetic",
+    "q": "How do I specify audit recording rules and their order for the kube-apiserver audit policy?",
+    "source": "reference/config-api/apiserver-audit.v1::8",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-audit.v1",
+          "start": 7155,
+          "end": 9038
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy082",
+    "type": "synthetic",
+    "q": "Do containers ensure the same behavior across different hosts by packaging their dependencies?",
+    "source": "concepts/containers::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/containers",
+          "start": 0,
+          "end": 765
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy083",
+    "type": "synthetic",
+    "q": "What fields are required in a ReplicationController's pod spec template and what restartPolicy value is allowed?",
+    "source": "concepts/workloads/controllers/replicationcontroller::5",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/replicationcontroller",
+          "start": 5030,
+          "end": 5902
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy084",
+    "type": "synthetic",
+    "q": "How can Kubernetes prefer routing Service traffic to endpoints in the same availability zone?",
+    "source": "concepts/services-networking/topology-aware-routing::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/topology-aware-routing",
+          "start": 0,
+          "end": 753
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy085",
+    "type": "synthetic",
+    "q": "How can I limit which pods can access a Secret to reduce exposure on a node?",
+    "source": "concepts/configuration/secret::28",
+    "targets": [
+      [
+        {
+          "doc": "concepts/configuration/secret",
+          "start": 30621,
+          "end": 31514
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy086",
+    "type": "synthetic",
+    "q": "Will VPA change resource requests for already running Pods, or only when Pods are created or recreated?",
+    "source": "concepts/workloads/autoscaling/vertical-pod-autoscale::6",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/autoscaling/vertical-pod-autoscale",
+          "start": 6253,
+          "end": 6911
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy087",
+    "type": "synthetic",
+    "q": "Why are my webhook calls from the API server failing with connection errors?",
+    "source": "reference/access-authn-authz/manifest-admission-control::16",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/manifest-admission-control",
+          "start": 13969,
+          "end": 15000
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy088",
+    "type": "synthetic",
+    "q": "How can Kubernetes enforce or modify API requests like setting image pull policy automatically?",
+    "source": "concepts/policy::1",
+    "targets": [
+      [
+        {
+          "doc": "concepts/policy",
+          "start": 632,
+          "end": 1362
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy089",
+    "type": "synthetic",
+    "q": "Can I enforce node-specific or default namespace-wide network policies using Kubernetes NetworkPolicy API?",
+    "source": "concepts/services-networking/network-policies::18",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/network-policies",
+          "start": 19215,
+          "end": 20966
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy090",
+    "type": "synthetic",
+    "q": "Can an external system suggest a node for a pending Pod, and can the scheduler overwrite that suggestion?",
+    "source": "concepts/scheduling-eviction/assign-pod-node::22",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/assign-pod-node",
+          "start": 27562,
+          "end": 28394
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy091",
+    "type": "synthetic",
+    "q": "How do I provide registry credentials for pulling images now that kubelet's built-in cloud credential providers were removed?",
+    "source": "concepts/containers/images::24",
+    "targets": [
+      [
+        {
+          "doc": "concepts/containers/images",
+          "start": 26795,
+          "end": 27481
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy092",
+    "type": "synthetic",
+    "q": "Is the feature gate PodTopologyLabelsAdmission enabled by default in kube-apiserver?",
+    "source": "reference/command-line-tools-reference/kube-apiserver::26",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-apiserver",
+          "start": 40574,
+          "end": 42383
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy093",
+    "type": "synthetic",
+    "q": "Can DaemonSet pods run on nodes marked unschedulable so they can start before the node becomes Ready?",
+    "source": "concepts/workloads/controllers/daemonset::8",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/daemonset",
+          "start": 8339,
+          "end": 9044
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy094",
+    "type": "synthetic",
+    "q": "How do I disable Memory QoS and what happens to memory.min, memory.low, and memory.high afterwards?",
+    "source": "concepts/workloads/pods/pod-qos::10",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/pod-qos",
+          "start": 8480,
+          "end": 9320
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy095",
+    "type": "synthetic",
+    "q": "Which admission controller blocks pods that set required AntiAffinity topology keys other than kubernetes.io/hostname?",
+    "source": "reference/access-authn-authz/admission-controllers::22",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/admission-controllers",
+          "start": 19265,
+          "end": 20386
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy096",
+    "type": "synthetic",
+    "q": "How does a ResourceClaim indicate consumed bandwidth and the share ID after allocation?",
+    "source": "concepts/resource-management/dynamic-resource-allocation/dra-features::9",
+    "targets": [
+      [
+        {
+          "doc": "concepts/resource-management/dynamic-resource-allocation/dra-features",
+          "start": 10674,
+          "end": 11735
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy097",
+    "type": "synthetic",
+    "q": "What fields are required when configuring a webhook-based authorizer in the kube-apiserver config?",
+    "source": "reference/config-api/apiserver-config.v1::13",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-config.v1",
+          "start": 11450,
+          "end": 12731
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy098",
+    "type": "synthetic",
+    "q": "Can I disable the built-in Job controller for a specific Job and let an external controller manage it?",
+    "source": "concepts/workloads/controllers/job::47",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/job",
+          "start": 59454,
+          "end": 60637
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy099",
+    "type": "synthetic",
+    "q": "How do I change the IP and port where kube-proxy serves its health check endpoint?",
+    "source": "reference/command-line-tools-reference/kube-proxy::11",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-proxy",
+          "start": 16511,
+          "end": 18083
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy100",
+    "type": "synthetic",
+    "q": "How should I label WordPress and its MySQL StatefulSet and Service to show they belong to the same app?",
+    "source": "concepts/overview/working-with-objects/common-labels::4",
+    "targets": [
+      [
+        {
+          "doc": "concepts/overview/working-with-objects/common-labels",
+          "start": 3876,
+          "end": 5798
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy101",
+    "type": "synthetic",
+    "q": "How can I delete a ReplicaSet but keep its Pods running?",
+    "source": "concepts/workloads/controllers/replicaset::10",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/replicaset",
+          "start": 9909,
+          "end": 10955
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy102",
+    "type": "synthetic",
+    "q": "What resource settings are required for a Pod to be classified as Guaranteed QoS?",
+    "source": "concepts/workloads/pods/pod-qos::3",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/pod-qos",
+          "start": 2020,
+          "end": 2833
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy103",
+    "type": "synthetic",
+    "q": "Are there any kube-proxy feature gates and their default values listed when not using --config?",
+    "source": "reference/command-line-tools-reference/kube-proxy::10",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-proxy",
+          "start": 15245,
+          "end": 16509
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy104",
+    "type": "synthetic",
+    "q": "How must credential provider names be specified and where must the provider executable reside for the kubelet to use it?",
+    "source": "reference/config-api/kubelet-config.v1::2",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubelet-config.v1",
+          "start": 1748,
+          "end": 3633
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy105",
+    "type": "synthetic",
+    "q": "Can I assign a specific IP to a Service, and what restrictions apply when setting .spec.clusterIP?",
+    "source": "concepts/services-networking/service::15",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/service",
+          "start": 17749,
+          "end": 18624
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy106",
+    "type": "synthetic",
+    "q": "How does VPA determine and apply new CPU/memory requests to Pods in a cluster?",
+    "source": "concepts/workloads/autoscaling/vertical-pod-autoscale::2",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/autoscaling/vertical-pod-autoscale",
+          "start": 1941,
+          "end": 4277
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy107",
+    "type": "synthetic",
+    "q": "How can I run a small new release alongside the stable frontend without the pods overlapping?",
+    "source": "concepts/workloads/management::7",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/management",
+          "start": 9200,
+          "end": 10915
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy108",
+    "type": "synthetic",
+    "q": "What feature gate controls enabling ContainerRestartRules in kube-controller-manager and is it alpha or beta by default?",
+    "source": "reference/command-line-tools-reference/kube-controller-manager::17",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-controller-manager",
+          "start": 27218,
+          "end": 29103
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy109",
+    "type": "synthetic",
+    "q": "What mandatory fields must I include in a Kubernetes manifest to create an object?",
+    "source": "concepts/overview/working-with-objects::3",
+    "targets": [
+      [
+        {
+          "doc": "concepts/overview/working-with-objects",
+          "start": 4040,
+          "end": 5912
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy110",
+    "type": "synthetic",
+    "q": "How do I set node-specific kubeadm init options like node name, CRI socket, or API advertise address?",
+    "source": "reference/config-api/kubeadm-config.v1beta3::5",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubeadm-config.v1beta3",
+          "start": 6879,
+          "end": 8743
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy111",
+    "type": "synthetic",
+    "q": "Why didn't kubelet detect memory pressure before the OOM killer ran?",
+    "source": "concepts/scheduling-eviction/node-pressure-eviction::23",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/node-pressure-eviction",
+          "start": 25879,
+          "end": 26690
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy112",
+    "type": "synthetic",
+    "q": "Can Windows Kubernetes nodes use hostNetwork or support Local NodePort access from the same node?",
+    "source": "concepts/services-networking/windows-networking::7",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/windows-networking",
+          "start": 10718,
+          "end": 12582
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy113",
+    "type": "synthetic",
+    "q": "How do I specify CPU and memory resource limits and requests for containers in a Pod?",
+    "source": "concepts/configuration/manage-resources-containers::4",
+    "targets": [
+      [
+        {
+          "doc": "concepts/configuration/manage-resources-containers",
+          "start": 4254,
+          "end": 5121
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy114",
+    "type": "synthetic",
+    "q": "What does the ConcurrentSyncs field control for the device taint eviction controller, and what's its default?",
+    "source": "reference/config-api/kube-controller-manager-config.v1alpha1::32",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-controller-manager-config.v1alpha1",
+          "start": 39823,
+          "end": 41033
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy115",
+    "type": "synthetic",
+    "q": "How do I specify which container registries trigger a kubelet credential provider executable?",
+    "source": "reference/config-api/kubelet-config.v1alpha1::6",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubelet-config.v1alpha1",
+          "start": 4722,
+          "end": 7976
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy116",
+    "type": "synthetic",
+    "q": "How do I configure per-core and minimum conntrack entries and timeouts for TCP/UDP in kube-proxy v1alpha1?",
+    "source": "reference/config-api/kube-proxy-config.v1alpha1::23",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-proxy-config.v1alpha1",
+          "start": 21905,
+          "end": 24174
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy117",
+    "type": "synthetic",
+    "q": "Can I overcommit hugepage resources like I do CPU or memory in Kubernetes?",
+    "source": "concepts/configuration/manage-resources-containers::3",
+    "targets": [
+      [
+        {
+          "doc": "concepts/configuration/manage-resources-containers",
+          "start": 3296,
+          "end": 4254
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy118",
+    "type": "synthetic",
+    "q": "How do I limit total requested GPUs in a namespace using a resource quota for nvidia.com/gpu?",
+    "source": "concepts/policy/resource-quotas::5",
+    "targets": [
+      [
+        {
+          "doc": "concepts/policy/resource-quotas",
+          "start": 6006,
+          "end": 6773
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy119",
+    "type": "synthetic",
+    "q": "Can I configure multiple JWT issuers for API server authentication and how are they validated?",
+    "source": "reference/config-api/apiserver-config.v1::3",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-config.v1",
+          "start": 2484,
+          "end": 4423
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy120",
+    "type": "synthetic",
+    "q": "Can I create a PVC from an existing PVC using a CSI driver, and what namespace/storage class restrictions apply?",
+    "source": "concepts/storage/volume-pvc-datasource::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/storage/volume-pvc-datasource",
+          "start": 0,
+          "end": 1661
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy121",
+    "type": "synthetic",
+    "q": "Which feature gate must be enabled on kube-apiserver and kubelet to allow CSI volume health status?",
+    "source": "concepts/storage/volume-health-monitoring::5",
+    "targets": [
+      [
+        {
+          "doc": "concepts/storage/volume-health-monitoring",
+          "start": 5406,
+          "end": 6469
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy122",
+    "type": "synthetic",
+    "q": "How many PodDisruptionBudget objects can be synced simultaneously (which config field controls that)?",
+    "source": "reference/config-api/kube-controller-manager-config.v1alpha1::33",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-controller-manager-config.v1alpha1",
+          "start": 41033,
+          "end": 41834
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy123",
+    "type": "synthetic",
+    "q": "How does Kubernetes choose which container to kill when a node runs out of memory?",
+    "source": "concepts/scheduling-eviction/node-pressure-eviction::20",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/node-pressure-eviction",
+          "start": 22675,
+          "end": 24209
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy124",
+    "type": "synthetic",
+    "q": "If I change a NetworkPolicy or pod/namespace labels, will existing connections be immediately dropped?",
+    "source": "concepts/services-networking/network-policies::19",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/network-policies",
+          "start": 20966,
+          "end": 21743
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy125",
+    "type": "synthetic",
+    "q": "How often does kube-proxy resync iptables rules and what's the minimum interval before forced resyncs?",
+    "source": "reference/command-line-tools-reference/kube-proxy::12",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-proxy",
+          "start": 18083,
+          "end": 19749
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy126",
+    "type": "synthetic",
+    "q": "How do I restrict allowed label values for a metric using --allow-metric-labels?",
+    "source": "concepts/cluster-administration/system-metrics::9",
+    "targets": [
+      [
+        {
+          "doc": "concepts/cluster-administration/system-metrics",
+          "start": 12454,
+          "end": 14096
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy127",
+    "type": "synthetic",
+    "q": "What kinds of pod terminations are caused by cluster admin actions versus unavoidable failures?",
+    "source": "concepts/workloads/pods/disruptions::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/disruptions",
+          "start": 0,
+          "end": 2384
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy128",
+    "type": "synthetic",
+    "q": "How do I label a namespace to enforce or audit Kubernetes Pod Security standards per mode?",
+    "source": "concepts/security/pod-security-admission::2",
+    "targets": [
+      [
+        {
+          "doc": "concepts/security/pod-security-admission",
+          "start": 1185,
+          "end": 2969
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy129",
+    "type": "synthetic",
+    "q": "How do I disable the periodic attach/detach reconciler loop in the controller manager?",
+    "source": "reference/config-api/kube-controller-manager-config.v1alpha1::25",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kube-controller-manager-config.v1alpha1",
+          "start": 32293,
+          "end": 33784
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy130",
+    "type": "synthetic",
+    "q": "How long after deprecation are stable metrics removed from scraping?",
+    "source": "concepts/cluster-administration/system-metrics::1",
+    "targets": [
+      [
+        {
+          "doc": "concepts/cluster-administration/system-metrics",
+          "start": 1465,
+          "end": 3193
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy131",
+    "type": "synthetic",
+    "q": "What fields does ExecCredentialStatus provide for credentials and which indicate expiration?",
+    "source": "reference/config-api/client-authentication.v1::4",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/client-authentication.v1",
+          "start": 5527,
+          "end": 6916
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy132",
+    "type": "synthetic",
+    "q": "How do I configure the scheduler to delegate a cluster-wide resource like example.com/foo to an extender?",
+    "source": "concepts/configuration/manage-resources-containers::21",
+    "targets": [
+      [
+        {
+          "doc": "concepts/configuration/manage-resources-containers",
+          "start": 22374,
+          "end": 23456
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy133",
+    "type": "synthetic",
+    "q": "Where can I find docs on PodGroup API, templates, pod scheduling groups, gang scheduling, and PodGroup policies?",
+    "source": "concepts/workloads/podgroup-api/lifecycle::4",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/podgroup-api/lifecycle",
+          "start": 3094,
+          "end": 3658
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy134",
+    "type": "synthetic",
+    "q": "Can I set both a JWT claim name and a CEL expression simultaneously in a ClaimOrExpression?",
+    "source": "reference/config-api/apiserver-config.v1beta1::14",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-config.v1beta1",
+          "start": 12984,
+          "end": 14138
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy135",
+    "type": "synthetic",
+    "q": "Can I force a Pod to run on a specific node by setting a field in the Pod spec?",
+    "source": "concepts/scheduling-eviction/assign-pod-node::21",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/assign-pod-node",
+          "start": 26161,
+          "end": 27562
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy136",
+    "type": "synthetic",
+    "q": "Where can I find cluster-level administration docs for configuring Kubernetes in our environment?",
+    "source": "concepts/configuration::6",
+    "targets": [
+      [
+        {
+          "doc": "concepts/configuration",
+          "start": 4134,
+          "end": 5530
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy137",
+    "type": "synthetic",
+    "q": "How can I reduce I/O latency impact from swap on system daemons during memory pressure?",
+    "source": "concepts/cluster-administration/swap-memory-management::13",
+    "targets": [
+      [
+        {
+          "doc": "concepts/cluster-administration/swap-memory-management",
+          "start": 14251,
+          "end": 14999
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy138",
+    "type": "synthetic",
+    "q": "How do I route gRPC traffic from a Gateway to a Service on a specific port using Kubernetes?",
+    "source": "concepts/services-networking/gateway::5",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/gateway",
+          "start": 6681,
+          "end": 8722
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy139",
+    "type": "synthetic",
+    "q": "Do I need to set any pod field or taints to ensure Windows containers schedule onto Windows nodes?",
+    "source": "concepts/windows/user-guide::7",
+    "targets": [
+      [
+        {
+          "doc": "concepts/windows/user-guide",
+          "start": 6813,
+          "end": 7981
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy140",
+    "type": "synthetic",
+    "q": "Do all Kubernetes clusters require at least one worker node to run Pods?",
+    "source": "concepts/architecture::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/architecture",
+          "start": 0,
+          "end": 1255
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy141",
+    "type": "synthetic",
+    "q": "How do I write an ABAC policy to allow a user read-only access to pods in one namespace?",
+    "source": "reference/access-authn-authz/abac::5",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/abac",
+          "start": 4134,
+          "end": 5577
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy142",
+    "type": "synthetic",
+    "q": "Why would loading admission policies from disk be better than registering them via the Kubernetes API?",
+    "source": "reference/access-authn-authz/manifest-admission-control::1",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/manifest-admission-control",
+          "start": 1062,
+          "end": 2340
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy143",
+    "type": "synthetic",
+    "q": "How do I create, delete, or overwrite Kubernetes objects using YAML configuration files with kubectl?",
+    "source": "concepts/overview/working-with-objects/object-management::4",
+    "targets": [
+      [
+        {
+          "doc": "concepts/overview/working-with-objects/object-management",
+          "start": 2919,
+          "end": 4254
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy144",
+    "type": "synthetic",
+    "q": "Does Kubernetes support a graceful shutdown on Windows and what requirements/settings are needed?",
+    "source": "concepts/cluster-administration/node-shutdown::2",
+    "targets": [
+      [
+        {
+          "doc": "concepts/cluster-administration/node-shutdown",
+          "start": 1482,
+          "end": 3323
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy145",
+    "type": "synthetic",
+    "q": "How can I reserve nodes for a specific team so only their pods run there while others can still use them?",
+    "source": "concepts/scheduling-eviction/taint-and-toleration::7",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/taint-and-toleration",
+          "start": 9214,
+          "end": 10283
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy146",
+    "type": "synthetic",
+    "q": "How can I list all namespaces currently present in my Kubernetes cluster using kubectl?",
+    "source": "concepts/overview/working-with-objects/namespaces::3",
+    "targets": [
+      [
+        {
+          "doc": "concepts/overview/working-with-objects/namespaces",
+          "start": 2282,
+          "end": 2838
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy147",
+    "type": "synthetic",
+    "q": "Can a kubelet modify its Node object labels and which specific label prefixes are allowed or forbidden?",
+    "source": "reference/access-authn-authz/admission-controllers::29",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/admission-controllers",
+          "start": 24546,
+          "end": 26490
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy148",
+    "type": "synthetic",
+    "q": "What Kubernetes versions and prerequisites are required to enable both IPv4 and IPv6 networking in a cluster?",
+    "source": "concepts/services-networking/dual-stack::1",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/dual-stack",
+          "start": 347,
+          "end": 1241
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy149",
+    "type": "synthetic",
+    "q": "How should I label frontend and Redis pods to distinguish tiers and roles for the guestbook app?",
+    "source": "concepts/overview/working-with-objects/labels::10",
+    "targets": [
+      [
+        {
+          "doc": "concepts/overview/working-with-objects/labels",
+          "start": 11025,
+          "end": 12465
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy150",
+    "type": "synthetic",
+    "q": "When should I use a Deployment instead of a ReplicationController for rolling updates?",
+    "source": "concepts/workloads/controllers/replicationcontroller::18",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/replicationcontroller",
+          "start": 16386,
+          "end": 17346
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy151",
+    "type": "synthetic",
+    "q": "Can I use privileged containers or POSIX capabilities in Kubernetes Windows containers?",
+    "source": "concepts/windows/intro::7",
+    "targets": [
+      [
+        {
+          "doc": "concepts/windows/intro",
+          "start": 8622,
+          "end": 10779
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy152",
+    "type": "synthetic",
+    "q": "What flag controls whether the controller manager uses leader election for high availability?",
+    "source": "reference/command-line-tools-reference/kube-controller-manager::26",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-controller-manager",
+          "start": 41185,
+          "end": 43020
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy153",
+    "type": "synthetic",
+    "q": "How should I design work distribution for pods managed by a ReplicationController to avoid pod-specific configuration?",
+    "source": "concepts/workloads/controllers/replicationcontroller::15",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/replicationcontroller",
+          "start": 12698,
+          "end": 13565
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy154",
+    "type": "synthetic",
+    "q": "What resource kinds are defined in the v1beta1 kubelet configuration API?",
+    "source": "reference/config-api/kubelet-config.v1beta1::0",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubelet-config.v1beta1",
+          "start": 0,
+          "end": 463
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy155",
+    "type": "synthetic",
+    "q": "How do I configure RequestedToCapacityRatio shape and resource weights to enable bin-packing vs least-requested?",
+    "source": "concepts/scheduling-eviction/resource-bin-packing::4",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/resource-bin-packing",
+          "start": 5094,
+          "end": 6034
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy156",
+    "type": "synthetic",
+    "q": "How does kubelet determine when to throttle memory for Burstable containers with cgroup v2?",
+    "source": "concepts/workloads/pods/pod-qos::8",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/pod-qos",
+          "start": 5306,
+          "end": 6440
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy157",
+    "type": "synthetic",
+    "q": "How can I make the scheduler reuse filtering/scoring results to speed up scheduling similar pods?",
+    "source": "concepts/scheduling-eviction/scheduler-perf-tuning::6",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/scheduler-perf-tuning",
+          "start": 6165,
+          "end": 8500
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy158",
+    "type": "synthetic",
+    "q": "Can pods labeled role=db in default namespace initiate TCP connections to 10.0.0.0/24 on port 5978?",
+    "source": "concepts/services-networking/network-policies::4",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/network-policies",
+          "start": 6009,
+          "end": 7125
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy159",
+    "type": "synthetic",
+    "q": "What fields in an AdmissionResponse specify allowed outcome, reasoning, patches, audit annotations, and client warnings?",
+    "source": "reference/config-api/apiserver-admission.v1::8",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-admission.v1",
+          "start": 8249,
+          "end": 10514
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy160",
+    "type": "synthetic",
+    "q": "Can I attach non-identifying arbitrary metadata to Kubernetes objects that tools can later read?",
+    "source": "concepts/overview/working-with-objects/annotations::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/overview/working-with-objects/annotations",
+          "start": 0,
+          "end": 2344
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy161",
+    "type": "synthetic",
+    "q": "Can a kubelet use its TLS-bootstrapped client certificate for serving HTTPS endpoints?",
+    "source": "reference/access-authn-authz/kubelet-tls-bootstrapping::15",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/kubelet-tls-bootstrapping",
+          "start": 17937,
+          "end": 18792
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy162",
+    "type": "synthetic",
+    "q": "Can I set a restart policy for a single container in a Pod instead of the Pod-level policy?",
+    "source": "concepts/workloads/pods/pod-lifecycle::17",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/pod-lifecycle",
+          "start": 19095,
+          "end": 20944
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy163",
+    "type": "synthetic",
+    "q": "What is the default state of the DRAFractionalCapacityRange feature flag in kube-apiserver?",
+    "source": "reference/command-line-tools-reference/kube-apiserver::22",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-apiserver",
+          "start": 34274,
+          "end": 36159
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy164",
+    "type": "synthetic",
+    "q": "What field name and API version identify the tracing configuration object for the apiserver?",
+    "source": "reference/config-api/apiserver-config.v1alpha1::6",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-config.v1alpha1",
+          "start": 5856,
+          "end": 6571
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy165",
+    "type": "synthetic",
+    "q": "How do I write a CEL expression to validate fields of the Kubernetes UserInfo in JWTAuthenticator?",
+    "source": "reference/config-api/apiserver-config.v1alpha1::32",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-config.v1alpha1",
+          "start": 34395,
+          "end": 35682
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy166",
+    "type": "synthetic",
+    "q": "Why can't I safely remove an old CRD storage version even though new version exists?",
+    "source": "concepts/overview/working-with-objects/storage-version::5",
+    "targets": [
+      [
+        {
+          "doc": "concepts/overview/working-with-objects/storage-version",
+          "start": 6064,
+          "end": 7365
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy167",
+    "type": "synthetic",
+    "q": "How does Kubernetes choose .spec.clusterIP and .spec.clusterIPs when creating a dual-stack Service with PreferDualStack?",
+    "source": "concepts/services-networking/dual-stack::4",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/dual-stack",
+          "start": 4176,
+          "end": 6402
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy168",
+    "type": "synthetic",
+    "q": "Can a PodGroup reference a parent CompositePodGroup, and what conditions are required for that reference?",
+    "source": "concepts/workloads/podgroup-api::8",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/podgroup-api",
+          "start": 6652,
+          "end": 7758
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy169",
+    "type": "synthetic",
+    "q": "If a StatefulSet rollout stalls because a pod never becomes Ready, how do I force it back to the previous template?",
+    "source": "concepts/workloads/controllers/statefulset::18",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/statefulset",
+          "start": 15686,
+          "end": 16673
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy170",
+    "type": "synthetic",
+    "q": "How should I choose between one Job per work item versus a single Job handling many items in Kubernetes?",
+    "source": "concepts/workloads/controllers/job::34",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/job",
+          "start": 43255,
+          "end": 45048
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy171",
+    "type": "synthetic",
+    "q": "How does the kubelet decide which dead containers to remove and what config controls that behavior?",
+    "source": "concepts/architecture/garbage-collection::8",
+    "targets": [
+      [
+        {
+          "doc": "concepts/architecture/garbage-collection",
+          "start": 8131,
+          "end": 9419
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy172",
+    "type": "synthetic",
+    "q": "What happens when a Pod can't find any node that meets its scheduling requirements?",
+    "source": "concepts/scheduling-eviction/pod-priority-preemption::9",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/pod-priority-preemption",
+          "start": 7915,
+          "end": 8520
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy173",
+    "type": "synthetic",
+    "q": "How should I update a running container's software—edit it directly or rebuild and redeploy the image?",
+    "source": "concepts/containers::1",
+    "targets": [
+      [
+        {
+          "doc": "concepts/containers",
+          "start": 765,
+          "end": 1425
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy174",
+    "type": "synthetic",
+    "q": "Can a ReplicaSet take ownership of manually created Pods that match its label selector?",
+    "source": "concepts/workloads/controllers/replicaset::4",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/replicaset",
+          "start": 4593,
+          "end": 6632
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy175",
+    "type": "synthetic",
+    "q": "How can I make one container in a pod not restart while others keep restarting?",
+    "source": "concepts/workloads/pods/pod-lifecycle::18",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/pods/pod-lifecycle",
+          "start": 20944,
+          "end": 22516
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy176",
+    "type": "synthetic",
+    "q": "What fields are required to define a command-line argument for control plane components or etcd in kubeadm?",
+    "source": "reference/config-api/kubeadm-config.v1beta4::46",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubeadm-config.v1beta4",
+          "start": 62122,
+          "end": 62836
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy177",
+    "type": "synthetic",
+    "q": "How do I change weights for NodeResourcesFit and PodGroupPodsCount and adjust NodeResourcesFit resource weights?",
+    "source": "concepts/scheduling-eviction/topology-aware-scheduling::2",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/topology-aware-scheduling",
+          "start": 1468,
+          "end": 3074
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy178",
+    "type": "synthetic",
+    "q": "How do I change which registry kubeadm pulls control plane images from?",
+    "source": "reference/config-api/kubeadm-config.v1beta3::27",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubeadm-config.v1beta3",
+          "start": 34078,
+          "end": 35093
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy179",
+    "type": "synthetic",
+    "q": "What label prefix should I use for shared application metadata to avoid colliding with user labels?",
+    "source": "concepts/overview/working-with-objects/common-labels::0",
+    "targets": [
+      [
+        {
+          "doc": "concepts/overview/working-with-objects/common-labels",
+          "start": 0,
+          "end": 982
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy180",
+    "type": "synthetic",
+    "q": "How does the scheduler decide when to schedule Pods that belong to a PodGroup with a gang policy?",
+    "source": "concepts/scheduling-eviction/gang-scheduling::1",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/gang-scheduling",
+          "start": 1049,
+          "end": 2729
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy181",
+    "type": "synthetic",
+    "q": "Will kubelet recreate a static Pod evicted due to node resource pressure, and how does priority affect that?",
+    "source": "concepts/scheduling-eviction/node-pressure-eviction::2",
+    "targets": [
+      [
+        {
+          "doc": "concepts/scheduling-eviction/node-pressure-eviction",
+          "start": 1434,
+          "end": 2184
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy182",
+    "type": "synthetic",
+    "q": "Where does the kubelet and container runtime write their logs on systems using systemd versus non-systemd?",
+    "source": "concepts/cluster-administration/observability::4",
+    "targets": [
+      [
+        {
+          "doc": "concepts/cluster-administration/observability",
+          "start": 3976,
+          "end": 6434
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy183",
+    "type": "synthetic",
+    "q": "Do Deployment selectors need to match pod template labels, and can they be changed after creation in apps/v1?",
+    "source": "concepts/workloads/controllers/deployment::35",
+    "targets": [
+      [
+        {
+          "doc": "concepts/workloads/controllers/deployment",
+          "start": 49080,
+          "end": 50353
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy184",
+    "type": "synthetic",
+    "q": "How do I provide a client TLS certificate and key in a kubeconfig AuthInfo?",
+    "source": "reference/config-api/kubeconfig.v1::4",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubeconfig.v1",
+          "start": 2495,
+          "end": 5408
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy185",
+    "type": "synthetic",
+    "q": "Which kube-scheduler flag controls the HTTPS port for serving authenticated and authorized requests?",
+    "source": "reference/command-line-tools-reference/kube-scheduler::18",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-scheduler",
+          "start": 28153,
+          "end": 29873
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy186",
+    "type": "synthetic",
+    "q": "How do I specify tokens and node registration settings in a kubeadm InitConfiguration v1beta4?",
+    "source": "reference/config-api/kubeadm-config.v1beta4::37",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/kubeadm-config.v1beta4",
+          "start": 49860,
+          "end": 53035
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy187",
+    "type": "synthetic",
+    "q": "What are the main API kinds in Gateway API and how do they relate to each other?",
+    "source": "concepts/services-networking/gateway::1",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/gateway",
+          "start": 1792,
+          "end": 3066
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy188",
+    "type": "synthetic",
+    "q": "Can kubelet request service account tokens for audiences not referenced by pods when NodeRestriction and feature gate enabled?",
+    "source": "reference/access-authn-authz/node::3",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/node",
+          "start": 3052,
+          "end": 4311
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy189",
+    "type": "synthetic",
+    "q": "Can Kubernetes resource names include uppercase letters or underscores?",
+    "source": "concepts/overview/working-with-objects/names::4",
+    "targets": [
+      [
+        {
+          "doc": "concepts/overview/working-with-objects/names",
+          "start": 3061,
+          "end": 3748
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy190",
+    "type": "synthetic",
+    "q": "Will files on a memory-backed emptyDir be automatically freed under node memory pressure?",
+    "source": "concepts/configuration/manage-resources-containers::17",
+    "targets": [
+      [
+        {
+          "doc": "concepts/configuration/manage-resources-containers",
+          "start": 17910,
+          "end": 19379
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy191",
+    "type": "synthetic",
+    "q": "How can I expose a Service externally and what type options control external accessibility?",
+    "source": "concepts/services-networking/service::13",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/service",
+          "start": 15385,
+          "end": 17310
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy192",
+    "type": "synthetic",
+    "q": "How can I prevent my mutating webhook from reacting to resources it creates itself?",
+    "source": "concepts/cluster-administration/admission-webhooks-good-practices::22",
+    "targets": [
+      [
+        {
+          "doc": "concepts/cluster-administration/admission-webhooks-good-practices",
+          "start": 19322,
+          "end": 20219
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy193",
+    "type": "synthetic",
+    "q": "How do I create and view a resource quota limiting CPU, memory, GPUs, and object counts in a namespace?",
+    "source": "concepts/policy/resource-quotas::12",
+    "targets": [
+      [
+        {
+          "doc": "concepts/policy/resource-quotas",
+          "start": 13933,
+          "end": 15930
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy194",
+    "type": "synthetic",
+    "q": "Where are the API schemas for kube-scheduler and kube-controller-manager v1/v1alpha1 configuration documented?",
+    "source": "reference::8",
+    "targets": [
+      [
+        {
+          "doc": "reference",
+          "start": 8210,
+          "end": 10236
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy195",
+    "type": "synthetic",
+    "q": "What's the default cache TTL for allowed and denied responses from the authorization webhook?",
+    "source": "reference/config-api/apiserver-config.v1beta1::32",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-config.v1beta1",
+          "start": 33881,
+          "end": 35667
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy196",
+    "type": "synthetic",
+    "q": "Are ClusterTrustBundle objects readable by all ServiceAccounts by default in a Kubernetes cluster?",
+    "source": "reference/access-authn-authz/certificate-signing-requests::23",
+    "targets": [
+      [
+        {
+          "doc": "reference/access-authn-authz/certificate-signing-requests",
+          "start": 26629,
+          "end": 28040
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy197",
+    "type": "synthetic",
+    "q": "Which TLS cipher suite list should I configure for the kube-scheduler server flag?",
+    "source": "reference/command-line-tools-reference/kube-scheduler::20",
+    "targets": [
+      [
+        {
+          "doc": "reference/command-line-tools-reference/kube-scheduler",
+          "start": 30339,
+          "end": 31593
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy198",
+    "type": "synthetic",
+    "q": "Will a Pod without a hostname get a DNS A record for its individual name in a headless Service?",
+    "source": "concepts/services-networking/dns-pod-service::7",
+    "targets": [
+      [
+        {
+          "doc": "concepts/services-networking/dns-pod-service",
+          "start": 5589,
+          "end": 7177
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy199",
+    "type": "synthetic",
+    "q": "Can ConfigMaps hold binary data, and how do I specify it differently from regular string data?",
+    "source": "concepts/configuration/configmap::1",
+    "targets": [
+      [
+        {
+          "doc": "concepts/configuration/configmap",
+          "start": 1077,
+          "end": 2012
+        }
+      ]
+    ]
+  },
+  {
+    "id": "sy200",
+    "type": "synthetic",
+    "q": "How do I specify configuration for a single admission plug-in in the apiserver config?",
+    "source": "reference/config-api/apiserver-config.v1::9",
+    "targets": [
+      [
+        {
+          "doc": "reference/config-api/apiserver-config.v1",
+          "start": 8649,
+          "end": 9795
+        }
+      ]
+    ]
+  }
+]

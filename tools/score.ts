@@ -1,7 +1,7 @@
 // The question set, scored. Every retrieval change in the course is decided
 // here: recall at k, mean reciprocal rank, and which questions moved.
 //   npm run score -- --set written --save small
-//   npm run score -- --set written --against small
+//   npm run score -- --set written,generated --against small
 //   npm run score -- --set castlane
 // Labels name a document, optionally a section and a phrase, never a chunk id,
 // so they survive re-chunking. One written question is about 2 points of
@@ -15,17 +15,17 @@ import { pool } from "../src/db.ts";
 import { embedQuestion } from "../src/embed.ts";
 import { vectorSearch, type Hit } from "../src/search.ts";
 
-export type Target = { doc: string; section?: string; contains?: string };
+export type Target = { doc: string; section?: string; contains?: string; start?: number; end?: number };
 export type Question = {
   id: string;
-  type: string; // nl, id, para, multi, none
+  type: string; // nl, id, para, multi, none, synthetic
   q: string;
   targets: Target[][]; // every inner list is one thing the answer needs; any alternative in it counts
   asker?: string; // Castlane questions: who asked
 };
 
 const QUESTIONS = join(import.meta.dirname, "..", "questions");
-export const SETS = ["written", "unanswerable", "near-miss", "castlane"] as const;
+export const SETS = ["written", "unanswerable", "near-miss", "castlane", "generated"] as const;
 export type SetName = (typeof SETS)[number];
 
 export function loadQuestions(set: SetName): Question[] {
@@ -33,7 +33,8 @@ export function loadQuestions(set: SetName): Question[] {
   if (set === "written") return read("public.json").queries.filter((q: Question) => q.type !== "none");
   if (set === "unanswerable") return read("public.json").queries.filter((q: Question) => q.type === "none");
   if (set === "near-miss") return read("near-miss.json").queries;
-  return read("castlane.json").questions;
+  if (set === "castlane") return read("castlane.json").questions;
+  return read("generated.json");
 }
 
 // ---- matching a chunk to a label -----------------------------------------------
@@ -59,6 +60,11 @@ export class Labels {
   matches(c: Ranked, t: Target): boolean {
     if (c.docId !== t.doc) return false;
     if (t.section && !this.sectionsOf(t.doc).some((s) => s.slug === t.section && c.start < s.end && c.end > s.start)) return false;
+    // generated questions carry a character range: overlap half of it, or 300 characters
+    if (t.start !== undefined && t.end !== undefined) {
+      const overlap = Math.min(c.end, t.end) - Math.max(c.start, t.start);
+      if (overlap < Math.min(300, (t.end - t.start) / 2)) return false;
+    }
     if (t.contains && !this.passage(c).toLowerCase().includes(t.contains.toLowerCase())) return false;
     return true;
   }
@@ -105,6 +111,16 @@ export function movedUpDown(before: Record<string, number>, after: Record<string
     if (b <= line && a > line) fellOut++;
   }
   return { up, down, same, cameIn, fellOut };
+}
+
+// The two-set rule: keep a change only if it does not lose beyond noise on the
+// written set and does not lose on the generated set.
+export const NOISE_QUESTIONS = 3;
+export function twoSetRule(written: { before: number; after: number; n: number }, generated: { before: number; after: number }) {
+  const lost = (written.before - written.after) * written.n;
+  if (lost >= NOISE_QUESTIONS) return { keep: false, reason: `loses ${lost.toFixed(1)} written questions at R@5` };
+  if (generated.after < generated.before) return { keep: false, reason: `generated R@5 drops ${generated.before.toFixed(3)} -> ${generated.after.toFixed(3)}` };
+  return { keep: true, reason: `written ${((written.after - written.before) * written.n).toFixed(1)} questions, generated ${generated.before.toFixed(3)} -> ${generated.after.toFixed(3)}` };
 }
 
 // ---- running a leg over a set ---------------------------------------------------
@@ -165,6 +181,13 @@ if (import.meta.main) {
       if (!base[set]) continue;
       const m = movedUpDown(base[set].ranks, ranksOf(results[set].scores));
       console.log(`${set} against ${values.against}: ${m.up} moved up, ${m.down} moved down, ${m.same} same; top-five line: ${m.cameIn} in, ${m.fellOut} out`);
+    }
+    if (base.written && base.generated && results.written && results.generated) {
+      const v = twoSetRule(
+        { before: base.written.summary["R@5"], after: summarize(results.written.scores)["R@5"], n: results.written.scores.length },
+        { before: base.generated.summary["R@5"], after: summarize(results.generated.scores)["R@5"] },
+      );
+      console.log(`two-set rule: ${v.keep ? "keep the change" : "reject the change"} (${v.reason})`);
     }
   }
   if (values.save) {

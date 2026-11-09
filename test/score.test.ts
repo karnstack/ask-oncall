@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { Labels, movedUpDown, scoreQuestion, summarize, type Question } from "../tools/score.ts";
+import { Labels, movedUpDown, scoreQuestion, summarize, twoSetRule, type Question } from "../tools/score.ts";
 
 const text = "# Pods\n\nIntro.\n\n## Pod fault recovery\n\nNodes fail.\n\n## Disruptions\n\nA PodDisruptionBudget keeps a minimum number of replicas.";
 const labels = new Labels([{ id: "pods", text }]);
@@ -26,4 +26,11 @@ test("recall at five and reciprocal rank for one question", () => {
 test("moved up, moved down, and the top-five line", () => {
   const m = movedUpDown({ a: 10, b: 2, c: -1, d: 3 }, { a: 1, b: 7, c: 4, d: 3 });
   assert.deepEqual(m, { up: 2, down: 1, same: 1, cameIn: 2, fellOut: 1 });
+});
+
+test("the two-set rule", () => {
+  assert.equal(twoSetRule({ before: 0.802, after: 0.865, n: 48 }, { before: 0.76, after: 0.79 }).keep, true);
+  assert.equal(twoSetRule({ before: 0.813, after: 0.792, n: 48 }, { before: 0.83, after: 0.855 }).keep, true, "one written question is noise");
+  assert.equal(twoSetRule({ before: 0.833, after: 0.75, n: 48 }, { before: 0.83, after: 0.9 }).keep, false, "four written questions lost");
+  assert.equal(twoSetRule({ before: 0.833, after: 0.844, n: 48 }, { before: 0.855, after: 0.83 }).keep, false, "generated drops");
 });

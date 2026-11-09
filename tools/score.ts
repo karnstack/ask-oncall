@@ -10,7 +10,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { countTokens, sectionsOf, type Section } from "../src/chunk.ts";
-import { RERANK_CANDIDATES } from "../src/config.ts";
+import { EMBED_COLUMN, EMBED_DIMS, EMBED_MODEL, RERANK_CANDIDATES } from "../src/config.ts";
 import { loadAlertRunbooks, loadCastlane, loadKubernetesDocs, type Doc } from "../src/corpus.ts";
 import { pool } from "../src/db.ts";
 import { embedQuestion } from "../src/embed.ts";
@@ -145,14 +145,18 @@ export function twoSetRule(written: { before: number; after: number; n: number }
 // ---- running a leg over a set ---------------------------------------------------
 
 export type Leg = "vector" | "word" | "hybrid" | "rerank";
+export type EmbeddingChoice = { column: string; model: string; dims?: number };
 
 export function filterFor(set: SetName, q: Question): Filter {
   if (set !== "castlane") return {}; // the public sets are scored unfiltered
   return { currentOnly: q.current_only };
 }
 
-export async function retrieve(leg: Leg, q: Question, filter: Filter): Promise<Hit[]> {
-  if (leg === "vector") return vectorSearch(await embedQuestion(q.q), filter);
+export async function retrieve(leg: Leg, q: Question, filter: Filter, emb?: EmbeddingChoice): Promise<Hit[]> {
+  if (leg === "vector") {
+    const vec = await embedQuestion(q.q, emb?.model ?? EMBED_MODEL, emb?.dims ?? EMBED_DIMS);
+    return vectorSearch(vec, filter, 50, emb?.column ?? EMBED_COLUMN);
+  }
   if (leg === "word") return wordSearch(q.q, filter);
   const { fused } = await hybridSearch(q.q, filter);
   if (leg === "hybrid") return fused;
@@ -160,12 +164,12 @@ export async function retrieve(leg: Leg, q: Question, filter: Filter): Promise<H
   return [...rr.ranked, ...fused.slice(RERANK_CANDIDATES)];
 }
 
-export async function runSet(set: SetName, leg: Leg, labels: Labels, opts: { budget?: number } = {}) {
+export async function runSet(set: SetName, leg: Leg, labels: Labels, opts: { budget?: number; emb?: EmbeddingChoice } = {}) {
   const questions = loadQuestions(set).filter((q) => q.targets.length);
   const scores: Score[] = [];
   const budget: number[] = [];
   for (const q of questions) {
-    const ranked = await retrieve(leg, q, filterFor(set, q));
+    const ranked = await retrieve(leg, q, filterFor(set, q), opts.emb);
     scores.push(scoreQuestion(labels, q, ranked));
     if (opts.budget) budget.push(recallWithinBudget(labels, q, ranked, opts.budget));
   }
@@ -183,6 +187,30 @@ export function report(name: string, scores: Score[]) {
   };
   by((s) => s.type, "type");
   by((s) => s.asker, "asker");
+}
+
+// For a model trial (src/migrate.ts): the vector leg on two columns, both sets.
+export async function compareColumns(main: EmbeddingChoice, shadow: EmbeddingChoice, castlaneOnly = false) {
+  const labels = Labels.fromCorpus();
+  const sets: SetName[] = castlaneOnly ? ["castlane"] : ["written", "generated"];
+  const r5: Record<string, { before: number; after: number; n: number }> = {};
+  for (const set of sets) {
+    const a = await runSet(set, "vector", labels, { emb: main });
+    const b = await runSet(set, "vector", labels, { emb: shadow });
+    report(`${set}, ${main.model} (${main.column})`, a.scores);
+    report(`${set}, ${shadow.model} (${shadow.column})`, b.scores);
+    const m = movedUpDown(ranksOf(a.scores), ranksOf(b.scores));
+    console.log(`  moved: ${m.up} up, ${m.down} down, ${m.same} same; top-five line: ${m.cameIn} in, ${m.fellOut} out`);
+    r5[set] = { before: summarize(a.scores)["R@5"], after: summarize(b.scores)["R@5"], n: a.scores.length };
+  }
+  if (!castlaneOnly) {
+    const v = twoSetRule(r5.written, r5.generated);
+    console.log(
+      v.keep
+        ? `two-set rule: the shadow model loses on neither set (${v.reason}); whether that is worth its price is still your call`
+        : `two-set rule: keep the current model (${v.reason})`,
+    );
+  }
 }
 
 // ---- the command line ------------------------------------------------------------

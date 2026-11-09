@@ -33,9 +33,9 @@ function cacheFor(model: string, dims: number) {
 
 export type EmbedStats = { texts: number; embedded: number; tokens: number; usd: number; ms: number };
 
-export async function embed(texts: string[], opts: { stage?: string; stats?: EmbedStats } = {}) {
-  const model = EMBED_MODEL;
-  const dims = EMBED_DIMS;
+export async function embed(texts: string[], opts: { model?: string; dims?: number; stage?: string; stats?: EmbedStats } = {}) {
+  const model = opts.model ?? EMBED_MODEL;
+  const dims = opts.dims ?? EMBED_DIMS;
   const cache = cacheFor(model, dims);
   const missing = [...new Set(texts)].filter((t) => !cache.has(textHash(t)));
   const stats = opts.stats ?? { texts: 0, embedded: 0, tokens: 0, usd: 0, ms: 0 };
@@ -75,7 +75,7 @@ export async function embed(texts: string[], opts: { stage?: string; stats?: Emb
 
 // A question is embedded the same way; the cache makes a repeated question
 // free, and it is safe to share across users: it holds no document text.
-export async function embedQuestion(question: string) {
-  const [v] = await embed([question], { stage: "embed:question" });
+export async function embedQuestion(question: string, model = EMBED_MODEL, dims = EMBED_DIMS) {
+  const [v] = await embed([question], { model, dims, stage: "embed:question" });
   return v;
 }

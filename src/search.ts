@@ -1,7 +1,7 @@
 // The first stage: two legs, each one SQL statement you can run in psql, and
 // reciprocal rank fusion to merge them. sql/hybrid.sql is the same fusion as a
 // single statement.
-import { CANDIDATES, RRF_K } from "./config.ts";
+import { CANDIDATES, EMBED_COLUMN, RRF_K } from "./config.ts";
 import { pool, toPg } from "./db.ts";
 import { embedQuestion } from "./embed.ts";
 
@@ -44,13 +44,13 @@ export function whereSql(filter: Filter, first: number): { sql: string; params: 
 
 // The vector leg: cosine distance, nearest first. With no vector index this
 // is exact search: every row is compared.
-export async function vectorSearch(vec: Float32Array, filter: Filter = {}, k = CANDIDATES): Promise<Hit[]> {
+export async function vectorSearch(vec: Float32Array, filter: Filter = {}, k = CANDIDATES, column = EMBED_COLUMN): Promise<Hit[]> {
   const w = whereSql(filter, 2);
   const { rows } = await pool.query(
-    `select ${HIT_COLUMNS}, 1 - (c.embedding <=> $1::vector) as score
+    `select ${HIT_COLUMNS}, 1 - (c.${column} <=> $1::vector) as score
        from chunks c join documents d on d.id = c.doc_id
       where ${w.sql}
-      order by c.embedding <=> $1::vector
+      order by c.${column} <=> $1::vector
       limit ${k}`,
     [toPg(vec), ...w.params],
   );

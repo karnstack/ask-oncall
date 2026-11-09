@@ -1,8 +1,15 @@
 // Every model id, size, price and knob lives here and nowhere else.
 
-// The embedding model, at its full size.
+// The embedding model, at its full size. EMBED_COLUMN is the column the vector
+// leg searches; switching models is these three lines, after a shadow run.
 export const EMBED_MODEL = "text-embedding-3-small";
 export const EMBED_DIMS = 1536;
+export const EMBED_COLUMN = "embedding";
+
+// The shadow candidate a model trial fills and scores (src/migrate.ts).
+export const SHADOW_MODEL = "text-embedding-3-large";
+export const SHADOW_DIMS = 3072;
+export const SHADOW_COLUMN = "embedding_v2";
 
 // Chunks: fixed windows (the first try), then cuts at headings.
 export const CHUNK_TOKENS = 512;
@@ -45,6 +52,7 @@ export type Price = { input: number; cachedInput: number; output: number };
 export const PRICES_CHECKED = "2026-11-08";
 export const PRICES: Record<string, Price> = {
   "text-embedding-3-small": { input: 0.02, cachedInput: 0.02, output: 0 },
+  "text-embedding-3-large": { input: 0.13, cachedInput: 0.13, output: 0 },
   "gpt-5.4-mini": { input: 0.75, cachedInput: 0.075, output: 4.5 },
   "gpt-5-nano": { input: 0.05, cachedInput: 0.005, output: 0.4 },
 };

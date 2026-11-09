@@ -24,8 +24,10 @@ export type Hit = {
 export const HIT_COLUMNS = `c.id, c.doc_id as "docId", c.n, c.source, c.title, c.url, c.breadcrumb, c.body,
   c.version, c.updated_at::text as "updatedAt", c.start_char as start, c.end_char as "end"`;
 
-// What the question asked for. Every filter runs inside both legs.
+// Who is asking and what they asked for. Every filter runs inside both legs,
+// never after them: the model must never see a chunk the asker could not open.
 export type Filter = {
+  principals?: string[]; // the asker's principals (access.ts)
   currentOnly?: boolean; // only documents in effect now
   service?: string; // a service the question names
 };
@@ -38,6 +40,7 @@ export function whereSql(filter: Filter, first: number): { sql: string; params: 
   const params: unknown[] = [];
   const param = (v: unknown) => `$${first + params.push(v) - 1}`;
   if (filter.currentOnly) parts.push(`d.is_current`);
+  if (filter.principals) parts.push(`c.allowed_groups && ${param(filter.principals)}::text[]`);
   if (filter.service) parts.push(`${param(filter.service)} = any(c.service)`);
   return { sql: parts.join(" and "), params };
 }

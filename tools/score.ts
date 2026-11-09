@@ -2,13 +2,14 @@
 // here: recall at k, mean reciprocal rank, and which questions moved.
 //   npm run score -- --set written --leg hybrid --save hybrid
 //   npm run score -- --set written,generated --leg rerank --against hybrid
-//   npm run score -- --set castlane --leg rerank
+//   npm run score -- --set castlane --leg rerank        (each asker's principals)
 // Labels name a document, optionally a section and a phrase, never a chunk id,
 // so they survive re-chunking. One written question is about 2 points of
 // recall; a change under 3 questions is noise.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
+import { principalsOf, userByHandle } from "../src/access.ts";
 import { countTokens, sectionsOf, type Section } from "../src/chunk.ts";
 import { EMBED_COLUMN, EMBED_DIMS, EMBED_MODEL, RERANK_CANDIDATES } from "../src/config.ts";
 import { loadAlertRunbooks, loadCastlane, loadKubernetesDocs, type Doc } from "../src/corpus.ts";
@@ -23,7 +24,7 @@ export type Question = {
   type: string; // nl, id, para, multi, none, synthetic
   q: string;
   targets: Target[][]; // every inner list is one thing the answer needs; any alternative in it counts
-  asker?: string; // Castlane questions: who asked
+  asker?: string; // Castlane questions: scored under this person's principals
   current_only?: boolean; // Castlane questions: a superseded document never counts
 };
 
@@ -148,8 +149,8 @@ export type Leg = "vector" | "word" | "hybrid" | "rerank";
 export type EmbeddingChoice = { column: string; model: string; dims?: number };
 
 export function filterFor(set: SetName, q: Question): Filter {
-  if (set !== "castlane") return {}; // the public sets are scored unfiltered
-  return { currentOnly: q.current_only };
+  if (set !== "castlane" || !q.asker) return {}; // the public sets are scored unfiltered
+  return { principals: principalsOf(userByHandle(q.asker)), currentOnly: q.current_only };
 }
 
 export async function retrieve(leg: Leg, q: Question, filter: Filter, emb?: EmbeddingChoice): Promise<Hit[]> {

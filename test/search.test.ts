@@ -23,8 +23,10 @@ test("rrf keeps the top `limit`", () => {
   assert.equal(rrf([list], 60, 50).length, 50);
 });
 
-test("the current filter sits next to the tombstone check", () => {
-  assert.deepEqual(whereSql({ currentOnly: true }, 2), { sql: "d.deleted_at is null and d.is_current", params: [] });
+test("the permission filter is a parameter inside the query", () => {
+  const w = whereSql({ principals: ["everyone", "user:ext-rb", "contractors"], currentOnly: true }, 2);
+  assert.equal(w.sql, "d.deleted_at is null and d.is_current and c.allowed_groups && $2::text[]");
+  assert.deepEqual(w.params, [["everyone", "user:ext-rb", "contractors"]]);
 });
 
 test("every filter keeps live documents only; parameters number from `first`", () => {

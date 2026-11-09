@@ -1,8 +1,9 @@
-// The question path: rewrite a follow-up, search both legs, fuse, rerank, and
-// answer from what the reranker kept.
-//   npm run ask -- "How do I fail over Postgres?"
-//   npm run ask -- "and on the replica?" --thread "how do I see how many clients are waiting on pgbouncer-feeds"
+// The question path: rewrite a follow-up, search both legs inside the asker's
+// permissions, fuse, rerank, and answer from what the reranker kept.
+//   npm run ask -- "How do I fail over Postgres?" --as tw
+//   npm run ask -- "and on the replica?" --as tw --thread "how do I see how many clients are waiting on pgbouncer-feeds"
 import { parseArgs } from "node:util";
+import { principalsOf, userByHandle } from "./access.ts";
 import { answer, sourceLine } from "./answer.ts";
 import { RERANK_CANDIDATES, RERANK_KEEP } from "./config.ts";
 import { pool } from "./db.ts";
@@ -11,13 +12,14 @@ import { rewriteFollowUp } from "./rewrite.ts";
 import { hybridSearch, type Filter, type Hit } from "./search.ts";
 
 export type AskOptions = {
+  asker: string; // a handle from identity.json
   thread?: string[]; // earlier messages in the thread, oldest first
   service?: string;
   now?: Date;
   onDelta?: (text: string) => void;
 };
 
-export async function ask(question: string, opts: AskOptions = {}) {
+export async function ask(question: string, opts: AskOptions) {
   const t0 = performance.now();
   const ms: Record<string, number> = {};
   let usd = 0;
@@ -31,8 +33,9 @@ export async function ask(question: string, opts: AskOptions = {}) {
     usd += r.usd;
   }
 
-  // 2. both legs, current documents only
-  const filter: Filter = { currentOnly: true, service: opts.service };
+  // 2. both legs, inside the asker's permissions, current documents only
+  const principals = principalsOf(userByHandle(opts.asker));
+  const filter: Filter = { principals, currentOnly: true, service: opts.service };
   const first = await hybridSearch(searched, filter);
   Object.assign(ms, first.ms);
 
@@ -63,15 +66,15 @@ export async function ask(question: string, opts: AskOptions = {}) {
 if (import.meta.main) {
   const { values, positionals } = parseArgs({
     allowPositionals: true,
-    options: { thread: { type: "string", multiple: true }, service: { type: "string" }, now: { type: "string" } },
+    options: { as: { type: "string", default: "dara" }, thread: { type: "string", multiple: true }, service: { type: "string" }, now: { type: "string" } },
   });
   const question = positionals.join(" ");
-  if (!question) throw new Error(`usage: npm run ask -- "your question" [--thread "earlier message"]`);
+  if (!question) throw new Error(`usage: npm run ask -- "your question" --as <handle> [--thread "earlier message"]`);
   const now = values.now ? new Date(values.now) : new Date();
-  const r = await ask(question, { thread: values.thread, service: values.service, now, onDelta: (s) => process.stdout.write(s) });
+  const r = await ask(question, { asker: values.as!, thread: values.thread, service: values.service, now, onDelta: (s) => process.stdout.write(s) });
   console.log("\n");
   if (r.searched !== question) console.log(`searched as: ${r.searched}`);
-  console.log(`sources:`);
+  console.log(`sources (asked as ${values.as}):`);
   r.sources.forEach((s, i) => console.log(`  ${sourceLine(s, i, now)}${s.breadcrumb ? `\n      ${s.breadcrumb}` : ""}`));
   console.log(`time: ${Object.entries(r.ms).map(([k, v]) => `${k} ${Math.round(v)} ms`).join(", ")}`);
   console.log(`cost: $${r.usd.toFixed(5)}`);

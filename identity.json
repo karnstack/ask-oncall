@@ -1,0 +1,44 @@
+{
+  "about": "Castlane's people as the identity source sees them on 2026-11-08 (handles only; Dara is the only person named in narration). principals(user) = ['everyone', 'user:<handle>', ...groups]. Restricted Slack channels add 'user:<handle>' principals for members outside the channel's group.",
+  "groups": {
+    "everyone": "every account",
+    "eng": "every employee in engineering (140 engineers; the 20 below are the ones who appear in the corpus)",
+    "contractors": "the 3 agency engineers on the platform rotation",
+    "security": "the security team",
+    "payouts-eng": "the payouts team"
+  },
+  "users": [
+    { "handle": "dara", "kind": "employee", "team": "platform", "groups": ["eng"], "rotation": "platform", "note": "owns #ask-oncall; they/them" },
+    { "handle": "tw", "kind": "employee", "team": "feeds", "groups": ["eng"], "rotation": "platform", "note": "IC on INC-2291" },
+    { "handle": "ok", "kind": "employee", "team": "feeds", "groups": ["eng"], "rotation": "platform", "note": "paged in prod-eu-west during INC-2291, asked #ask-oncall at 03:43" },
+    { "handle": "zi", "kind": "employee", "team": "feeds", "groups": ["eng"], "rotation": "platform" },
+    { "handle": "rs", "kind": "employee", "team": "platform", "groups": ["eng"], "rotation": "platform", "note": "secondary on INC-2291, found the 400-connection limit" },
+    { "handle": "hq", "kind": "employee", "team": "platform", "groups": ["eng"], "rotation": "platform", "note": "IC on INC-2276, got the repmgr answer" },
+    { "handle": "gf", "kind": "employee", "team": "platform", "groups": ["eng"], "rotation": "platform" },
+    { "handle": "ne", "kind": "employee", "team": "platform", "groups": ["eng"], "rotation": "platform" },
+    { "handle": "mbe", "kind": "employee", "team": "data platform", "groups": ["eng"], "rotation": "platform", "note": "Postgres and PgBouncer owner; posted the 03:31 workaround; wrote failover v3 and pgbouncer v4" },
+    { "handle": "pk", "kind": "employee", "team": "media", "groups": ["eng"], "rotation": "platform" },
+    { "handle": "vi", "kind": "employee", "team": "media", "groups": ["eng"], "rotation": "platform" },
+    { "handle": "lm", "kind": "employee", "team": "media", "groups": ["eng"], "rotation": "platform" },
+    { "handle": "ay", "kind": "employee", "team": "private-feeds", "groups": ["eng"], "rotation": "platform", "note": "member of the restricted #inc-2207 channel" },
+    { "handle": "bo", "kind": "employee", "team": "edge", "groups": ["eng"], "rotation": "platform" },
+    { "handle": "yu", "kind": "employee", "team": "edge", "groups": ["eng"], "rotation": "platform" },
+    { "handle": "jh", "kind": "employee", "team": "payouts", "groups": ["eng", "payouts-eng"], "rotation": "payouts", "note": "held the batch during INC-2207; wrote the September payout summary" },
+    { "handle": "cv", "kind": "employee", "team": "payouts", "groups": ["eng", "payouts-eng"], "rotation": "payouts" },
+    { "handle": "nd", "kind": "employee", "team": "payouts", "groups": ["eng", "payouts-eng"], "rotation": "payouts" },
+    { "handle": "sec-lead", "kind": "employee", "team": "security", "groups": ["eng", "security"], "rotation": null, "note": "the security lead; IC and author of INC-2207" },
+    { "handle": "sec-ir", "kind": "employee", "team": "security", "groups": ["eng", "security"], "rotation": null },
+    { "handle": "ext-rb", "kind": "contractor", "team": "agency", "groups": ["contractors"], "rotation": "platform", "note": "asks 'why were creator payouts late on Tuesday?' (lesson 16, new order)" },
+    { "handle": "ext-ml", "kind": "contractor", "team": "agency", "groups": ["contractors"], "rotation": "platform" },
+    { "handle": "ext-sv", "kind": "contractor", "team": "agency", "groups": ["contractors"], "rotation": "platform" }
+  ],
+  "bots": ["alertmanager", "incident-bot", "deploy-bot", "ask-oncall"],
+  "rotation": {
+    "platform": "15 employees (dara, tw, ok, zi, rs, hq, gf, ne, mbe, pk, vi, lm, ay, bo, yu) + 3 contractors (ext-rb, ext-ml, ext-sv) = 18",
+    "payouts": "payouts-eng only (jh, cv, nd)"
+  },
+  "group_changes": [
+    { "at": "2026-08-20T11:30:00Z", "what": "#ask-oncall opened to the whole platform rotation, contractors included (ADR-0038 update); permissions in search (PLAT-4290) still open" },
+    { "at": "2026-09-16T09:00:00Z", "what": "SEC-313: log store read access removed from the contractors group" }
+  ]
+}

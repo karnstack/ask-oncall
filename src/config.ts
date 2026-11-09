@@ -30,6 +30,12 @@ export const CONTEXT_MODEL = "gpt-5-nano";
 // The follow-up rewrite.
 export const REWRITE_MODEL = "gpt-5.4-mini";
 
+// The index path: a reconcile that would tombstone more than this share of a
+// source refuses; a chunk whose word 5-grams overlap a dead chunk's above
+// DUPLICATE_JACCARD counts as a copy.
+export const RECONCILE_MAX_SHARE = 0.5;
+export const DUPLICATE_JACCARD = 0.5;
+
 // US$ per 1,000,000 tokens, checked 2026-11-08 at
 // https://developers.openai.com/api/docs/pricing (re-check before you trust a bill).
 export type Price = { input: number; cachedInput: number; output: number };

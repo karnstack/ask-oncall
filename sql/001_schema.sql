@@ -17,6 +17,7 @@ create table if not exists documents (
   allowed_groups text[] not null,         -- principals: groups, or user:<handle>
   scope          text,
   deleted_at     timestamptz,             -- the tombstone
+  duplicate_of   text,                    -- a near-copy of a dead document takes its status
   updated_at     timestamptz,
   indexed_at     timestamptz not null default now()
 );

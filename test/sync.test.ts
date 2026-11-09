@@ -17,7 +17,22 @@ test("the document hash changes with the text and with the front matter", () => 
 
 test("reconcile tombstones what the listing no longer has", () => {
   const plan = reconcilePlan(["a", "b", "c", "d"], ["a", "b", "c"]);
+  assert.equal(plan.refused, false);
   assert.deepEqual(plan.toTombstone, ["d"]);
+});
+
+test("reconcile refuses an empty listing", () => {
+  const plan = reconcilePlan(Array.from({ length: 109 }, (_, i) => `d${i}`), []);
+  assert.equal(plan.refused, true);
+  assert.equal(plan.reason, "listing is empty (109 documents indexed)");
+});
+
+test("reconcile refuses to remove more than half", () => {
+  const known = Array.from({ length: 109 }, (_, i) => `d${i}`);
+  const plan = reconcilePlan(known, known.slice(0, 36));
+  assert.equal(plan.refused, true);
+  assert.equal(plan.toTombstone.length, 73);
+  assert.equal(reconcilePlan([], []).refused, false, "an empty source with nothing indexed is fine");
 });
 
 // The database is never reached: pool.connect hands back a client that writes

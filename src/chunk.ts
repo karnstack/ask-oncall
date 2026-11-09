@@ -1,4 +1,5 @@
-// Chunkers. A chunk's id is its document id plus its position, `doc_id::n`.
+// Chunkers. A chunk's id is its document id plus its position, `doc_id::n`:
+// safe because a changed document's chunks are replaced together (sync.ts).
 import { encode, decode } from "gpt-tokenizer/encoding/cl100k_base"; // the embedding models' tokenizer
 import { CHUNK_MAX_TOKENS, CHUNK_MIN_TOKENS, CHUNK_OVERLAP, CHUNK_TOKENS } from "./config.ts";
 

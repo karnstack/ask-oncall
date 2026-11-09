@@ -28,12 +28,14 @@ export type Filter = {
 };
 
 // The WHERE clause for a filter, with its parameters numbered from `first`.
+// Every leg joins its chunks to their documents and keeps live ones only: a
+// tombstoned document never answers.
 export function whereSql(filter: Filter, first: number): { sql: string; params: unknown[] } {
-  const parts: string[] = [];
+  const parts = ["d.deleted_at is null"];
   const params: unknown[] = [];
   const param = (v: unknown) => `$${first + params.push(v) - 1}`;
   if (filter.service) parts.push(`${param(filter.service)} = any(c.service)`);
-  return { sql: parts.length ? parts.join(" and ") : "true", params };
+  return { sql: parts.join(" and "), params };
 }
 
 // The vector leg: cosine distance, nearest first. With no vector index this
@@ -42,7 +44,7 @@ export async function vectorSearch(vec: Float32Array, filter: Filter = {}, k = C
   const w = whereSql(filter, 2);
   const { rows } = await pool.query(
     `select ${HIT_COLUMNS}, 1 - (c.embedding <=> $1::vector) as score
-       from chunks c
+       from chunks c join documents d on d.id = c.doc_id
       where ${w.sql}
       order by c.embedding <=> $1::vector
       limit ${k}`,
@@ -63,7 +65,7 @@ export async function wordSearch(question: string, filter: Filter = {}, k = CAND
   const { rows } = await pool.query(
     `with q as (select ${OR_QUERY} as q)
      select ${HIT_COLUMNS}, ts_rank(c.tsv, q.q, 1) as score
-       from chunks c, q
+       from chunks c join documents d on d.id = c.doc_id, q
       where c.tsv @@ q.q and ${w.sql}
       order by score desc, c.id
       limit ${k}`,

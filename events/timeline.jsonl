@@ -1,0 +1,36 @@
+{"at": "2023-11-08T13:05:00Z", "event": "doc_updated", "doc": "wiki-export-2024/Transcoder_Restarts.md", "note": "wiki page v4: transcoder pods have 2Gi, delete the pod"}
+{"at": "2024-04-11T16:20:00Z", "event": "doc_created", "doc": "runbooks/postgres-failover.md@v2", "note": "repmgr procedure; the same text is on the wiki page"}
+{"at": "2024-09-30T12:00:00Z", "event": "source_frozen", "source": "wiki-export-2024", "docs": ["wiki-export-2024/Postgres_Failover.md", "wiki-export-2024/Transcoder_Restarts.md"], "note": "wiki exported when runbooks moved to the registry; never updated again"}
+{"at": "2025-03-11T14:02:00Z", "event": "incident", "incident": "INC-1873", "note": "last failover done with repmgr; postmortem quotes the v2 commands"}
+{"at": "2025-03-14T09:30:00Z", "event": "doc_created", "doc": "postmortems/INC-1873.md"}
+{"at": "2025-08-14T10:00:00Z", "event": "doc_created", "doc": "runbooks/pgbouncer.md@v3", "note": "default_pool_size = 40, two pgbouncer-feeds pods, scale-out mitigation"}
+{"at": "2025-09-17T14:02:40Z", "event": "slack_post", "doc": "slack/inc-1987/2025-09-17.json", "note": "transcoder limit bumped 2Gi -> 4Gi"}
+{"at": "2025-10-02T09:00:00Z", "event": "doc_created", "doc": "runbooks/transcoder.md@v3", "note": "3Gi with TRANSCODE_MAX_PARALLEL=2"}
+{"at": "2026-04-09T12:00:00Z", "event": "doc_created", "doc": "adr/ADR-0031-patroni-on-kubernetes.md"}
+{"at": "2026-04-14T03:12:00Z", "event": "incident", "incident": "INC-2112", "note": "lesson 1 opener: KubePodCrashLooping for transcoder; eleven minutes on three pages that say 2Gi, 4Gi, 3Gi"}
+{"at": "2026-04-28T16:00:00Z", "event": "doc_created", "doc": "adr/ADR-0038-ask-oncall.md"}
+{"at": "2026-05-04T02:00:00Z", "event": "index_built", "note": "first #ask-oncall index; nightly at 02:00 UTC from here on, re-reads every source and upserts by position"}
+{"at": "2026-06-16T08:00:00Z", "event": "change", "note": "pg-feeds cut over to Patroni on Kubernetes (pg-payouts on 2026-06-09)"}
+{"at": "2026-06-18T09:12:00Z", "event": "doc_deleted", "doc": "runbooks/postgres-failover.md@v2", "note": "deleted outright, not superseded: its commands do not exist on the new pods"}
+{"at": "2026-06-18T09:15:00Z", "event": "doc_created", "doc": "runbooks/postgres-failover.md@v3", "note": "Patroni, 7 steps, step 4 pause writes"}
+{"at": "2026-08-20T11:30:00Z", "event": "group_change", "note": "#ask-oncall opened to contractors; PLAT-4290 (permissions in search) still open", "doc": "adr/ADR-0038-ask-oncall.md"}
+{"at": "2026-09-08T10:00:00Z", "event": "change", "note": "PLAT-4410: pgbouncer-feeds 2 -> 3 pods in both regions; pool size unchanged"}
+{"at": "2026-09-15T05:02:30Z", "event": "slack_post", "doc": "slack/inc-2207/2026-09-15.json", "note": "restricted: security + user:ay + user:jh; canary string pf-app-2026.09.10"}
+{"at": "2026-09-15T05:40:15Z", "event": "slack_post", "doc": "slack/incidents/2026-09-15.json", "note": "payout batch on hold at security's request (eng)"}
+{"at": "2026-09-15T12:50:00Z", "event": "doc_created", "doc": "status/2026-09-15-payouts-delayed.md", "note": "everyone: delayed about six hours because of a security check"}
+{"at": "2026-09-16T09:00:00Z", "event": "group_change", "note": "SEC-313: log read access removed from contractors"}
+{"at": "2026-09-16T09:20:00Z", "event": "doc_created", "doc": "reports/payouts-2026-09.md", "note": "payouts-eng: mentions the hold and INC-2207 by id only"}
+{"at": "2026-09-17T08:30:00Z", "event": "doc_created", "doc": "postmortems/INC-2207.md", "note": "security only"}
+{"at": "2026-09-18T10:05:00Z", "event": "ask", "user": "ext-rb", "channel": "#ask-oncall", "question": "why were creator payouts late on Tuesday?", "note": "lesson on permissions: the unfiltered index quotes INC-2207"}
+{"at": "2026-10-01T00:00:00Z", "event": "policy", "note": "every page opens an INC (ADR-0036, handbook v5); INC numbers climb about 3 a day"}
+{"at": "2026-10-21T02:38:44Z", "event": "slack_post", "doc": "slack/inc-2276/2026-10-21.json"}
+{"at": "2026-10-21T02:42:00Z", "event": "ask", "user": "hq", "channel": "#ask-oncall", "question": "how do I fail over postgres?", "note": "lesson 11: answer cites the deleted v2 (repmgr)"}
+{"at": "2026-10-23T14:12:00Z", "event": "doc_created", "doc": "postmortems/INC-2276.md"}
+{"at": "2026-10-26T03:20:15Z", "event": "ask", "user": "tw", "channel": "#inc-2291", "question": "@ask-oncall how do I see how many clients are waiting on pgbouncer-feeds", "note": "lesson 10 thread, then 'and on the replica?' at 03:21:02"}
+{"at": "2026-10-26T03:31:04Z", "event": "slack_post", "doc": "slack/inc-2291/2026-10-26.json", "note": "the workaround: SET default_pool_size = 25; RECONNECT feeds;"}
+{"at": "2026-10-26T03:43:00Z", "event": "ask", "user": "ok", "channel": "#ask-oncall", "question": "PgBouncerPoolSaturated on pgbouncer-feeds in prod-eu-west, apps getting 53300. what do I do?", "note": "lesson 13: nightly index, answer quotes pgbouncer v3"}
+{"at": "2026-10-28T11:02:00Z", "event": "doc_superseded", "doc": "runbooks/pgbouncer.md@v3", "superseded_by": "runbooks/pgbouncer.md@v4"}
+{"at": "2026-10-28T11:02:00Z", "event": "doc_created", "doc": "runbooks/pgbouncer.md@v4", "note": "default_pool_size = 25, effective 2026-10-28"}
+{"at": "2026-10-29T15:40:00Z", "event": "doc_created", "doc": "postmortems/INC-2291.md"}
+{"at": "2026-10-30T09:00:00Z", "event": "doc_updated", "doc": "handbook/oncall-handbook.md@v6"}
+{"at": "2026-11-03T03:05:00Z", "event": "ask", "user": "zi", "channel": "#ask-oncall", "question": "what should default_pool_size be on pgbouncer-feeds?", "note": "lessons 12 and 18 (scenario): v3 (40) outranks v4 (25)"}

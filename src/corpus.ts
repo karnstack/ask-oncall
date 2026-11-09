@@ -32,6 +32,8 @@ export type Doc = {
   url: string;
   text: string; // what gets chunked: cleaned Markdown, or a flattened Slack day
   meta: Meta;
+  createdAt?: string; // Castlane: when the document first existed (for replays)
+  messages?: Msg[]; // Slack channel days
 };
 
 const PUBLIC_META: Meta = {
@@ -168,6 +170,7 @@ export function loadAlertRunbooks(root = join(CORPUS, "prom-runbooks")): Doc[] {
 
 const list = (v: unknown): string[] => (Array.isArray(v) ? v.map(String) : v ? [String(v)] : []);
 const hhmmss = (ts: string) => new Date(Number(ts.split(".")[0]) * 1000).toISOString().slice(11, 19);
+const tsIso = (ts: string) => new Date(Number(ts.split(".")[0]) * 1000).toISOString();
 
 // Front matter becomes columns: the deletes, versions and permissions code
 // filters on these, so a loader that drops them loses more than text.
@@ -198,21 +201,62 @@ export function flattenSlack(title: string, messages: Msg[]): string {
   return lines.join("\n");
 }
 
+export type TimelineEvent = { at: string; event: string; doc?: string; [k: string]: unknown };
+export const loadTimeline = (): TimelineEvent[] =>
+  readFileSync(join(import.meta.dirname, "..", "events", "timeline.jsonl"), "utf8")
+    .split("\n")
+    .filter(Boolean)
+    .map((l) => JSON.parse(l));
+
 // Every Castlane file. The folder is the union of everything that ever
 // existed, so deleted documents are here too, with deletedAt set.
 export function loadCastlane(root = join(CORPUS, "castlane")): Doc[] {
+  const created = new Map<string, string>();
+  for (const e of loadTimeline()) if (e.doc && e.event === "doc_created" && !created.has(e.doc)) created.set(e.doc, e.at);
   return walk(root)
     .filter((f) => f.endsWith(".md") || f.endsWith(".json"))
     .map((file) => {
       const raw = readFileSync(file, "utf8");
       if (file.endsWith(".json")) {
         const { messages, ...fm } = JSON.parse(raw);
-        return { id: fm.id, source: fm.source, title: fm.title, url: fm.url, text: flattenSlack(fm.title, messages), meta: metaOf(fm) };
+        return {
+          id: fm.id, source: fm.source, title: fm.title, url: fm.url,
+          text: flattenSlack(fm.title, messages), meta: metaOf(fm), messages, createdAt: tsIso(messages[0].ts),
+        };
       }
       const m = FRONT_MATTER.exec(raw)!;
       const fm = parseYaml(m[1]);
-      return { id: fm.id, source: fm.source, title: fm.title, url: fm.url, text: raw.slice(m[0].length).trim(), meta: metaOf(fm) };
+      const meta = metaOf(fm);
+      return {
+        id: fm.id, source: fm.source, title: fm.title, url: fm.url,
+        text: raw.slice(m[0].length).trim(), meta, createdAt: created.get(fm.id) ?? `${meta.effectiveAt}T00:00:00Z`,
+      };
     });
+}
+
+// Castlane as it stood at time `at`: created by then and not yet deleted,
+// Slack days cut to the messages posted by then, and "current" recomputed
+// from the supersede events that had happened (events/timeline.jsonl).
+export function castlaneAsOf(at: string): Doc[] {
+  const t = Date.parse(at);
+  const superseded = new Map<string, string>();
+  for (const e of loadTimeline()) if (e.event === "doc_superseded" && e.doc) superseded.set(e.doc, e.at);
+  const out: Doc[] = [];
+  for (const d of loadCastlane()) {
+    if (Date.parse(d.createdAt!) > t) continue;
+    if (d.meta.deletedAt && Date.parse(d.meta.deletedAt) <= t) continue;
+    const supAt = superseded.get(d.id);
+    const wasSuperseded = !!supAt && Date.parse(supAt) <= t;
+    const meta = { ...d.meta, deletedAt: null, isCurrent: !wasSuperseded, supersededBy: wasSuperseded ? d.meta.supersededBy : null };
+    if (d.messages) {
+      const kept = d.messages
+        .filter((m) => Number(m.ts) * 1000 <= t)
+        .map((m) => ({ ...m, replies: (m.replies ?? []).filter((r) => Number(r.ts) * 1000 <= t) }));
+      if (!kept.length) continue;
+      out.push({ ...d, meta, messages: kept, text: flattenSlack(d.title, kept) });
+    } else out.push({ ...d, meta });
+  }
+  return out;
 }
 
 // Today's documents: the public docs and every Castlane document not deleted.

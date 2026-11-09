@@ -23,7 +23,7 @@ test("rrf keeps the top `limit`", () => {
   assert.equal(rrf([list], 60, 50).length, 50);
 });
 
-test("a service named in the question becomes a filter; no filter matches everything", () => {
-  assert.deepEqual(whereSql({}, 2), { sql: "true", params: [] });
-  assert.deepEqual(whereSql({ service: "pgbouncer-payouts" }, 3), { sql: "$3 = any(c.service)", params: ["pgbouncer-payouts"] });
+test("every filter keeps live documents only; parameters number from `first`", () => {
+  assert.deepEqual(whereSql({}, 2), { sql: "d.deleted_at is null", params: [] });
+  assert.equal(whereSql({ service: "pgbouncer-payouts" }, 3).sql, "d.deleted_at is null and $3 = any(c.service)");
 });

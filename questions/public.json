@@ -1,0 +1,847 @@
+{
+ "about": "Labelled query set for the production-rag lab, built 2026-11-08 against kubernetes/website@0449ba43 (content/en/docs) + prometheus-operator/runbooks@a685d14. Each query has targets; a target is a list of acceptable alternatives {doc, section?, contains?}. A retrieved chunk matches an alternative if it is from that doc, overlaps that section (if given) and its body contains that string (if given, case-insensitive). recall@k = share of targets matched in the top k. type none = no answer in the corpus (no targets).",
+ "queries": [
+  {
+   "id": "nl01",
+   "type": "nl",
+   "q": "How do I roll back a Deployment to an earlier version?",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/controllers/deployment",
+      "section": "rolling-back-a-deployment"
+     },
+     {
+      "doc": "tasks/run-application/update-deployment-rolling",
+      "section": "rolling-back-to-the-previous-revision"
+     },
+     {
+      "doc": "reference/kubectl/generated/kubectl_rollout/kubectl_rollout_undo"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl02",
+   "type": "nl",
+   "q": "How does the Horizontal Pod Autoscaler calculate the desired number of replicas?",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/autoscaling/horizontal-pod-autoscale",
+      "section": "algorithm-details"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl03",
+   "type": "nl",
+   "q": "What happens to the Pods on a node when the node becomes unreachable?",
+   "targets": [
+    [
+     {
+      "doc": "concepts/scheduling-eviction/taint-and-toleration",
+      "section": "taint-based-evictions"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl04",
+   "type": "nl",
+   "q": "How can I expose the keys of a Secret to a container as environment variables?",
+   "targets": [
+    [
+     {
+      "doc": "tasks/inject-data-application/distribute-credentials-secure",
+      "contains": "environment variable"
+     },
+     {
+      "doc": "concepts/configuration/secret",
+      "section": "using-secrets-as-environment-variables"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl05",
+   "type": "nl",
+   "q": "How do I cap the total CPU and memory that all workloads in one namespace can request?",
+   "targets": [
+    [
+     {
+      "doc": "concepts/policy/resource-quotas",
+      "section": "compute-resource-quota"
+     },
+     {
+      "doc": "concepts/policy/resource-quotas",
+      "section": "how-kubernetes-resourcequotas-work"
+     },
+     {
+      "doc": "tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl06",
+   "type": "nl",
+   "q": "How do I safely drain a node before doing maintenance on it?",
+   "targets": [
+    [
+     {
+      "doc": "tasks/administer-cluster/safely-drain-node",
+      "section": "use-kubectl-drain-to-remove-a-node-from-service"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl07",
+   "type": "nl",
+   "q": "When should I use a readiness probe instead of a liveness probe?",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/pods/probes",
+      "section": "when-should-you-use-a-readiness-probe"
+     },
+     {
+      "doc": "concepts/workloads/pods/probes",
+      "section": "when-should-you-use-a-liveness-probe"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl08",
+   "type": "nl",
+   "q": "How do I take a backup of etcd?",
+   "targets": [
+    [
+     {
+      "doc": "tasks/administer-cluster/configure-upgrade-etcd",
+      "section": "backing-up-an-etcd-cluster"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl09",
+   "type": "nl",
+   "q": "How do I deny all ingress traffic to pods in a namespace by default?",
+   "targets": [
+    [
+     {
+      "doc": "concepts/services-networking/network-policies",
+      "section": "default-deny-all-ingress-traffic"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl10",
+   "type": "nl",
+   "q": "What are the steps to upgrade the control plane of a kubeadm cluster?",
+   "targets": [
+    [
+     {
+      "doc": "tasks/administer-cluster/kubeadm/kubeadm-upgrade",
+      "section": "upgrading-control-plane-nodes"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl11",
+   "type": "nl",
+   "q": "How do I make sure a minimum number of replicas stays available during voluntary disruptions?",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/pods/disruptions",
+      "section": "pod-disruption-budgets"
+     },
+     {
+      "doc": "tasks/run-application/configure-pdb",
+      "section": "specifying-a-poddisruptionbudget"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl12",
+   "type": "nl",
+   "q": "How do I increase the size of an existing PersistentVolumeClaim?",
+   "targets": [
+    [
+     {
+      "doc": "concepts/storage/persistent-volumes",
+      "section": "expanding-persistent-volumes-claims"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl13",
+   "type": "nl",
+   "q": "How are container logs rotated on a node?",
+   "targets": [
+    [
+     {
+      "doc": "concepts/cluster-administration/logging",
+      "section": "log-rotation"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "nl14",
+   "type": "nl",
+   "q": "How does a StatefulSet give each pod a stable network identity?",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/controllers/statefulset",
+      "section": "stable-network-id"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id01",
+   "type": "id",
+   "q": "SidecarContainers feature gate",
+   "targets": [
+    [
+     {
+      "doc": "reference/command-line-tools-reference/feature-gates/SidecarContainers"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id02",
+   "type": "id",
+   "q": "kubelet --max-pods default",
+   "targets": [
+    [
+     {
+      "doc": "reference/command-line-tools-reference/kubelet",
+      "contains": "--max-pods int32"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id03",
+   "type": "id",
+   "q": "ImagePullBackOff",
+   "targets": [
+    [
+     {
+      "doc": "concepts/containers/images",
+      "section": "imagepullbackoff"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id04",
+   "type": "id",
+   "q": "kubectl.kubernetes.io/default-container",
+   "targets": [
+    [
+     {
+      "doc": "reference/labels-annotations-taints",
+      "section": "kubectlkubernetesiodefault-container"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id05",
+   "type": "id",
+   "q": "evictionHard memory.available default",
+   "targets": [
+    [
+     {
+      "doc": "concepts/scheduling-eviction/node-pressure-eviction",
+      "section": "hard-eviction-thresholds"
+     },
+     {
+      "doc": "reference/config-api/kubelet-config.v1beta1",
+      "contains": "evictionHard"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id06",
+   "type": "id",
+   "q": "node.kubernetes.io/unreachable taint",
+   "targets": [
+    [
+     {
+      "doc": "reference/labels-annotations-taints",
+      "section": "nodekubernetesiounreachable"
+     },
+     {
+      "doc": "concepts/scheduling-eviction/taint-and-toleration",
+      "section": "taint-based-evictions"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id07",
+   "type": "id",
+   "q": "KubePodCrashLooping",
+   "targets": [
+    [
+     {
+      "doc": "runbooks/kubernetes/KubePodCrashLooping"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id08",
+   "type": "id",
+   "q": "what uses port 10250",
+   "targets": [
+    [
+     {
+      "doc": "reference/networking/ports-and-protocols",
+      "contains": "10250"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id09",
+   "type": "id",
+   "q": "kubectl rollout undo --to-revision",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/controllers/deployment",
+      "section": "rolling-back-to-a-previous-revision"
+     },
+     {
+      "doc": "reference/kubectl/generated/kubectl_rollout/kubectl_rollout_undo"
+     },
+     {
+      "doc": "tasks/run-application/update-deployment-rolling",
+      "section": "rolling-back-to-a-specific-revision"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id10",
+   "type": "id",
+   "q": "ttlSecondsAfterFinished",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/controllers/ttlafterfinished"
+     },
+     {
+      "doc": "concepts/workloads/controllers/job",
+      "section": "ttl-mechanism-for-finished-jobs"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id11",
+   "type": "id",
+   "q": "--service-node-port-range",
+   "targets": [
+    [
+     {
+      "doc": "concepts/services-networking/service",
+      "section": "type-nodeport"
+     },
+     {
+      "doc": "reference/command-line-tools-reference/kube-apiserver",
+      "contains": "--service-node-port-range"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id12",
+   "type": "id",
+   "q": "pod-security.kubernetes.io/enforce",
+   "targets": [
+    [
+     {
+      "doc": "reference/labels-annotations-taints",
+      "section": "pod-securitykubernetesioenforce"
+     },
+     {
+      "doc": "concepts/security/pod-security-admission"
+     },
+     {
+      "doc": "tasks/configure-pod-container/enforce-standards-namespace-labels"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id13",
+   "type": "id",
+   "q": "etcdHighNumberOfFailedGRPCRequests",
+   "targets": [
+    [
+     {
+      "doc": "runbooks/etcd/etcdHighNumberOfFailedGRPCRequests"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id14",
+   "type": "id",
+   "q": "OOMKilled exit code 137",
+   "targets": [
+    [
+     {
+      "doc": "concepts/configuration/manage-resources-containers",
+      "section": "my-container-is-terminated"
+     },
+     {
+      "doc": "tasks/configure-pod-container/assign-memory-resource",
+      "section": "exceed-a-containers-memory-limit"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id15",
+   "type": "id",
+   "q": "kubeadm init --pod-network-cidr",
+   "targets": [
+    [
+     {
+      "doc": "setup/production-environment/tools/kubeadm/create-cluster-kubeadm",
+      "contains": "pod-network-cidr"
+     },
+     {
+      "doc": "reference/setup-tools/kubeadm/generated/kubeadm_init",
+      "contains": "pod-network-cidr"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "id16",
+   "type": "id",
+   "q": "KubeletCrashLoopBackOffMax",
+   "targets": [
+    [
+     {
+      "doc": "reference/command-line-tools-reference/feature-gates/KubeletCrashLoopBackOffMax"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa01",
+   "type": "para",
+   "q": "my container keeps dying and coming back over and over, what does that mean",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/pods/pod-lifecycle",
+      "contains": "CrashLoopBackOff"
+     },
+     {
+      "doc": "runbooks/kubernetes/KubePodCrashLooping"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa02",
+   "type": "para",
+   "q": "keep the scheduler from putting any new workloads onto one particular machine",
+   "targets": [
+    [
+     {
+      "doc": "concepts/architecture/nodes",
+      "section": "manual-node-administration"
+     },
+     {
+      "doc": "concepts/scheduling-eviction/taint-and-toleration",
+      "section": "concepts"
+     },
+     {
+      "doc": "reference/kubectl/generated/kubectl_cordon"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa03",
+   "type": "para",
+   "q": "the cluster can't download our app's image from the company's private registry",
+   "targets": [
+    [
+     {
+      "doc": "tasks/configure-pod-container/pull-image-private-registry"
+     },
+     {
+      "doc": "concepts/containers/images",
+      "section": "specifying-imagepullsecrets-on-a-pod"
+     },
+     {
+      "doc": "concepts/containers/images",
+      "section": "using-a-private-registry"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa04",
+   "type": "para",
+   "q": "my app gets killed whenever it uses too much RAM",
+   "targets": [
+    [
+     {
+      "doc": "tasks/configure-pod-container/assign-memory-resource",
+      "section": "exceed-a-containers-memory-limit"
+     },
+     {
+      "doc": "concepts/configuration/manage-resources-containers",
+      "section": "my-container-is-terminated"
+     },
+     {
+      "doc": "concepts/configuration/manage-resources-containers",
+      "section": "how-pods-with-resource-limits-are-run"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa05",
+   "type": "para",
+   "q": "give every copy of my database its own disk that survives restarts",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/controllers/statefulset",
+      "section": "stable-storage"
+     },
+     {
+      "doc": "concepts/workloads/controllers/statefulset",
+      "section": "volume-claim-templates"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa06",
+   "type": "para",
+   "q": "spread my app's copies evenly over different data centers",
+   "targets": [
+    [
+     {
+      "doc": "concepts/scheduling-eviction/topology-spread-constraints"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa07",
+   "type": "para",
+   "q": "clean up finished batch jobs automatically after some time",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/controllers/ttlafterfinished"
+     },
+     {
+      "doc": "concepts/workloads/controllers/job",
+      "section": "ttl-mechanism-for-finished-jobs"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa08",
+   "type": "para",
+   "q": "keep at least a few instances of my service running while ops patches the servers",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/pods/disruptions",
+      "section": "pod-disruption-budgets"
+     },
+     {
+      "doc": "tasks/run-application/configure-pdb"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa09",
+   "type": "para",
+   "q": "run a helper process next to my main app that ships its log files somewhere",
+   "targets": [
+    [
+     {
+      "doc": "concepts/cluster-administration/logging",
+      "section": "sidecar-container-with-logging-agent"
+     },
+     {
+      "doc": "concepts/workloads/pods/sidecar-containers"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa10",
+   "type": "para",
+   "q": "reach my service from outside on a fixed port on every machine",
+   "targets": [
+    [
+     {
+      "doc": "concepts/services-networking/service",
+      "section": "type-nodeport"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa11",
+   "type": "para",
+   "q": "how long does Kubernetes wait for my app to shut down cleanly before force killing it",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/pods/pod-lifecycle",
+      "section": "pod-termination",
+      "contains": "30 seconds"
+     },
+     {
+      "doc": "concepts/containers/container-lifecycle-hooks",
+      "section": "hook-handler-execution"
+     },
+     {
+      "doc": "concepts/workloads/pods/pod-lifecycle",
+      "contains": "terminate gracefully, which defaults to 30 seconds"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "pa12",
+   "type": "para",
+   "q": "add more copies of my app automatically when it gets busy",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/autoscaling/horizontal-pod-autoscale"
+     },
+     {
+      "doc": "tasks/run-application/horizontal-pod-autoscale-walkthrough"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "mu01",
+   "type": "multi",
+   "q": "How do I back up etcd, and how do I restore the cluster from that backup?",
+   "targets": [
+    [
+     {
+      "doc": "tasks/administer-cluster/configure-upgrade-etcd",
+      "section": "backing-up-an-etcd-cluster"
+     }
+    ],
+    [
+     {
+      "doc": "tasks/administer-cluster/configure-upgrade-etcd",
+      "section": "restoring-an-etcd-cluster"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "mu02",
+   "type": "multi",
+   "q": "The KubeletDown alert is firing. What does it mean, and which port does the kubelet API listen on so I can check it?",
+   "targets": [
+    [
+     {
+      "doc": "runbooks/kubernetes/KubeletDown"
+     }
+    ],
+    [
+     {
+      "doc": "reference/networking/ports-and-protocols",
+      "contains": "10250"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "mu03",
+   "type": "multi",
+   "q": "Set a ResourceQuota on a namespace and also give containers default memory limits there",
+   "targets": [
+    [
+     {
+      "doc": "concepts/policy/resource-quotas"
+     },
+     {
+      "doc": "tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace"
+     }
+    ],
+    [
+     {
+      "doc": "concepts/policy/limit-range"
+     },
+     {
+      "doc": "tasks/administer-cluster/manage-resources/memory-default-namespace"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "mu04",
+   "type": "multi",
+   "q": "KubePodNotReady alert: what does it mean and how do readiness probes decide if a pod is ready?",
+   "targets": [
+    [
+     {
+      "doc": "runbooks/kubernetes/KubePodNotReady"
+     }
+    ],
+    [
+     {
+      "doc": "concepts/workloads/pods/probes",
+      "section": "readiness-probe"
+     },
+     {
+      "doc": "concepts/workloads/pods/probes",
+      "section": "when-should-you-use-a-readiness-probe"
+     },
+     {
+      "doc": "concepts/workloads/pods/pod-lifecycle",
+      "section": "readiness-probe"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "mu05",
+   "type": "multi",
+   "q": "What is the default grace period when a pod is deleted, and when does the preStop hook run relative to it?",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/pods/pod-lifecycle",
+      "section": "pod-termination",
+      "contains": "30 seconds"
+     },
+     {
+      "doc": "concepts/workloads/pods/pod-lifecycle",
+      "contains": "terminate gracefully, which defaults to 30 seconds"
+     }
+    ],
+    [
+     {
+      "doc": "concepts/containers/container-lifecycle-hooks",
+      "section": "hook-handler-execution"
+     },
+     {
+      "doc": "concepts/workloads/pods/pod-lifecycle",
+      "section": "pod-termination-flow",
+      "contains": "preStop"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "mu06",
+   "type": "multi",
+   "q": "Compare how a Deployment and a StatefulSet roll back to a previous revision",
+   "targets": [
+    [
+     {
+      "doc": "concepts/workloads/controllers/deployment",
+      "section": "rolling-back-a-deployment"
+     }
+    ],
+    [
+     {
+      "doc": "concepts/workloads/controllers/statefulset",
+      "section": "forced-rollback"
+     },
+     {
+      "doc": "concepts/workloads/controllers/statefulset",
+      "section": "performing-rollbacks"
+     },
+     {
+      "doc": "concepts/workloads/controllers/statefulset",
+      "section": "revision-history"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "no01",
+   "type": "none",
+   "q": "How do I enable the PodTelepathy feature gate?",
+   "targets": []
+  },
+  {
+   "id": "no02",
+   "type": "none",
+   "q": "What is the default value of the kubelet --max-pod-burst flag?",
+   "targets": []
+  },
+  {
+   "id": "no03",
+   "type": "none",
+   "q": "How do I set job priorities in HashiCorp Nomad?",
+   "targets": []
+  },
+  {
+   "id": "no04",
+   "type": "none",
+   "q": "How much does a GKE Autopilot cluster cost per vCPU hour?",
+   "targets": []
+  },
+  {
+   "id": "no05",
+   "type": "none",
+   "q": "How do I configure sticky sessions on an OpenShift Route?",
+   "targets": []
+  },
+  {
+   "id": "no06",
+   "type": "none",
+   "q": "When is Kubernetes 2.0 being released?",
+   "targets": []
+  },
+  {
+   "id": "no07",
+   "type": "none",
+   "q": "How do I fix the KubeQuantumDecoherence alert?",
+   "targets": []
+  },
+  {
+   "id": "no08",
+   "type": "none",
+   "q": "What is the uptime SLA for the Amazon EKS control plane?",
+   "targets": []
+  }
+ ]
+}

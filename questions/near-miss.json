@@ -1,0 +1,14 @@
+{
+  "about": "LAB-24 (phase 2): 9 more public near-miss unanswerable questions, written 2026-11-08, so the unanswerable total is 8 + 9 public + 3 Castlane = 20. Same shape as queries.json; 'keyTerms' must have zero hits in the cleaned public corpus and in Castlane (checked by 35-nearmiss.ts); 'near' names the real thing each one is close to.",
+  "queries": [
+    { "id": "nm01", "type": "none", "q": "What is the default value of the kubelet --image-gc-high-threshhold flag?", "targets": [], "keyTerms": ["threshhold"], "near": "kubelet --image-gc-high-threshold (one letter off)" },
+    { "id": "nm02", "type": "none", "q": "How do I raise the kube-apiserver --max-requests-in-flights limit?", "targets": [], "keyTerms": ["requests-in-flights"], "near": "--max-requests-inflight" },
+    { "id": "nm03", "type": "none", "q": "How do I enable the InPlacePodVerticalScalingBurst feature gate?", "targets": [], "keyTerms": ["VerticalScalingBurst"], "near": "the InPlacePodVerticalScaling gate family" },
+    { "id": "nm04", "type": "none", "q": "What does the KubeletPodStartUpLatencyCritical alert mean?", "targets": [], "keyTerms": ["KubeletPodStartUpLatencyCritical"], "near": "KubeletPodStartUpLatencyHigh (one word off)" },
+    { "id": "nm05", "type": "none", "q": "How do I fix the KubeAPIErrorBudgetBurnCritical alert?", "targets": [], "keyTerms": ["KubeAPIErrorBudgetBurnCritical"], "near": "KubeAPIErrorBudgetBurn" },
+    { "id": "nm06", "type": "none", "q": "How do I turn on GKE Image Streaming so pods start faster?", "targets": [], "keyTerms": ["image streaming"], "near": "another vendor's feature (Google Kubernetes Engine)" },
+    { "id": "nm07", "type": "none", "q": "What is the default nodeDrainTimeout on a Cluster API MachineDeployment?", "targets": [], "keyTerms": ["nodeDrainTimeout"], "near": "another project's field (Cluster API); Kubernetes has kubectl drain --timeout" },
+    { "id": "nm08", "type": "none", "q": "How do I use kubectl rollout pause --at-revision to stop a rollout at a given revision?", "targets": [], "keyTerms": ["at-revision"], "near": "kubectl rollout pause (no such flag) and rollout undo --to-revision" },
+    { "id": "nm09", "type": "none", "q": "What is the default terminationGracePeriodMinutes for a pod?", "targets": [], "keyTerms": ["terminationGracePeriodMinutes"], "near": "terminationGracePeriodSeconds (a unit off)" }
+  ]
+}

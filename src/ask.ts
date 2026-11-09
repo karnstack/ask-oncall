@@ -1,10 +1,12 @@
 // The question path: rewrite a follow-up, search both legs inside the asker's
-// permissions, fuse, rerank, and answer from what the reranker kept.
+// permissions, fuse, rerank, answer from what the reranker kept, and check
+// the answer.
 //   npm run ask -- "How do I fail over Postgres?" --as tw
 //   npm run ask -- "and on the replica?" --as tw --thread "how do I see how many clients are waiting on pgbouncer-feeds"
 import { parseArgs } from "node:util";
 import { principalsOf, userByHandle } from "./access.ts";
 import { answer, sourceLine } from "./answer.ts";
+import { checkAnswer, citedSentence, passed, quotedSpans } from "./checks.ts";
 import { RERANK_CANDIDATES, RERANK_KEEP } from "./config.ts";
 import { pool } from "./db.ts";
 import { rerank } from "./rerank.ts";
@@ -60,8 +62,10 @@ export async function ask(question: string, opts: AskOptions) {
   usd += a.usd;
   ms.total = performance.now() - t0;
 
+  // 5. check it
+  const checks = checkAnswer(text, kept);
   const version = await indexVersion();
-  return { question, searched, text, sources: kept, candidates, ms, usd, indexVersion: version };
+  return { question, searched, text, sources: kept, candidates, checks, ms, usd, indexVersion: version };
 }
 
 // ---- the command line ---------------------------------------------------------
@@ -79,6 +83,16 @@ if (import.meta.main) {
   if (r.searched !== question) console.log(`searched as: ${r.searched}`);
   console.log(`sources (asked as ${values.as}, index version ${r.indexVersion}):`);
   r.sources.forEach((s, i) => console.log(`  ${sourceLine(s, i, now)}${s.breadcrumb ? `\n      ${s.breadcrumb}` : ""}`));
+  for (const span of quotedSpans(r.text).slice(0, 4)) {
+    const from = r.sources.map((s) => citedSentence(s.body, span)).find(Boolean);
+    if (from) console.log(`  quoted: "${span}"\n      from: ${from.slice(0, 200)}`);
+  }
+  const c = r.checks;
+  console.log(
+    `checks: ${passed(c) ? "pass" : "FAIL"} (${c.citations} citations, ${c.badCitations.length} bad; ${c.quotes} quotes, ` +
+      `${c.unverifiedQuotes.length} not in the sources; ${c.foreignLinks.length} foreign links)`,
+  );
+  if (!passed(c)) console.log(`  ${JSON.stringify({ bad: c.badCitations, quotes: c.unverifiedQuotes, links: c.foreignLinks })}`);
   console.log(`time: ${Object.entries(r.ms).map(([k, v]) => `${k} ${Math.round(v)} ms`).join(", ")}`);
   console.log(`cost: $${r.usd.toFixed(5)}`);
   await pool.end();

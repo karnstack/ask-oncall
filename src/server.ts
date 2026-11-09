@@ -47,6 +47,7 @@ async function route(req: IncomingMessage, res: ServerResponse) {
       answer: r.text,
       searched: r.searched,
       sources: r.sources.map((s, i) => ({ n: i + 1, id: s.id, title: s.title, version: s.version, updatedAt: s.updatedAt, url: s.url, breadcrumb: s.breadcrumb })),
+      checks: r.checks,
       ms: r.ms,
     };
     answers.set(key, { at: Date.now(), body });

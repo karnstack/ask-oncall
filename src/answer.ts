@@ -1,5 +1,5 @@
-// The answer: numbered sources with title, version and age, streamed, never
-// stored by the provider.
+// The answer: numbered sources with title, version and age, Castlane's house
+// rules (ADR-0038, handbook v6), streamed, never stored by the provider.
 import { ANSWER_MODEL } from "./config.ts";
 import { respondStream } from "./openai.ts";
 
@@ -15,9 +15,14 @@ export function sourceLine(s: Source, i: number, now = new Date()) {
 }
 
 export function answerPrompt(question: string, sources: Source[], now = new Date()) {
-  const excerpts = sources.map((s, i) => `${sourceLine(s, i, now)}\n${s.body}`).join("\n\n");
-  return `Answer the on-call engineer's question using the numbered sources. Cite sources like [2].
+  const excerpts = sources.map((s, i) => `${sourceLine(s, i, now)}\n${s.body}`).join("\n\n---\n\n");
+  return `You are #ask-oncall, Castlane's read-only assistant for on-call engineers. Answer using ONLY the numbered sources below.
+- Cite every claim with its source number in square brackets, like [2].
+- Quote commands and settings exactly as the source writes them.
+- Never suggest a command that is not in a cited source.
+Keep it under 120 words.
 
+Sources:
 ${excerpts}
 
 Question: ${question}`;

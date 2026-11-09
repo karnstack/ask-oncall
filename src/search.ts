@@ -117,8 +117,11 @@ export function rrf<T extends { id: string }>(lists: T[][], k = RRF_K, limit = C
     .map((e) => ({ ...e.hit, score: e.score }));
 }
 
-// Both legs, fused, one after the other: embed the question, search by
-// vector, then search by words.
+// Both legs, fused. The word leg needs no embedding, so it runs while the
+// question is embedded and the vector leg searches: the critical path is the
+// slower of the two. (At Castlane's size the word leg takes about 11 ms and
+// hides behind a 218 ms embedding call, so this saves about 1 ms; it matters
+// when the word leg is slow.)
 export async function hybridSearch(question: string, filter: Filter = {}) {
   const ms = { embed: 0, vector: 0, word: 0 };
   const timed = async <T>(stage: keyof typeof ms, fn: () => Promise<T>) => {
@@ -127,8 +130,9 @@ export async function hybridSearch(question: string, filter: Filter = {}) {
     ms[stage] = performance.now() - t0;
     return result;
   };
-  const vec = await timed("embed", () => embedQuestion(question));
-  const vector = await timed("vector", () => vectorSearch(vec, filter));
-  const word = await timed("word", () => wordSearch(question, filter));
+  const [vector, word] = await Promise.all([
+    timed("embed", () => embedQuestion(question)).then((vec) => timed("vector", () => vectorSearch(vec, filter))),
+    timed("word", () => wordSearch(question, filter)),
+  ]);
   return { vector, word, fused: rrf([vector, word]), ms };
 }
